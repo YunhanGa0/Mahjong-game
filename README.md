@@ -1,6 +1,6 @@
 # Mahjong-game
 COMP2008J-Software Development Project
-A Beijing-version mahjong game based on Java
+(A Beijing-version mahjong game based on Java)
 
 Group8-Team members:
 1. Yunhan Gao 22207250
