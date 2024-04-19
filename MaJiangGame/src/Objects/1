@@ -1,0 +1,99 @@
+import java.util.*;
+
+public class MaJiang {
+
+    static ArrayList<Integer> list= new ArrayList<>();
+    static HashMap<Integer,String> pai = new HashMap<>();
+
+    static {
+
+        String[] color= {"条","万","筒"};
+        String[] number= {"1","2","3","4","5","6","7","8","9"};
+
+        int numb=1;
+
+        for (String c : color) {
+            for (String n : number) {
+                for (int i = 0; i < 4; i++){
+                    pai.put(numb, c + n);
+                    list.add(numb);
+                    numb++;
+                }
+            }
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"东风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"西风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"南风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"北风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"红中");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"白板");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"发财");
+            list.add(numb);
+            numb++;
+        }
+
+    }
+
+    public MaJiang(){
+        System.out.println(pai);
+
+        //洗牌
+        Collections.shuffle(list);
+
+        //发牌（四个人四个列表）
+        TreeSet<Integer> player1=new TreeSet<>();
+        TreeSet<Integer> player2=new TreeSet<>();
+        TreeSet<Integer> player3=new TreeSet<>();
+        TreeSet<Integer> player4=new TreeSet<>();
+
+        for (int i=0;i<52;i++){
+            int majiang= list.get(i);
+            if (i%4==0){
+                player1.add(majiang);
+            }else if(i%4==1){
+                player2.add(majiang);
+            }else if(i%4==2){
+                player3.add(majiang);
+            }else {
+                player4.add(majiang);
+            }
+        }
+
+        int zhuang= list.get(52);
+        player1.add(zhuang);
+
+    }
+
+}
