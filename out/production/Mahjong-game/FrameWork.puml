@@ -1,0 +1,81 @@
+@startuml
+
+skinparam class {
+    BackgroundColor Snow
+    ArrowColor DimGray
+    BorderColor DimGray
+}
+
+class MenuJFrame{
+
+}
+
+class GameJFrame {
+    -container: Container;
+    -landlord[]: JButton;
+    -Card[]: JButton;
+    -int: Zhuang_Flag;
+    -turn: int;
+    -Zhuang: JLabel ;
+    -currentList: ArrayList;
+    -pokerList: ArrayList;
+    -lordList: ArrayList;
+    -time[]:JTextField
+    - operation: PlayerOperation;
+    -nextPlayer: boolean;
+    +initGame():void
+    +initView(): void
+    +initJframe(): void
+    +initCard(): void
+    +actionPerformed: void
+}
+
+class MaJiang {
+
+    -gameJFrame: GameJFrame
+    -name: String
+    -Up: boolean
+    -Clickable: boolean
+    -clicked: boolean
+    +turnFront(): void
+    +turnRear(): void
+    +mouseClicked(e: MouseEvent): void
+
+}
+
+class PlayerOperation {
+    - gameJFrame: GameJFrame
+    - isRun: boolean
+    - i: int
+
+    + PlayerOperation(m: GameJFrame, i: int)
+    + run(): void
+    + sleep(i: int): void
+    + setZhuang(i: int): void
+    + turnOn(flag: boolean): void
+    + computer0(): void
+    + computer2(): void
+    + getCardByName(list: List<Poker>, n: String): List
+    + AI_3(model: List<String>, player: List<Poker>, list: List<String>, role: int): void
+    + timeWait(n: int, player: int): void
+    + win(): boolean
+}
+
+class App {
+    +main(args: String[]): void
+}
+
+
+class Other_Algorithm {
+    - g: GameJFrame
+
+    + checkPeng(): boolean
+    + checkGang(): boolean
+    + checkChi(): boolean
+}
+
+MaJiang "1" -- "1" GameJFrame
+App -- GameJFrame
+
+
+@enduml
