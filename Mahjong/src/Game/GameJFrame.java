@@ -1,6 +1,6 @@
 package Game;
 
-import Objects.majiangpai;
+import Objects.MahJongCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.TreeSet;
 
 
 public class GameJFrame extends JFrame implements ActionListener {
@@ -35,7 +38,8 @@ public class GameJFrame extends JFrame implements ActionListener {
     //0索引：左边的电脑玩家
     //1索引：中间的自己
     //2索引：右边的电脑玩家
-    ArrayList<ArrayList<majiangpai>> currentList = new ArrayList<>();
+    //3：对面的
+    ArrayList<ArrayList<MahJongCard>> currentList = new ArrayList<>();
 
     //集合嵌套集合
     //大集合中有三个小集合
@@ -43,13 +47,14 @@ public class GameJFrame extends JFrame implements ActionListener {
     //0索引：左边的电脑玩家
     //1索引：中间的自己
     //2索引：右边的电脑玩家
-    ArrayList<ArrayList<majiangpai>> playerList = new ArrayList<>();
+    //3:对面的
+    ArrayList<ArrayList<MahJongCard>> playerList = new ArrayList<>();
 
     //底牌
-    ArrayList<majiangpai> lordList = new ArrayList<>();
+    ArrayList<MahJongCard> lordList = new ArrayList<>();
 
     //牌盒，装所有的牌
-    ArrayList<majiangpai> pokerList = new ArrayList();
+    ArrayList<MahJongCard> pokerList = new ArrayList();
 
     //三个玩家前方的文本提示
     //0索引：左边的电脑玩家
@@ -88,6 +93,85 @@ public class GameJFrame extends JFrame implements ActionListener {
     //准备牌，洗牌，发牌
     public void initCard() {
 
+        ArrayList<Integer> list= new ArrayList<>();
+        HashMap<Integer,String> pai = new HashMap<>();
+        String[] color= {"条","万","筒"};
+        String[] number= {"1","2","3","4","5","6","7","8","9"};
+
+        int numb=1;
+
+        for (String c : color) {
+            for (String n : number) {
+                for (int i = 0; i < 4; i++){
+                    pai.put(numb, c + n);
+                    list.add(numb);
+                    numb++;
+                }
+            }
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"东风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"西风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"南风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"北风");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"红中");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"白板");
+            list.add(numb);
+            numb++;
+        }
+
+        for(int i=0;i<4;i++){
+            pai.put(numb,"发财");
+            list.add(numb);
+            numb++;
+        }
+
+        Collections.shuffle(list);
+
+        TreeSet<Integer> player1=new TreeSet<>();
+        TreeSet<Integer> player2=new TreeSet<>();
+        TreeSet<Integer> player3=new TreeSet<>();
+        TreeSet<Integer> player4=new TreeSet<>();
+
+        for (int i=0;i<52;i++){
+            int majiang= list.get(i);
+            if (i%4==0){
+                player1.add(majiang);
+            }else if(i%4==1){
+                player2.add(majiang);
+            }else if(i%4==2){
+                player3.add(majiang);
+            }else {
+                player4.add(majiang);
+            }
+        }
+
     }
 
     //打牌之前的准备工作
@@ -99,11 +183,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-            //点击抢地主
-
-            //点击不抢
-
-            //点击不要
+            //点击Roll骰子
 
             //点击出牌
 
@@ -135,8 +215,8 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     //添加组件
     public void initView() {
-        //创建抢地主的按钮
-        JButton robBut = new JButton("抢地主");
+        //创建roll骰子的按钮
+        JButton robBut = new JButton("roll骰子");
         //设置位置
         robBut.setBounds(320, 400, 75, 20);
         //添加点击事件
@@ -183,7 +263,8 @@ public class GameJFrame extends JFrame implements ActionListener {
         //左边的电脑玩家是0
         //中间的自己是1
         //右边的电脑玩家是2
-        for (int i = 0; i < 3; i++) {
+        //对面是3
+        for (int i = 0; i < 4; i++) {
             time[i] = new JTextField("倒计时:");
             time[i].setEditable(false);
             time[i].setVisible(false);
@@ -192,6 +273,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         time[0].setBounds(140, 230, 60, 20);
         time[1].setBounds(374, 360, 60, 20);
         time[2].setBounds(620, 230, 60, 20);
+        time[3].setBounds(374, 230, 60, 20);
 
 
         //创建庄家图标

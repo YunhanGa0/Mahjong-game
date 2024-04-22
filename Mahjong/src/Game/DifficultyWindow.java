@@ -35,4 +35,5 @@ public class DifficultyWindow extends JFrame {
         // 添加面板到窗口
         add(panel);
     }
+
 }

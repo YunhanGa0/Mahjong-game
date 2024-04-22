@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 //麻将类的oop实现
-public class majiangpai extends JLabel implements MouseListener {
+public class MahJongCard extends JLabel implements MouseListener {
 
     GameJFrame gameJFrame;
     //牌是啥
@@ -41,7 +41,7 @@ public class majiangpai extends JLabel implements MouseListener {
 
     }
 
-    public majiangpai(GameJFrame gameJFrame, String name, boolean up, boolean Clickable, boolean clicked) {
+    public MahJongCard(GameJFrame gameJFrame, String name, boolean up, boolean Clickable, boolean clicked) {
         this.gameJFrame = gameJFrame;
         this.name = name;
         this.up = up;

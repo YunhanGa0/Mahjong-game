@@ -55,5 +55,4 @@ public class MenuJFrame extends JFrame implements ActionListener {
         }
     }
 
-
 }
