@@ -2,6 +2,7 @@ package Game;
 
 
 import Game.GameJFrame;
+import Objects.MahJongCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,19 +99,25 @@ public class PlayerOperation extends Thread {
 
     public void computer0() {
         timeWait(1, 0);
-        ShowCard(0);
+        //ShowCard(0);
+
+    }
+
+    public void computer1() {
+        timeWait(1, 2);
+        //ShowCard(2);
 
     }
 
     public void computer2() {
         timeWait(1, 2);
-        ShowCard(2);
+        //ShowCard(2);
 
     }
 
 
 
-    public List getCardByName(List<Poker> list, String n) {
+    public List getCardByName(List<MahJongCard> list, String n) {
         String[] name = n.split(",");
         ArrayList cardsList = new ArrayList();
         int j = 0;
@@ -122,10 +129,6 @@ public class PlayerOperation extends Thread {
             }
         }
         return cardsList;
-    }
-
-    public void AI(List<String> model, List<Poker> player, List<String> list, int role) {
-
     }
 
     public void timeWait(int n, int player) {
@@ -156,24 +159,152 @@ public class PlayerOperation extends Thread {
         gameJFrame.time[player].setVisible(false);
     }
 
-    public boolean win() {
-        for (int i = 0; i < 3; i++) {
-            if (gameJFrame.playerList.get(i).size() == 0) {
-                String s;
-                if (i == 1) {
-                    s = "恭喜你，胜利了!";
-                } else {
-                    s = "恭喜电脑" + i + ",赢了! 你的智商有待提高哦";
+    public void ShowCard(int role) {
+        int orders[] = new int[]{4, 3, 2, 1, 5};
+        Model model = Common.getModel(gameJFrame.playerList.get(role), orders);
+        ArrayList<String> list = new ArrayList<>();
+        if (gameJFrame.time[(role + 1) % 3].getText().equals("不要") && gameJFrame.time[(role + 2) % 3].getText().equals("不要")) {
+            if (model.a123.size() > 0) {
+                list.add(model.a123.get(model.a123.size() - 1));
+            } else if (model.a3.size() > 0) {
+                if (model.a1.size() > 0) {
+                    list.add(model.a1.get(model.a1.size() - 1));
+                } else if (model.a2.size() > 0) {
+                    list.add(model.a2.get(model.a2.size() - 1));
                 }
-                for (int j = 0; j < gameJFrame.playerList.get((i + 1) % 3).size(); j++)
-                    gameJFrame.playerList.get((i + 1) % 3).get(j).turnFront();
-                for (int j = 0; j < gameJFrame.playerList.get((i + 2) % 3).size(); j++)
-                    gameJFrame.playerList.get((i + 2) % 3).get(j).turnFront();
-                JOptionPane.showMessageDialog(gameJFrame, s);
-                return true;
+                list.add(model.a3.get(model.a3.size() - 1));
+            } else if (model.a112233.size() > 0) {
+                list.add(model.a112233.get(model.a112233.size() - 1));
+            } else if (model.a111222.size() > 0) {
+                String name[] = model.a111222.get(0).split(",");
+
+                if (name.length / 3 <= model.a1.size()) {
+                    list.add(model.a111222.get(model.a111222.size() - 1));
+                    for (int i = 0; i < name.length / 3; i++)
+                        list.add(model.a1.get(i));
+                } else if (name.length / 3 <= model.a2.size()) {
+                    list.add(model.a111222.get(model.a111222.size() - 1));
+                    for (int i = 0; i < name.length / 3; i++)
+                        list.add(model.a2.get(i));
+                }
+
+            } else if (model.a2.size() > (model.a111222.size() * 2 + model.a3.size())) {
+                list.add(model.a2.get(model.a2.size() - 1));
+            } else if (model.a1.size() > (model.a111222.size() * 2 + model.a3.size())) {
+                list.add(model.a1.get(model.a1.size() - 1));
+            } else if (model.a4.size() > 0) {
+                int sizea1 = model.a1.size();
+                int sizea2 = model.a2.size();
+                if (sizea1 >= 2) {
+                    list.add(model.a1.get(sizea1 - 1));
+                    list.add(model.a1.get(sizea1 - 2));
+                    list.add(model.a4.get(0));
+
+                } else if (sizea2 >= 2) {
+                    list.add(model.a2.get(sizea1 - 1));
+                    list.add(model.a2.get(sizea1 - 2));
+                    list.add(model.a4.get(0));
+
+                } else {
+                    list.add(model.a4.get(0));
+
+                }
+
             }
+        } else {
+
+            if (role != gameJFrame.dizhuFlag) {
+                int f = 0;
+                if (gameJFrame.time[gameJFrame.dizhuFlag].getText().equals("不要")) {
+                    f = 1;
+                }
+                if ((role + 1) % 3 == gameJFrame.dizhuFlag) {
+                    if ((Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c1
+                            || Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c2)
+                            && gameJFrame.currentList.get(gameJFrame.dizhuFlag).size() < 1)
+                        f = 1;
+                    if (gameJFrame.currentList.get((role + 2) % 3).size() > 0
+                            && Common.getValue(gameJFrame.currentList.get((role + 2) % 3).get(0)) > 13)
+                        f = 1;
+                }
+                if (f == 1) {
+                    gameJFrame.time[role].setVisible(true);
+                    gameJFrame.time[role].setText("不要");
+                    return;
+                }
+            }
+
+            int can = 0;
+            if (role == gameJFrame.dizhuFlag) {
+                if (gameJFrame.playerList.get((role + 1) % 3).size() <= 5 || gameJFrame.playerList.get((role + 2) % 3).size() <= 5)
+                    can = 1;
+            } else {
+                if (gameJFrame.playerList.get(gameJFrame.dizhuFlag).size() <= 5)
+                    can = 1;
+            }
+
+            ArrayList<MahJongCard> player;
+            if (gameJFrame.time[(role + 2) % 3].getText().equals("不要"))
+                player = gameJFrame.currentList.get((role + 1) % 3);
+            else
+                player = gameJFrame.currentList.get((role + 2) % 3);
+
+
+            gameJFrame.currentList.get(role).clear();
+            if (list.size() > 0) {
+                Point point = new Point();
+                if (role == 0)
+                    point.x = 200;
+                if (role == 2)
+                    point.x = 550;
+                if (role == 1) {
+                    point.x = (770 / 2) - (gameJFrame.currentList.get(1).size() + 1) * 15 / 2;
+                    point.y = 300;
+                }
+                point.y = (400 / 2) - (list.size() + 1) * 15 / 2;
+                ArrayList<MahJongCard> temp = new ArrayList<>();
+                for (int i = 0, len = list.size(); i < len; i++) {
+                    List<MahJongCard> pokers = getCardByName(gameJFrame.playerList.get(role), list.get(i));
+                    for (MahJongCard poker : pokers) {
+                        temp.add(poker);
+                    }
+                }
+                temp = Common.getOrder2(temp);
+                for (MahJongCard poker : temp) {
+                    Common.move(poker, poker.getLocation(), point);
+                    point.y += 15;
+                    gameJFrame.container.setComponentZOrder(poker, 0);
+                    gameJFrame.currentList.get(role).add(poker);
+                    gameJFrame.playerList.get(role).remove(poker);
+                }
+                Common.rePosition(gameJFrame, gameJFrame.playerList.get(role), role);
+            } else {
+                gameJFrame.time[role].setVisible(true);
+                gameJFrame.time[role].setText("不要");
+            }
+            for (MahJongCard poker : gameJFrame.currentList.get(role))
+                poker.turnFront();
         }
-        return false;
+
+        public boolean win () {
+            for (int i = 0; i < 3; i++) {
+                if (gameJFrame.playerList.get(i).size() == 0) {
+                    String s;
+                    if (i == 1) {
+                        s = "恭喜你，胜利了!";
+                    } else {
+                        s = "恭喜电脑" + i + ",赢了! 你的智商有待提高哦";
+                    }
+                    for (int j = 0; j < gameJFrame.playerList.get((i + 1) % 3).size(); j++)
+                        gameJFrame.playerList.get((i + 1) % 3).get(j).turnFront();
+                    for (int j = 0; j < gameJFrame.playerList.get((i + 2) % 3).size(); j++)
+                        gameJFrame.playerList.get((i + 2) % 3).get(j).turnFront();
+                    JOptionPane.showMessageDialog(gameJFrame, s);
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
 }

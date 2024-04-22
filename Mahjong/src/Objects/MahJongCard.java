@@ -20,7 +20,7 @@ public class MahJongCard extends JLabel implements MouseListener {
     //当前状态：是否被点击
     private boolean clicked=false;
 
-    public majiangpai(GameJFrame m, String name, boolean up){
+    public MahJongCard(GameJFrame m, String name, boolean up){
         this.name=name;
         this.up=up;
 
