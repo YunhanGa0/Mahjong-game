@@ -1,6 +1,7 @@
 package Algorithm;
 
 import Game.GameJFrame;
+import Objects.MahjongCard;
 
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {

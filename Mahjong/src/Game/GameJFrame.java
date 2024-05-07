@@ -1,6 +1,6 @@
 package Game;
 
-import Objects.MahJongCard;
+import Objects.MahjongCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,11 +25,11 @@ public class GameJFrame extends JFrame implements ActionListener {
     //管理吃牌和碰牌两个按钮
     JButton publishCard[] = new JButton[2];
 
-    int dizhuFlag;
+    int DealerFlag;
     int turn;
 
     //游戏界面中庄家的图标
-    JLabel dizhu;
+    JLabel Dealer;
 
 
     //集合嵌套集合
@@ -39,7 +39,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     //1索引：中间的自己
     //2索引：右边的电脑玩家
     //3：对面的
-    ArrayList<ArrayList<MahJongCard>> currentList = new ArrayList<>();
+    ArrayList<ArrayList<MahjongCard>> currentList = new ArrayList<>();
 
     //集合嵌套集合
     //大集合中有三个小集合
@@ -48,19 +48,17 @@ public class GameJFrame extends JFrame implements ActionListener {
     //1索引：中间的自己
     //2索引：右边的电脑玩家
     //3:对面的
-    ArrayList<ArrayList<MahJongCard>> playerList = new ArrayList<>();
+    ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
 
-    //底牌
-    ArrayList<MahJongCard> lordList = new ArrayList<>();
 
     //牌盒，装所有的牌
-    ArrayList<MahJongCard> pokerList = new ArrayList();
+    ArrayList<MahjongCard> pokerList;
 
     //三个玩家前方的文本提示
     //0索引：左边的电脑玩家
     //1索引：中间的自己
     //2索引：右边的电脑玩家
-    JTextField time[] = new JTextField[3];
+    JTextField time[] = new JTextField[4];
 
     //用户操作，涉及多线程的知识
     PlayerOperation po;
@@ -69,23 +67,25 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     public GameJFrame() {
         //设置图标
-        setIconImage(Toolkit.getDefaultToolkit().getImage("doudizhu\\image\\dizhu.png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(""));
+
         //设置界面
         initJframe();
+
         //添加组件
         initView();
+
         //界面显示出来
         //先展示界面再发牌，因为发牌里面有动画，界面不展示出来，动画无法展示
         this.setVisible(true);
+
         //初始化牌
         //准备牌，洗牌，发牌
         new Thread(this::initCard).start();
 
-
         //打牌之前的准备工作
         //展示抢地主和不抢地主两个按钮并且再创建三个集合用来装三个玩家准备要出的牌
         initGame();
-
     }
 
 
@@ -277,10 +277,10 @@ public class GameJFrame extends JFrame implements ActionListener {
 
 
         //创建庄家图标
-        dizhu = new JLabel(new ImageIcon("doudizhu\\image\\dizhu.png"));
-        dizhu.setVisible(false);
-        dizhu.setSize(40, 40);
-        container.add(dizhu);
+        Dealer = new JLabel(new ImageIcon("doudizhu\\image\\dizhu.png"));
+        Dealer.setVisible(false);
+        Dealer.setSize(40, 40);
+        container.add(Dealer);
 
     }
 

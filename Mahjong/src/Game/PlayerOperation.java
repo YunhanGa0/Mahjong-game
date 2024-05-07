@@ -1,8 +1,7 @@
 package Game;
 
 
-import Game.GameJFrame;
-import Objects.MahJongCard;
+import Objects.MahjongCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +27,7 @@ public class PlayerOperation extends Thread {
     @Override
     public void run() {
 
-        gameJFrame.turn = gameJFrame.dizhuFlag;
+        gameJFrame.turn = gameJFrame.DealerFlag;
         while (true) {
 
             if (gameJFrame.turn == 1) {
@@ -71,25 +70,26 @@ public class PlayerOperation extends Thread {
         }
     }
 
+
     public void setlord(int i) {
         Point point = new Point();
         if (i == 1) {
             point.x = 80;
             point.y = 430;
-            gameJFrame.dizhuFlag = 1;
+            gameJFrame.DealerFlag = 1;
         }
         if (i == 0) {
             point.x = 80;
             point.y = 20;
-            gameJFrame.dizhuFlag = 0;
+            gameJFrame.DealerFlag = 0;
         }
         if (i == 2) {
             point.x = 700;
             point.y = 20;
-            gameJFrame.dizhuFlag = 2;
+            gameJFrame.DealerFlag = 2;
         }
-        gameJFrame.dizhu.setLocation(point);
-        gameJFrame.dizhu.setVisible(true);
+        gameJFrame.Dealer.setLocation(point);
+        gameJFrame.Dealer.setVisible(true);
     }
 
     public void turnOn(boolean flag) {
@@ -116,8 +116,7 @@ public class PlayerOperation extends Thread {
     }
 
 
-
-    public List getCardByName(List<MahJongCard> list, String n) {
+    public List getCardByName(List<MahjongCard> list, String n) {
         String[] name = n.split(",");
         ArrayList cardsList = new ArrayList();
         int j = 0;
@@ -213,15 +212,15 @@ public class PlayerOperation extends Thread {
             }
         } else {
 
-            if (role != gameJFrame.dizhuFlag) {
+            if (role != gameJFrame.DealerFlag) {
                 int f = 0;
-                if (gameJFrame.time[gameJFrame.dizhuFlag].getText().equals("不要")) {
+                if (gameJFrame.time[gameJFrame.DealerFlag].getText().equals("不要")) {
                     f = 1;
                 }
-                if ((role + 1) % 3 == gameJFrame.dizhuFlag) {
+                if ((role + 1) % 3 == gameJFrame.DealerFlag) {
                     if ((Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c1
                             || Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c2)
-                            && gameJFrame.currentList.get(gameJFrame.dizhuFlag).size() < 1)
+                            && gameJFrame.currentList.get(gameJFrame.DealerFlag).size() < 1)
                         f = 1;
                     if (gameJFrame.currentList.get((role + 2) % 3).size() > 0
                             && Common.getValue(gameJFrame.currentList.get((role + 2) % 3).get(0)) > 13)
@@ -235,15 +234,15 @@ public class PlayerOperation extends Thread {
             }
 
             int can = 0;
-            if (role == gameJFrame.dizhuFlag) {
+            if (role == gameJFrame.DealerFlag) {
                 if (gameJFrame.playerList.get((role + 1) % 3).size() <= 5 || gameJFrame.playerList.get((role + 2) % 3).size() <= 5)
                     can = 1;
             } else {
-                if (gameJFrame.playerList.get(gameJFrame.dizhuFlag).size() <= 5)
+                if (gameJFrame.playerList.get(gameJFrame.DealerFlag).size() <= 5)
                     can = 1;
             }
 
-            ArrayList<MahJongCard> player;
+            ArrayList<MahjongCard> player;
             if (gameJFrame.time[(role + 2) % 3].getText().equals("不要"))
                 player = gameJFrame.currentList.get((role + 1) % 3);
             else
@@ -262,15 +261,15 @@ public class PlayerOperation extends Thread {
                     point.y = 300;
                 }
                 point.y = (400 / 2) - (list.size() + 1) * 15 / 2;
-                ArrayList<MahJongCard> temp = new ArrayList<>();
+                ArrayList<MahjongCard> temp = new ArrayList<>();
                 for (int i = 0, len = list.size(); i < len; i++) {
-                    List<MahJongCard> pokers = getCardByName(gameJFrame.playerList.get(role), list.get(i));
-                    for (MahJongCard poker : pokers) {
+                    List<MahjongCard> pokers = getCardByName(gameJFrame.playerList.get(role), list.get(i));
+                    for (MahjongCard poker : pokers) {
                         temp.add(poker);
                     }
                 }
                 temp = Common.getOrder2(temp);
-                for (MahJongCard poker : temp) {
+                for (MahjongCard poker : temp) {
                     Common.move(poker, poker.getLocation(), point);
                     point.y += 15;
                     gameJFrame.container.setComponentZOrder(poker, 0);
@@ -282,29 +281,31 @@ public class PlayerOperation extends Thread {
                 gameJFrame.time[role].setVisible(true);
                 gameJFrame.time[role].setText("不要");
             }
-            for (MahJongCard poker : gameJFrame.currentList.get(role))
+            for (MahjongCard poker : gameJFrame.currentList.get(role))
                 poker.turnFront();
-        }
-
-        public boolean win () {
-            for (int i = 0; i < 3; i++) {
-                if (gameJFrame.playerList.get(i).size() == 0) {
-                    String s;
-                    if (i == 1) {
-                        s = "恭喜你，胜利了!";
-                    } else {
-                        s = "恭喜电脑" + i + ",赢了! 你的智商有待提高哦";
-                    }
-                    for (int j = 0; j < gameJFrame.playerList.get((i + 1) % 3).size(); j++)
-                        gameJFrame.playerList.get((i + 1) % 3).get(j).turnFront();
-                    for (int j = 0; j < gameJFrame.playerList.get((i + 2) % 3).size(); j++)
-                        gameJFrame.playerList.get((i + 2) % 3).get(j).turnFront();
-                    JOptionPane.showMessageDialog(gameJFrame, s);
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
+    public boolean win () {
+        for (int i = 0; i < 3; i++) {
+            if (gameJFrame.playerList.get(i).size() == 0) {
+                String s;
+                if (i == 1) {
+                    s = "恭喜你，胜利了!";
+                } else {
+                    s = "恭喜电脑" + i + ",赢了! 你的智商有待提高哦";
+                }
+                for (int j = 0; j < gameJFrame.playerList.get((i + 1) % 3).size(); j++)
+                    gameJFrame.playerList.get((i + 1) % 3).get(j).turnFront();
+                for (int j = 0; j < gameJFrame.playerList.get((i + 2) % 3).size(); j++)
+                    gameJFrame.playerList.get((i + 2) % 3).get(j).turnFront();
+                JOptionPane.showMessageDialog(gameJFrame, s);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
+
+

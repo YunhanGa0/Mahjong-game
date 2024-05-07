@@ -48,10 +48,10 @@ public class MenuJFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == startGameButton) {
-            new DifficultyWindow().setVisible(true); // 显示难度选择窗口
+            new DifficultyJFrame().setVisible(true); // 显示难度选择窗口
         }
         if (source == aboutGameButton) {
-            new AboutGameWindow().setVisible(true); // 显示关于游戏窗口
+            new AboutJFrame().setVisible(true); // 显示关于游戏窗口
         }
     }
 

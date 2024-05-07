@@ -2,8 +2,8 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
-public class AboutGameWindow extends JFrame {
-    public AboutGameWindow() {
+public class AboutJFrame extends JFrame {
+    public AboutJFrame() {
         // 设置窗口标题
         setTitle("关于游戏");
         // 设置窗口大小

@@ -3,8 +3,8 @@ package Game;
 import javax.swing.*;
 import java.awt.*;
 
-public class DifficultyWindow extends JFrame {
-    public DifficultyWindow() {
+public class DifficultyJFrame extends JFrame {
+    public DifficultyJFrame() {
         // 设置窗口标题
         setTitle("选择游戏难度");
         // 设置窗口大小

@@ -1,5 +1,7 @@
 package Algorithm;
 
+import Objects.MahjongCard;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
 public class Hu_Algorithm {
         /**
          * 判断手牌是否可以胡牌,使用选将拆分法来实现
-         * @param handCards
+         * @param
          * <pre>
          * 手牌的格式必须转换为如下数据格式,数组的下标表示牌的类型共34种类型,数组的值表示这个类型牌的数量<br>
          * cards[0]                   =                 2<br>
@@ -22,6 +24,14 @@ public class Hu_Algorithm {
          *
          * @return true可以胡  false
          */
+
+
+        //把手牌中的arraylist转化成此方法可用的普通数组格式
+        public static int[] changeFormat(ArrayList<MahjongCard> cards){
+            int[] handCards= new int[13];
+            return handCards;
+        }
+
         public static boolean checkHandCardsCanWin(int[] handCards) {
 
             int[] cards = new int[34];
@@ -94,7 +104,6 @@ public class Hu_Algorithm {
         /**
          * 将手牌分开不同的花色进行分别判定,如果万，条，筒，字牌每种花色都能满足胡牌条件则此手牌一定可以胡
          * @param cards     hand cards
-         * @param eye_color
          * @param checkedCache
          * @return whether can hu
          */
@@ -292,7 +301,7 @@ public class Hu_Algorithm {
          * 字牌花色的处理逻辑
          * @param cards
          * @param cacheIndex
-         * @param cache
+         * @param
          * @return
          */
         private static boolean checkZiCardsWin(int[] cards, int cacheIndex, int[] checkedCache) {
