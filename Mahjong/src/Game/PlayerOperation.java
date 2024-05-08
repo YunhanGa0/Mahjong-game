@@ -8,6 +8,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Algorithm.Other_Algorithm.hideCards;
+
 public class PlayerOperation extends Thread {
 
     //游戏主界面
@@ -24,6 +26,7 @@ public class PlayerOperation extends Thread {
         this.i = i;
     }
 
+    //控制游戏的主要流程，包括倒计时、判断玩家行动、更新游戏状态、计算分数和判断游戏结束条件等
     @Override
     public void run() {
 
@@ -70,7 +73,7 @@ public class PlayerOperation extends Thread {
         }
     }
 
-
+    //庄家旗帜位置
     public void setlord(int i) {
         Point point = new Point();
         if (i == 1) {
@@ -97,6 +100,7 @@ public class PlayerOperation extends Thread {
         gameJFrame.publishCard[1].setVisible(flag);
     }
 
+    //Three computer player
     public void computer0() {
         timeWait(1, 0);
         //ShowCard(0);
@@ -115,7 +119,7 @@ public class PlayerOperation extends Thread {
 
     }
 
-
+    //解析牌的值，用于比较牌的大小
     public List getCardByName(List<MahjongCard> list, String n) {
         String[] name = n.split(",");
         ArrayList cardsList = new ArrayList();
@@ -130,10 +134,11 @@ public class PlayerOperation extends Thread {
         return cardsList;
     }
 
+    //倒计时限制玩家操作
     public void timeWait(int n, int player) {
 
         if (gameJFrame.currentList.get(player).size() > 0)
-            Common.hideCards(gameJFrame.currentList.get(player));
+            hideCards(gameJFrame.currentList.get(player));
         if (player == 1) {
             int i = n;
 
@@ -158,134 +163,12 @@ public class PlayerOperation extends Thread {
         gameJFrame.time[player].setVisible(false);
     }
 
+    //玩家出牌逻辑
     public void ShowCard(int role) {
-        int orders[] = new int[]{4, 3, 2, 1, 5};
-        Model model = Common.getModel(gameJFrame.playerList.get(role), orders);
-        ArrayList<String> list = new ArrayList<>();
-        if (gameJFrame.time[(role + 1) % 3].getText().equals("不要") && gameJFrame.time[(role + 2) % 3].getText().equals("不要")) {
-            if (model.a123.size() > 0) {
-                list.add(model.a123.get(model.a123.size() - 1));
-            } else if (model.a3.size() > 0) {
-                if (model.a1.size() > 0) {
-                    list.add(model.a1.get(model.a1.size() - 1));
-                } else if (model.a2.size() > 0) {
-                    list.add(model.a2.get(model.a2.size() - 1));
-                }
-                list.add(model.a3.get(model.a3.size() - 1));
-            } else if (model.a112233.size() > 0) {
-                list.add(model.a112233.get(model.a112233.size() - 1));
-            } else if (model.a111222.size() > 0) {
-                String name[] = model.a111222.get(0).split(",");
 
-                if (name.length / 3 <= model.a1.size()) {
-                    list.add(model.a111222.get(model.a111222.size() - 1));
-                    for (int i = 0; i < name.length / 3; i++)
-                        list.add(model.a1.get(i));
-                } else if (name.length / 3 <= model.a2.size()) {
-                    list.add(model.a111222.get(model.a111222.size() - 1));
-                    for (int i = 0; i < name.length / 3; i++)
-                        list.add(model.a2.get(i));
-                }
-
-            } else if (model.a2.size() > (model.a111222.size() * 2 + model.a3.size())) {
-                list.add(model.a2.get(model.a2.size() - 1));
-            } else if (model.a1.size() > (model.a111222.size() * 2 + model.a3.size())) {
-                list.add(model.a1.get(model.a1.size() - 1));
-            } else if (model.a4.size() > 0) {
-                int sizea1 = model.a1.size();
-                int sizea2 = model.a2.size();
-                if (sizea1 >= 2) {
-                    list.add(model.a1.get(sizea1 - 1));
-                    list.add(model.a1.get(sizea1 - 2));
-                    list.add(model.a4.get(0));
-
-                } else if (sizea2 >= 2) {
-                    list.add(model.a2.get(sizea1 - 1));
-                    list.add(model.a2.get(sizea1 - 2));
-                    list.add(model.a4.get(0));
-
-                } else {
-                    list.add(model.a4.get(0));
-
-                }
-
-            }
-        } else {
-
-            if (role != gameJFrame.DealerFlag) {
-                int f = 0;
-                if (gameJFrame.time[gameJFrame.DealerFlag].getText().equals("不要")) {
-                    f = 1;
-                }
-                if ((role + 1) % 3 == gameJFrame.DealerFlag) {
-                    if ((Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c1
-                            || Common.jugdeType(gameJFrame.currentList.get((role + 2) % 3)) != PokerType.c2)
-                            && gameJFrame.currentList.get(gameJFrame.DealerFlag).size() < 1)
-                        f = 1;
-                    if (gameJFrame.currentList.get((role + 2) % 3).size() > 0
-                            && Common.getValue(gameJFrame.currentList.get((role + 2) % 3).get(0)) > 13)
-                        f = 1;
-                }
-                if (f == 1) {
-                    gameJFrame.time[role].setVisible(true);
-                    gameJFrame.time[role].setText("不要");
-                    return;
-                }
-            }
-
-            int can = 0;
-            if (role == gameJFrame.DealerFlag) {
-                if (gameJFrame.playerList.get((role + 1) % 3).size() <= 5 || gameJFrame.playerList.get((role + 2) % 3).size() <= 5)
-                    can = 1;
-            } else {
-                if (gameJFrame.playerList.get(gameJFrame.DealerFlag).size() <= 5)
-                    can = 1;
-            }
-
-            ArrayList<MahjongCard> player;
-            if (gameJFrame.time[(role + 2) % 3].getText().equals("不要"))
-                player = gameJFrame.currentList.get((role + 1) % 3);
-            else
-                player = gameJFrame.currentList.get((role + 2) % 3);
-
-
-            gameJFrame.currentList.get(role).clear();
-            if (list.size() > 0) {
-                Point point = new Point();
-                if (role == 0)
-                    point.x = 200;
-                if (role == 2)
-                    point.x = 550;
-                if (role == 1) {
-                    point.x = (770 / 2) - (gameJFrame.currentList.get(1).size() + 1) * 15 / 2;
-                    point.y = 300;
-                }
-                point.y = (400 / 2) - (list.size() + 1) * 15 / 2;
-                ArrayList<MahjongCard> temp = new ArrayList<>();
-                for (int i = 0, len = list.size(); i < len; i++) {
-                    List<MahjongCard> pokers = getCardByName(gameJFrame.playerList.get(role), list.get(i));
-                    for (MahjongCard poker : pokers) {
-                        temp.add(poker);
-                    }
-                }
-                temp = Common.getOrder2(temp);
-                for (MahjongCard poker : temp) {
-                    Common.move(poker, poker.getLocation(), point);
-                    point.y += 15;
-                    gameJFrame.container.setComponentZOrder(poker, 0);
-                    gameJFrame.currentList.get(role).add(poker);
-                    gameJFrame.playerList.get(role).remove(poker);
-                }
-                Common.rePosition(gameJFrame, gameJFrame.playerList.get(role), role);
-            } else {
-                gameJFrame.time[role].setVisible(true);
-                gameJFrame.time[role].setText("不要");
-            }
-            for (MahjongCard poker : gameJFrame.currentList.get(role))
-                poker.turnFront();
-        }
     }
 
+    //检测是否有玩家胜利
     public boolean win () {
         for (int i = 0; i < 3; i++) {
             if (gameJFrame.playerList.get(i).size() == 0) {

@@ -1,5 +1,6 @@
 package Game;
 
+import Algorithm.Other_Algorithm;
 import Objects.MahjongCard;
 
 import javax.swing.*;
@@ -52,7 +53,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
 
     //牌盒，装所有的牌
-    ArrayList<MahjongCard> pokerList;
+    ArrayList<MahjongCard> MahjongCardList;
 
     //三个玩家前方的文本提示
     //0索引：左边的电脑玩家
@@ -94,7 +95,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     public void initCard() {
 
         ArrayList<Integer> list= new ArrayList<>();
-        HashMap<Integer,String> pai = new HashMap<>();
+        HashMap<Integer,String> cards = new HashMap<>();
         String[] color= {"条","万","筒"};
         String[] number= {"1","2","3","4","5","6","7","8","9"};
 
@@ -103,73 +104,94 @@ public class GameJFrame extends JFrame implements ActionListener {
         for (String c : color) {
             for (String n : number) {
                 for (int i = 0; i < 4; i++){
-                    pai.put(numb, c + n);
-                    list.add(numb);
+                    MahjongCard card=new MahjongCard(this,c + n,false);
+                    card.setLocation(350,150);
                     numb++;
                 }
             }
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"东风");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"东风",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"西风");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"西风",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"南风");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"南风",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"北风");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"北风",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"红中");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"红中",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"白板");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"发财",false);
+            card.setLocation(350,150);
             numb++;
         }
 
         for(int i=0;i<4;i++){
-            pai.put(numb,"发财");
-            list.add(numb);
+            MahjongCard card=new MahjongCard(this,"白板",false);
+            card.setLocation(350,150);
             numb++;
         }
 
-        Collections.shuffle(list);
+        //洗牌
+        Collections.shuffle(MahjongCardList);
 
-        TreeSet<Integer> player1=new TreeSet<>();
-        TreeSet<Integer> player2=new TreeSet<>();
-        TreeSet<Integer> player3=new TreeSet<>();
-        TreeSet<Integer> player4=new TreeSet<>();
+        //创建四个集合用来装四个玩家的牌，并把四个小集合放到大集合中方便管理
+        ArrayList<MahjongCard> player0 = new ArrayList<>();
+        ArrayList<MahjongCard> player1 = new ArrayList<>();
+        ArrayList<MahjongCard> player2 = new ArrayList<>();
+        ArrayList<MahjongCard> player3 = new ArrayList<>();
 
         for (int i=0;i<52;i++){
-            int majiang= list.get(i);
+            MahjongCard card= MahjongCardList.get(i);
             if (i%4==0){
-                player1.add(majiang);
+                player0.add(card);
             }else if(i%4==1){
-                player2.add(majiang);
+                player1.add(card);
             }else if(i%4==2){
-                player3.add(majiang);
+                player2.add(card);
+                card.turnFront();
             }else {
-                player4.add(majiang);
+                player3.add(card);
             }
+
+            //把四个装着牌的小集合放到大集合中方便管理
+            playerList.add(player0);
+            playerList.add(player1);
+            playerList.add(player2);
+            playerList.add(player3);
+
+            //把当前的牌至于最顶端，这样就会有牌依次错开且叠起来的效果
+            container.setComponentZOrder(card, 0);
+
+        }
+
+        //给牌排序
+        for (int i = 0; i < 3; i++) {
+            //排序
+            Other_Algorithm.order(playerList.get(i));
+            //重新摆放顺序
+            Other_Algorithm.rePosition(this, playerList.get(i), i);
         }
 
     }
@@ -177,6 +199,21 @@ public class GameJFrame extends JFrame implements ActionListener {
     //打牌之前的准备工作
     private void initGame() {
         //创建三个集合用来装三个玩家准备要出的牌
+        for (int i = 0; i < 3; i++) {
+            ArrayList<MahjongCard> list = new ArrayList<>();
+            //添加到大集合中方便管理
+            currentList.add(list);
+        }
+
+        //展示roll骰子按钮
+        //
+
+        //展示自己前面的倒计时文本
+        time[1].setVisible(true);
+        //倒计时10秒
+        po = new PlayerOperation(this, 30);
+        //开启倒计时
+        po.start();
 
     }
 
@@ -187,29 +224,35 @@ public class GameJFrame extends JFrame implements ActionListener {
 
             //点击出牌
 
-            //创建一个临时的集合，用来存放当前要出的牌
+        //创建一个临时的集合，用来存放当前要出的牌
+        ArrayList<MahjongCard> c = new ArrayList<>();
+        //获取中自己手上所有的牌
+        ArrayList<MahjongCard> player2 = playerList.get(1);
 
-            //获取中自己手上所有的牌
-
-            //遍历手上的牌，把要出的牌都放到临时集合中
+        //遍历手上的牌，把要出的牌都放到临时集合中
+        for (int i = 0; i < player2.size(); i++) {
+            MahjongCard card = player2.get(i);
+            if (card.isClicked()) {
+                c.add(card);
+            }
 
             //判断，如果电脑玩家是否可以吃/碰/杠/胡
 
 
+            //把当前要出的牌，放到大集合中统一管理
 
-                //把当前要出的牌，放到大集合中统一管理
-
-                //在手上的牌中，去掉已经出掉的牌
+            //在手上的牌中，去掉已经出掉的牌
 
 
-                //计算坐标并移动牌
-                //移动的目的是要出的牌移动到上方
+            //计算坐标并移动牌
+            //移动的目的是要出的牌移动到上方
 
-                //重新摆放剩余的牌
+            //重新摆放剩余的牌
 
-                //隐藏文本提示
+            //隐藏文本提示
 
-                //下一个玩家可玩
+            //下一个玩家可玩
+        }
 
     }
 
