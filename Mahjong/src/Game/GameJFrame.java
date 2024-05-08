@@ -10,8 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.TreeSet;
 
 
 public class GameJFrame extends JFrame implements ActionListener {
@@ -94,64 +92,29 @@ public class GameJFrame extends JFrame implements ActionListener {
     //准备牌，洗牌，发牌
     public void initCard() {
 
-        ArrayList<Integer> list= new ArrayList<>();
-        HashMap<Integer,String> cards = new HashMap<>();
-        String[] color= {"条","万","筒"};
-        String[] number= {"1","2","3","4","5","6","7","8","9"};
+        //String[] color= {"条","万","筒"};，用1，2，3代替
+        //String[] number= {"1","2","3","4","5","6","7","8","9"};
 
-        int numb=1;
+        int numb = 1;
 
-        for (String c : color) {
-            for (String n : number) {
-                for (int i = 0; i < 4; i++){
-                    MahjongCard card=new MahjongCard(this,c + n,false);
-                    card.setLocation(350,150);
+        for (int i = 1; i <= 10; i++) {
+            if (i <= 3) {
+                for (int j = 1; j <= 9; j++) {
+                    for (int k = 0; k < 4; k++) {
+                        MahjongCard card = new MahjongCard(this, i + "-" + j, false);
+                        card.setLocation(350, 150);
+                        numb++;
+                    }
+                }
+            } else {
+                for (int k = 0; k < 4; k++) {
+                    MahjongCard card = new MahjongCard(this, i + "-" + 0, false);
+                    card.setLocation(350, 150);
                     numb++;
                 }
             }
         }
 
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"东风",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"西风",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"南风",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"北风",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"红中",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"发财",false);
-            card.setLocation(350,150);
-            numb++;
-        }
-
-        for(int i=0;i<4;i++){
-            MahjongCard card=new MahjongCard(this,"白板",false);
-            card.setLocation(350,150);
-            numb++;
-        }
 
         //洗牌
         Collections.shuffle(MahjongCardList);
@@ -180,6 +143,8 @@ public class GameJFrame extends JFrame implements ActionListener {
             playerList.add(player1);
             playerList.add(player2);
             playerList.add(player3);
+
+            //给庄多发一张牌
 
             //把当前的牌至于最顶端，这样就会有牌依次错开且叠起来的效果
             container.setComponentZOrder(card, 0);
@@ -220,9 +185,9 @@ public class GameJFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-            //点击Roll骰子
+        //点击Roll骰子
 
-            //点击出牌
+        //点击出牌
 
         //创建一个临时的集合，用来存放当前要出的牌
         ArrayList<MahjongCard> c = new ArrayList<>();
@@ -236,8 +201,15 @@ public class GameJFrame extends JFrame implements ActionListener {
                 c.add(card);
             }
 
+            int flag = 0;
             //判断，如果电脑玩家是否可以吃/碰/杠/胡
+            if (time[0].getText().equals("不要") && time[2].getText().equals("不要")) {
+                if (Other_Algorithm.CheckPeng()){
+                    flag = 1;
+                }
+            } else {
 
+            }
 
             //把当前要出的牌，放到大集合中统一管理
 

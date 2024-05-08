@@ -12,16 +12,17 @@ import java.util.List;
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
 
+    GameJFrame g;
 
-    public boolean CheckPeng(){
+    public static boolean CheckPeng(){
         return false;
     }
 
-    public boolean CheckGang(){
+    public static boolean CheckGang(){
         return false;
     }
 
-    public boolean CheckChi(){
+    public static boolean CheckChi(){
         return false;
     }
 
@@ -52,57 +53,51 @@ public class Other_Algorithm {
 
 
     //利用牌的价值，将集合中的牌进行排序
+    //o1是原来的，o2是新增的
     public static void order(ArrayList<MahjongCard> list) {
-        //此时可以改为lambda表达式
         Collections.sort(list, new Comparator<MahjongCard>() {
             @Override
             public int compare(MahjongCard o1, MahjongCard o2) {
 
+                //获得最前面的数字，判断花色（1条2万3筒45678东西南北中910发白）
                 int a1 = Integer.parseInt(o1.getName().substring(0, 1));
                 int a2 = Integer.parseInt(o2.getName().substring(0, 1));
 
+                //获取后面的值
                 int b1 = Integer.parseInt(o1.getName().substring(2));
                 int b2 = Integer.parseInt(o2.getName().substring(2));
-
-                //计算牌的价值，利用牌的价值进行排序
-
-                //计算大小王牌的价值
-                if (a1 == 5) {
-                    b1 += 100;
-                }
-                if (a2 == 5) {
-                    b2 += 100;
-                }
-
-                //计算A的价值
-                if (b1 == 1) {
-                    b1 += 20;
-                }
-                if (b2 == 1) {
-                    b2 += 20;
-                }
-                //计算2的价值
-                if (b1 == 2) {
-                    b1 += 30;
-                }
-                if (b2 == 2) {
-                    b2 += 30;
-                }
 
                 //倒序排列
                 int flag = b2 - b1;
 
-                //如果牌的价值一样，则按照花色排序
-                if (flag == 0) {
-                    return a2 - a1;
-                } else {
+                //如果牌的花色一样，则按照价值排序
+                if ((a2-a1) == 0) {
                     return flag;
+                } else {
+                    return a2-a1;
                 }
             }
         });
     }
 
-    //重新摆放牌
+    //获取当前牌的价值
+    public static int getValue(MahjongCard card) {
+        int i = Integer.parseInt(card.getName().substring(2));
+        if (card.getName().substring(2).equals("2"))
+            i += 13;
+        if (card.getName().substring(2).equals("1"))
+            i += 13;
+        if (getColor(card) == 5)
+            i += 2;
+        return i;
+    }
+
+    //获取当前牌的花色
+    public static int getColor(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(0, 1));
+    }
+
+    //重新摆放牌(需要更改位置参数)
     public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
         Point p = new Point();
         if (flag == 0) {
@@ -129,6 +124,7 @@ public class Other_Algorithm {
         }
     }
 
+    //算分用的，注意翻倍情况
     public static int getScore(ArrayList<MahjongCard> list) {
         int count = 0;
         for (int i = 0, len = list.size(); i < len; i++) {
@@ -143,56 +139,13 @@ public class Other_Algorithm {
         return count;
     }
 
-    public static int getColor(MahjongCard card) {
-        return Integer.parseInt(card.getName().substring(0, 1));
-    }
-
-    public static int getValue(MahjongCard poker) {
-        int i = Integer.parseInt(poker.getName().substring(2));
-        if (poker.getName().substring(2).equals("2"))
-            i += 13;
-        if (poker.getName().substring(2).equals("1"))
-            i += 13;
-        if (getColor(poker) == 5)
-            i += 2;
-        return i;
-    }
-
-    public static void getMax(MahjongCardIndex pokerIndex, ArrayList<MahjongCard> list) {
-        int count[] = new int[14];
-        for (int i = 0; i < 14; i++)
-            count[i] = 0;
-
-        for (int i = 0, len = list.size(); i < len; i++) {
-            if (getColor(list.get(i)) == 5)// 王
-                count[13]++;
-            else
-                count[getValue(list.get(i)) - 1]++;
-        }
-        ArrayList<ArrayList<Integer>> indexList = pokerIndex.indexList;
-        for (int i = 0; i < 14; i++) {
-            switch (count[i]) {
-                case 1:
-                    indexList.get(0).add(i + 1);
-                    break;
-                case 2:
-                    indexList.get(1).add(i + 1);
-                    break;
-                case 3:
-                    indexList.get(2).add(i + 1);
-                    break;
-                case 4:
-                    indexList.get(3).add(i + 1);
-                    break;
-            }
-        }
-    }
-
+    //将牌视为不可见状态
     public static void hideCards(ArrayList<MahjongCard> list) {
         for (int i = 0, len = list.size(); i < len; i++) {
             list.get(i).setVisible(false);
         }
     }
+
 
     class MahjongCardIndex {
         ArrayList<ArrayList<Integer>> indexList = new ArrayList<>();

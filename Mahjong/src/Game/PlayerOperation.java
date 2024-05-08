@@ -163,7 +163,7 @@ public class PlayerOperation extends Thread {
         gameJFrame.time[player].setVisible(false);
     }
 
-    //玩家出牌逻辑
+    //
     public void ShowCard(int role) {
 
     }

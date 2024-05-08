@@ -62,7 +62,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.up = false;
     }
 
-    //能不能被点击：能就上升，再被点就下去
+    //能不能被点击,能就上升，再被点就下去
     @Override
     public void mouseClicked(MouseEvent e) {
         if (Clickable) {
