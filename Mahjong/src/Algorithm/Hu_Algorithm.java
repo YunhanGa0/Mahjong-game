@@ -1,5 +1,6 @@
 package Algorithm;
 
+import Game.GameJFrame;
 import Objects.MahjongCard;
 
 import java.util.ArrayList;
@@ -25,10 +26,30 @@ public class Hu_Algorithm {
          * @return true可以胡  false
          */
 
+        public static boolean checkHu(ArrayList<MahjongCard> cards){
+            int[] hc=changeFormat(cards);
+            return checkHandCardsCanWin(hc);
+        }
+
 
         //把手牌中的arraylist转化成此方法可用的普通数组格式
         public static int[] changeFormat(ArrayList<MahjongCard> cards){
-            int[] handCards= new int[13];
+            int[] handCards= new int[34];
+            for (MahjongCard c: cards ){
+                int color=Integer.parseInt(c.getName().substring(0, 1));
+                if(color==1){
+                    int value=Integer.parseInt(c.getName().substring(2));
+                    handCards[value-1]+=1;
+                }else if (color==2){
+                    int value=Integer.parseInt(c.getName().substring(2));
+                    handCards[value+8]+=1;
+                }else if (color==3){
+                    int value=Integer.parseInt(c.getName().substring(2));
+                    handCards[value+17]+=1;
+                }else {
+                    handCards[color+23]+=1;
+                }
+            }
             return handCards;
         }
 
