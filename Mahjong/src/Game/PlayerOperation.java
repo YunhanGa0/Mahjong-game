@@ -48,7 +48,7 @@ public class PlayerOperation extends Thread {
                     break;
             }
             if (gameJFrame.turn == 1) {
-                computer0();
+                computer1();
                 gameJFrame.turn = (gameJFrame.turn + 1) % 4;
                 if (win())
                     break;
@@ -61,7 +61,7 @@ public class PlayerOperation extends Thread {
             }
 
             if (gameJFrame.turn == 3) {
-                computer2();
+                computer3();
                 gameJFrame.turn = (gameJFrame.turn + 1) % 4;
                 if (win())
                     break;
@@ -74,7 +74,7 @@ public class PlayerOperation extends Thread {
     //因为线程中的sleep方法有异常，直接调用影响阅读
     public void sleep(int i) {
         try {
-            Thread.sleep(i * 1000);
+            Thread.sleep((long)i * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -109,43 +109,32 @@ public class PlayerOperation extends Thread {
 
     //Three computer player
     public void computer0() {
-        timeWait(1, 0);
-        //ShowCard(0);
+        timeWait(1, 1);
+        ShowCard(0);
 
     }
 
     public void computer1() {
         timeWait(1, 2);
-        //ShowCard(2);
-
+        ShowCard(1);
     }
 
     public void computer2() {
-        timeWait(1, 2);
-        //ShowCard(2);
-
+        timeWait(1, 3);
+        ShowCard(2);
     }
 
-    //解析牌的值，用于比较牌的大小
-    public List getCardByName(List<MahjongCard> list, String n) {
-        String[] name = n.split(",");
-        ArrayList cardsList = new ArrayList();
-        int j = 0;
-        for (int i = 0, len = list.size(); i < len; i++) {
-            if (j < name.length && list.get(i).getName().equals(name[j])) {
-                cardsList.add(list.get(i));
-                i = 0;
-                j++;
-            }
-        }
-        return cardsList;
+    public void computer3() {
+        timeWait(1, 4);
+        ShowCard(3);
     }
+
 
     //倒计时限制玩家操作
     public void timeWait(int n, int player) {
         if (gameJFrame.currentList.get(player).size() > 0)
             hideCards(gameJFrame.currentList.get(player));
-        if (player == 1) {
+        if (player == 0) {
             int i = n;
             while (gameJFrame.nextPlayer == false && i >= 0) {
                 gameJFrame.time[player].setText("倒计时:" + i);
@@ -153,8 +142,7 @@ public class PlayerOperation extends Thread {
                 sleep(1);
                 i--;
             }
-            if (i == -1 && player == 1) {
-
+            if (i == -1 && player == 0) {
                 ShowCard(1);
             }
             gameJFrame.nextPlayer = false;
@@ -169,7 +157,14 @@ public class PlayerOperation extends Thread {
     }
 
     //
-    public void ShowCard(int role) {
+    public void ShowCard(int playerIndex) {
+        // 获取当前玩家手中的麻将牌列表
+
+        // 获取当前出牌玩家手中的麻将牌列表
+
+        // 将选择的麻将牌从玩家手牌中移除，并更新玩家的手牌显示位置
+
+        // 展示出的麻将牌
 
     }
 
@@ -178,7 +173,7 @@ public class PlayerOperation extends Thread {
         for (int i = 0; i < 4; i++) {
             if (Hu_Algorithm.checkHu(gameJFrame.playerList.get(i))) {
                 String s;
-                if (i == 1&&i!=0) {
+                if (i == 0) {
                     s = "恭喜你，胜利了!";
                 } else {
                     s = "恭喜电脑" + i + ",赢了! 你的智商有待提高哦";

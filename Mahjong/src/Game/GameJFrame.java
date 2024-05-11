@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 
 public class GameJFrame extends JFrame implements ActionListener {
@@ -30,23 +31,19 @@ public class GameJFrame extends JFrame implements ActionListener {
     //游戏界面中庄家的图标
     JLabel Dealer;
 
-
     //集合嵌套集合
     //大集合中有三个小集合
     //小集合中装着每一个玩家当前要出的牌
-    //0索引：左边的电脑玩家
-    //1索引：中间的自己
-    //2索引：右边的电脑玩家
+    //索引0：中间的自己
+    //索引1：右边的电脑玩家
+    //索引2：对面的电脑玩家
+    //索引3：左边的电脑玩家
     //3：对面的
     ArrayList<ArrayList<MahjongCard>> currentList = new ArrayList<>();
 
     //集合嵌套集合
     //大集合中有三个小集合
     //小集合中装着每一个玩家的牌
-    //0索引：左边的电脑玩家
-    //1索引：中间的自己
-    //2索引：右边的电脑玩家
-    //3:对面的
     ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
 
 
@@ -54,14 +51,16 @@ public class GameJFrame extends JFrame implements ActionListener {
     ArrayList<MahjongCard> MahjongCardList;
 
     //三个玩家前方的文本提示
-    //0索引：左边的电脑玩家
-    //1索引：中间的自己
-    //2索引：右边的电脑玩家
+    //索引0：中间的自己
+    //索引1：右边的电脑玩家
+    //索引2：对面的电脑玩家
+    //索引3：左边的电脑玩家
     JTextField time[] = new JTextField[4];
 
-    //用户操作，涉及多线程的知识
+    //用户操作，涉及多线程
     PlayerOperation po;
 
+    //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
 
     public GameJFrame() {
@@ -69,7 +68,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         setIconImage(Toolkit.getDefaultToolkit().getImage(""));
 
         //设置界面
-        initJframe();
+        initJFrame();
 
         //添加组件
         initView();
@@ -92,29 +91,27 @@ public class GameJFrame extends JFrame implements ActionListener {
     //准备牌，洗牌，发牌
     public void initCard() {
 
-        //String[] color= {"条","万","筒"};，用1，2，3代替
-        //String[] number= {"1","2","3","4","5","6","7","8","9"};
-
-        int numb = 1;
-
         for (int i = 1; i <= 10; i++) {
             if (i <= 3) {
                 for (int j = 1; j <= 9; j++) {
                     for (int k = 0; k < 4; k++) {
                         MahjongCard card = new MahjongCard(this, i + "-" + j, false);
+                        MahjongCardList.add(card);
+                        container.add(card);
                         card.setLocation(350, 150);
-                        numb++;
+                        card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
                     }
                 }
             } else {
                 for (int k = 0; k < 4; k++) {
                     MahjongCard card = new MahjongCard(this, i + "-" + 0, false);
+                    MahjongCardList.add(card);
+                    container.add(card);
                     card.setLocation(350, 150);
-                    numb++;
+                    card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
                 }
             }
         }
-
 
         //洗牌
         Collections.shuffle(MahjongCardList);
@@ -138,13 +135,14 @@ public class GameJFrame extends JFrame implements ActionListener {
                 player3.add(card);
             }
 
+            //给庄多发一张牌
+
+
             //把四个装着牌的小集合放到大集合中方便管理
             playerList.add(player0);
             playerList.add(player1);
             playerList.add(player2);
             playerList.add(player3);
-
-            //给庄多发一张牌
 
             //把当前的牌至于最顶端，这样就会有牌依次错开且叠起来的效果
             container.setComponentZOrder(card, 0);
@@ -161,10 +159,14 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     }
 
+    private void loadMahjongCards() {
+
+    }
+
     //打牌之前的准备工作
     private void initGame() {
-        //创建三个集合用来装三个玩家准备要出的牌
-        for (int i = 0; i < 3; i++) {
+        //创建四个集合用来装四个玩家准备要出的牌
+        for (int i = 0; i < 4; i++) {
             ArrayList<MahjongCard> list = new ArrayList<>();
             //添加到大集合中方便管理
             currentList.add(list);
@@ -192,7 +194,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         //创建一个临时的集合，用来存放当前要出的牌
         ArrayList<MahjongCard> c = new ArrayList<>();
         //获取中自己手上所有的牌
-        ArrayList<MahjongCard> player2 = playerList.get(1);
+        ArrayList<MahjongCard> player2 = playerList.get(0);
 
         //遍历手上的牌，把要出的牌都放到临时集合中
         for (int i = 0; i < player2.size(); i++) {
@@ -300,9 +302,9 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //设置界面
-    public void initJframe() {
+    public void initJFrame() {
         //设置标题
-        this.setTitle("斗地主");
+        this.setTitle("Mahjong Game");
         //设置大小
         this.setSize(830, 620);
         //设置关闭模式

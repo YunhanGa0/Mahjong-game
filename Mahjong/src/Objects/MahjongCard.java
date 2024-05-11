@@ -62,6 +62,14 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.up = false;
     }
 
+    // 在 MahjongCard 类中添加一个方法来设置牌的图片
+    public void setCardImage(String imagePath) {
+        ImageIcon imageIcon = new ImageIcon(imagePath); // 创建一个图片图标
+        Image image = imageIcon.getImage(); // 获取图标的图片对象
+        Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+        setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+    }
+
     //能不能被点击,能就上升，再被点就下去
     @Override
     public void mouseClicked(MouseEvent e) {

@@ -36,9 +36,9 @@ public class MenuJFrame extends JFrame implements ActionListener {
         startGameButton.setFont(new Font("Serif", Font.BOLD, 16));
         aboutGameButton.setFont(new Font("Serif", Font.BOLD, 16));
         startGameButton.setForeground(Color.WHITE);
-        startGameButton.setBackground(Color.GRAY);
+        startGameButton.setBackground(Color.BLACK);
         aboutGameButton.setForeground(Color.WHITE);
-        aboutGameButton.setBackground(Color.GRAY);
+        aboutGameButton.setBackground(Color.BLACK);
 
         add(startGameButton, constraints);
         add(aboutGameButton, constraints);

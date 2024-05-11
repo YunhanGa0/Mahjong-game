@@ -146,6 +146,21 @@ public class Other_Algorithm {
         }
     }
 
+    //解析牌的值，用于比较牌的大小
+    public List getCardByName(List<MahjongCard> list, String n) {
+        String[] name = n.split(",");
+        ArrayList cardsList = new ArrayList();
+        int j = 0;
+        for (int i = 0, len = list.size(); i < len; i++) {
+            if (j < name.length && list.get(i).getName().equals(name[j])) {
+                cardsList.add(list.get(i));
+                i = 0;
+                j++;
+            }
+        }
+        return cardsList;
+    }
+
 
     class MahjongCardIndex {
         ArrayList<ArrayList<Integer>> indexList = new ArrayList<>();
