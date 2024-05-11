@@ -8,17 +8,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.HashMap;
 
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
 
     GameJFrame g;
 
-    public static boolean CheckPeng(){
+    public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
+        ArrayList<MahjongCard> repeatCards = new ArrayList<>();
+
+        // 计数每种牌出现的次数
+        HashMap<MahjongCard, Integer> cardCounts = new HashMap<>();
+        for (MahjongCard card : cards) {
+            cardCounts.put(card, cardCounts.getOrDefault(card, 0) + 1);
+        }
+
+        // 找出出现至少两次的牌
+        for (MahjongCard card : cardCounts.keySet()) {
+            if (cardCounts.get(card) >= 2) {
+                repeatCards.add(card);
+            }
+        }
+
+        // 检查comingCard是否与repeatCards中的任何一个相同
+        for (MahjongCard card : repeatCards) {
+            if (card.equals(comingCard)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
-    public static boolean CheckGang(){
+    public static boolean CheckGang(){ // Method to check if can gang
         return false;
     }
 
