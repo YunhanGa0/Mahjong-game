@@ -9,6 +9,7 @@ import java.util.List;
 //判断是否胡牌的算法
 public class Hu_Algorithm {
         /**
+         *
          * 判断手牌是否可以胡牌,使用选将拆分法来实现
          * @param
          * <pre>
@@ -31,7 +32,6 @@ public class Hu_Algorithm {
             return checkHandCardsCanWin(hc);
         }
 
-
         //把手牌中的arraylist转化成此方法可用的普通数组格式
         public static int[] changeFormat(ArrayList<MahjongCard> cards){
             int[] handCards= new int[34];
@@ -39,7 +39,7 @@ public class Hu_Algorithm {
                 int color=Integer.parseInt(c.getName().substring(0, 1));
                 if(color==1){
                     int value=Integer.parseInt(c.getName().substring(2));
-                    handCards[value-1]+=1;
+                    handCards[value]+=1;
                 }else if (color==2){
                     int value=Integer.parseInt(c.getName().substring(2));
                     handCards[value+8]+=1;

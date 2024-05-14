@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import static javax.swing.text.StyleConstants.setIcon;
+
 
 public class GameJFrame extends JFrame implements ActionListener {
 
@@ -19,13 +21,19 @@ public class GameJFrame extends JFrame implements ActionListener {
     //现在统一获取了，后面直接用就可以了
     public Container container = null;
 
-    //管理胡牌和杠牌两个按钮
-    JButton landlord[] = new JButton[2];
+    //管理出牌一个按钮
+    JButton chulord[] = new JButton[1];
 
-    //管理吃牌和碰牌两个按钮
-    JButton publishCard[] = new JButton[2];
+    //管理胡牌一个按钮
+    JButton hulord[] = new JButton[1];
 
+    //管理吃牌，碰牌，杠牌三个按钮（顺序是0碰，1吃，2杠）
+    JButton Other[] = new JButton[3];
+
+    //庄家图标
     int DealerFlag;
+
+    //表示出牌轮次
     int turn;
 
     //游戏界面中庄家的图标
@@ -39,16 +47,18 @@ public class GameJFrame extends JFrame implements ActionListener {
     //索引2：对面的电脑玩家
     //索引3：左边的电脑玩家
     //3：对面的
-    ArrayList<ArrayList<MahjongCard>> currentList = new ArrayList<>();
+    static ArrayList<ArrayList<MahjongCard>> currentList = new ArrayList<>();
 
     //集合嵌套集合
     //大集合中有三个小集合
     //小集合中装着每一个玩家的牌
-    ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
-
+    static ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
 
     //牌盒，装所有的牌
-    ArrayList<MahjongCard> MahjongCardList;
+    static ArrayList<MahjongCard> MahjongCardList= new ArrayList<>();
+
+    //记录发牌数
+    static int numb;
 
     //三个玩家前方的文本提示
     //索引0：中间的自己
@@ -77,6 +87,8 @@ public class GameJFrame extends JFrame implements ActionListener {
         //先展示界面再发牌，因为发牌里面有动画，界面不展示出来，动画无法展示
         this.setVisible(true);
 
+        rollDice();
+
         //初始化牌
         //准备牌，洗牌，发牌
         new Thread(this::initCard).start();
@@ -84,6 +96,37 @@ public class GameJFrame extends JFrame implements ActionListener {
         //打牌之前的准备工作
         //展示抢地主和不抢地主两个按钮并且再创建三个集合用来装三个玩家准备要出的牌
         initGame();
+    }
+
+    private void rollDice() {
+        /*
+        Random random = new Random();
+
+        // 每个玩家掷骰子
+        int[] diceResults = new int[4]; // 假设有四个玩家
+        for (int j = 0; j < diceResults.length; j++) {
+            diceResults[j] = random.nextInt(12) + 1;;
+        }
+
+        //图形化骰子到窗口
+        for (int j = 0; j < diceResults.length; j++) {
+            System.out.println(diceResults[j]);
+        }
+
+        // 确定骰子点数最大的玩家，设为庄家
+        int maxDice = 0;
+        int dealerIndex = 0;  // 庄家索引
+        for (int j = 0; j < diceResults.length; j++) {
+            if (diceResults[j] > maxDice) {
+                maxDice = diceResults[j];
+                dealerIndex = j;
+            }
+        }
+
+         */
+        //DealerFlag=dealerIndex;
+        DealerFlag=1;
+        System.out.println(DealerFlag);
     }
 
 
@@ -98,8 +141,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                         MahjongCard card = new MahjongCard(this, i + "-" + j, false);
                         MahjongCardList.add(card);
                         container.add(card);
-                        card.setLocation(350, 150);
                         card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
+                        card.setLocation(455, 315);
                     }
                 }
             } else {
@@ -107,8 +150,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                     MahjongCard card = new MahjongCard(this, i + "-" + 0, false);
                     MahjongCardList.add(card);
                     container.add(card);
-                    card.setLocation(350, 150);
                     card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
+                    card.setLocation(455, 315);
                 }
             }
         }
@@ -122,21 +165,24 @@ public class GameJFrame extends JFrame implements ActionListener {
         ArrayList<MahjongCard> player2 = new ArrayList<>();
         ArrayList<MahjongCard> player3 = new ArrayList<>();
 
-        for (int i=0;i<52;i++){
-            MahjongCard card= MahjongCardList.get(i);
-            if (i%4==0){
+        for (int i=0;i<52;i++) {
+            MahjongCard card = MahjongCardList.get(i);
+            if (i % 4 == 0) {
                 player0.add(card);
-            }else if(i%4==1){
+                numb++;
+            } else if (i % 4 == 1) {
                 player1.add(card);
-            }else if(i%4==2){
+                numb++;
+            } else if (i % 4 == 2) {
                 player2.add(card);
-                card.turnFront();
-            }else {
+                numb++;
+            } else if (i % 4 == 3){
                 player3.add(card);
+                numb++;
             }
 
-            //给庄多发一张牌
-
+            //把当前的牌至于最顶端，这样就会有牌依次错开且叠起来的效果
+            container.setComponentZOrder(card, 0);
 
             //把四个装着牌的小集合放到大集合中方便管理
             playerList.add(player0);
@@ -144,22 +190,32 @@ public class GameJFrame extends JFrame implements ActionListener {
             playerList.add(player2);
             playerList.add(player3);
 
-            //把当前的牌至于最顶端，这样就会有牌依次错开且叠起来的效果
-            container.setComponentZOrder(card, 0);
-
         }
+        if(DealerFlag==0){
+            playerList.get(0).add(MahjongCardList.get(numb));
+        } else if (DealerFlag==1) {
+            playerList.get(1).add(MahjongCardList.get(numb));
+        } else if (DealerFlag==2) {
+            playerList.get(2).add(MahjongCardList.get(numb));
+        }else if (DealerFlag==3) {
+            playerList.get(3).add(MahjongCardList.get(numb));
+        }
+        numb++;
 
         //给牌排序
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i <=3; i++) {
             //排序
             Other_Algorithm.order(playerList.get(i));
+            /*
+            if (i!=0){
+                for(int j=0;j<playerList.get(i).size();j++)
+                playerList.get(i).get(j).turnRear();
+            }
+
+             */
             //重新摆放顺序
             Other_Algorithm.rePosition(this, playerList.get(i), i);
         }
-
-    }
-
-    private void loadMahjongCards() {
 
     }
 
@@ -172,125 +228,134 @@ public class GameJFrame extends JFrame implements ActionListener {
             currentList.add(list);
         }
 
-        //展示roll骰子按钮
-        //
-
         //展示自己前面的倒计时文本
         time[1].setVisible(true);
         //倒计时10秒
         po = new PlayerOperation(this, 30);
         //开启倒计时
         po.start();
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == null) {
+            //roll骰子决定庄家
+            time[1].setText("是庄");
+            po.isRun = true;
+        } else if (e.getSource() == Other[0]) {
+            //点击碰,进行碰的操作
 
-        //点击Roll骰子
+        } else if (e.getSource() == Other[1]) {
+            //点击吃，进行吃的操作
 
-        //点击出牌
+        } else if (e.getSource() == Other[2]) {
+            //点击杠，进行杠的操作
 
-        //创建一个临时的集合，用来存放当前要出的牌
-        ArrayList<MahjongCard> c = new ArrayList<>();
-        //获取中自己手上所有的牌
-        ArrayList<MahjongCard> player2 = playerList.get(0);
+        } else if (e.getSource() == hulord[0]) {
+            //点击胡，进行胡的操作
 
-        //遍历手上的牌，把要出的牌都放到临时集合中
-        for (int i = 0; i < player2.size(); i++) {
-            MahjongCard card = player2.get(i);
-            if (card.isClicked()) {
-                c.add(card);
-            }
+        }else if (e.getSource() == chulord[0]) {
+            //点击出牌
 
-            int flag = 0;
-            //判断，如果电脑玩家是否可以吃/碰/杠/胡
-            if (time[0].getText().equals("不要") && time[2].getText().equals("不要")) {
-                if (Other_Algorithm.CheckPeng()){
-                    flag = 1;
+            //创建一个临时的集合，用来存放当前要出的牌
+            ArrayList<MahjongCard> c = new ArrayList<>();
+            //获取中自己手上所有的牌
+            ArrayList<MahjongCard> player = playerList.get(0);
+
+            //遍历手上的牌，把要出的牌都放到临时集合中
+            for (int i = 0; i < player.size(); i++) {
+                MahjongCard card = player.get(i);
+                if (card.isClicked()) {
+                    c.add(card);
                 }
-            } else {
+
+                //把当前要出的牌，放到大集合中统一管理
+                currentList.set(1, c);
+                //在手上的牌中，去掉已经出掉的牌
+                player.removeAll(c);
+
+                //计算坐标并移动牌
+                //移动的目的是要出的牌移动到上方
+                Point point = new Point();
+                point.x = (1200 / 2) - (c.size() + 1) * 20 / 2;
+                point.y = 450;
+                for (int j = 0, len = c.size(); j < len; j++) {
+                    MahjongCard poker = c.get(i);
+                    Other_Algorithm.move(poker, poker.getLocation(), point);
+                    point.x += 20;
+                }
+
+                //重新摆放剩余的牌
+                Other_Algorithm.rePosition(this, player, 1);
+                //隐藏文本提示
+                time[0].setVisible(false);
+                //下一个玩家可玩
+                this.nextPlayer=true;
 
             }
-
-            //把当前要出的牌，放到大集合中统一管理
-
-            //在手上的牌中，去掉已经出掉的牌
-
-
-            //计算坐标并移动牌
-            //移动的目的是要出的牌移动到上方
-
-            //重新摆放剩余的牌
-
-            //隐藏文本提示
-
-            //下一个玩家可玩
         }
-
     }
 
-    //添加组件
+    //添加组件(前端)
     public void initView() {
-        //创建roll骰子的按钮
-        JButton robBut = new JButton("roll骰子");
-        //设置位置
-        robBut.setBounds(320, 400, 75, 20);
-        //添加点击事件
-        robBut.addActionListener(this);
-        //设置隐藏
-        robBut.setVisible(false);
-        //添加到数组中统一管理
-        landlord[0] = robBut;
-        //添加到界面中
-        container.add(robBut);
-
-        //创建不抢的按钮
-        JButton noBut = new JButton("不     抢");
-        //设置位置
-        noBut.setBounds(420, 400, 75, 20);
-        //添加点击事件
-        noBut.addActionListener(this);
-        //设置隐藏
-        noBut.setVisible(false);
-        //添加到数组中统一管理
-        landlord[1] = noBut;
-        //添加到界面中
-        container.add(noBut);
 
         //创建出牌的按钮
         JButton outCardBut = new JButton("出牌");
         outCardBut.setBounds(320, 400, 60, 20);
         outCardBut.addActionListener(this);
         outCardBut.setVisible(false);
-        publishCard[0] = outCardBut;
+        chulord[0] = outCardBut;
         container.add(outCardBut);
 
-        //创建不要的按钮
-        JButton noCardBut = new JButton("不要");
-        noCardBut.setBounds(420, 400, 60, 20);
-        noCardBut.addActionListener(this);
-        noCardBut.setVisible(false);
-        publishCard[1] = noCardBut;
-        container.add(noCardBut);
+        //创建胡的按钮
+        JButton huCardBut = new JButton("胡");
+        huCardBut.setBounds(420, 400, 60, 20);
+        huCardBut.addActionListener(this);
+        huCardBut.setVisible(false);
+        hulord[0] = huCardBut;
+        container.add(huCardBut);
 
+        //创建碰的按钮
+        JButton pengCardBut = new JButton("碰");
+        pengCardBut.setBounds(320, 400, 60, 20);
+        pengCardBut.addActionListener(this);
+        pengCardBut.setVisible(false);
+        Other[0] = pengCardBut;
+        container.add(pengCardBut);
+
+
+        //创建吃的按钮
+        JButton chiCardBut = new JButton("吃");
+        chiCardBut.setBounds(320, 400, 60, 20);
+        chiCardBut.addActionListener(this);
+        chiCardBut.setVisible(false);
+        Other[1] = outCardBut;
+        container.add(chiCardBut);
+
+        //创建杠的按钮
+        JButton gangCardBut = new JButton("出牌");
+        gangCardBut.setBounds(320, 400, 60, 20);
+        gangCardBut.addActionListener(this);
+        gangCardBut.setVisible(false);
+        Other[2] = gangCardBut;
+        container.add(gangCardBut);
 
         //创建三个玩家前方的提示文字：倒计时
         //每个玩家一个
-        //左边的电脑玩家是0
-        //中间的自己是1
-        //右边的电脑玩家是2
-        //对面是3
+        //中间的自己是0
+        //右边的电脑玩家是1
+        //对面是2
+        //左边的电脑玩家是3
         for (int i = 0; i < 4; i++) {
             time[i] = new JTextField("倒计时:");
             time[i].setEditable(false);
             time[i].setVisible(false);
             container.add(time[i]);
         }
-        time[0].setBounds(140, 230, 60, 20);
-        time[1].setBounds(374, 360, 60, 20);
-        time[2].setBounds(620, 230, 60, 20);
-        time[3].setBounds(374, 230, 60, 20);
+        time[0].setBounds(480, 570, 60, 20);
+        time[1].setBounds(800, 350, 60, 20);
+        time[2].setBounds(480, 200, 60, 20);
+        time[3].setBounds(160, 350, 60, 20);
 
 
         //创建庄家图标
@@ -306,7 +371,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         //设置标题
         this.setTitle("Mahjong Game");
         //设置大小
-        this.setSize(830, 620);
+        this.setSize(960, 720);
         //设置关闭模式
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //设置窗口无法进行调节
@@ -318,7 +383,24 @@ public class GameJFrame extends JFrame implements ActionListener {
         //取消内部默认的居中放置
         container.setLayout(null);
         //设置背景颜色
-        container.setBackground(Color.LIGHT_GRAY);
+        container.setBackground(Color.BLACK);
+    }
+
+    public static void addcards(int playerIndex){
+       playerList.get(playerIndex).add(MahjongCardList.get(numb));
+       numb++;
+    }
+
+    public static boolean CheckBreak(){
+        return false;
+    }
+
+    public ArrayList<ArrayList<MahjongCard>> getcurrentList(){
+        return currentList;
+    }
+
+    public ArrayList<MahjongCard> getplayer(int playerIndex){
+        return playerList.get(playerIndex);
     }
 
 }

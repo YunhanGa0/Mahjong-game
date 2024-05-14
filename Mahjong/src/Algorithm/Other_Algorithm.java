@@ -4,11 +4,10 @@ import Game.GameJFrame;
 import Objects.MahjongCard;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.HashMap;
+
+
 
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
@@ -49,12 +48,13 @@ public class Other_Algorithm {
         return false;
     }
 
+
     //移动牌（有移动的动画效果）
     public static void move(MahjongCard card, Point from, Point to) {
         if (to.x != from.x) {
             double k = (1.0) * (to.y - from.y) / (to.x - from.x);
             double b = to.y - to.x * k;
-            int flag = 0;
+            int flag;
             if (from.x < to.x)
                 flag = 20;
             else {
@@ -75,6 +75,7 @@ public class Other_Algorithm {
     }
 
 
+
     //利用牌的价值，将集合中的牌进行排序
     //o1是原来的，o2是新增的
     public static void order(ArrayList<MahjongCard> list) {
@@ -82,7 +83,7 @@ public class Other_Algorithm {
             @Override
             public int compare(MahjongCard o1, MahjongCard o2) {
 
-                //获得最前面的数字，判断花色（1条2万3筒45678东西南北中910发白）
+                //获得最前面的数字，判断花色（1万2条3筒45678东西南北中910发白）
                 int a1 = Integer.parseInt(o1.getName().substring(0, 1));
                 int a2 = Integer.parseInt(o2.getName().substring(0, 1));
 
@@ -91,29 +92,18 @@ public class Other_Algorithm {
                 int b2 = Integer.parseInt(o2.getName().substring(2));
 
                 //倒序排列
-                int flag = b2 - b1;
+                int flag = b1 - b2;
 
                 //如果牌的花色一样，则按照价值排序
-                if ((a2-a1) == 0) {
+                if ((a1-a2) == 0) {
                     return flag;
                 } else {
-                    return a2-a1;
+                    return a1-a2;
                 }
             }
         });
     }
 
-    //获取当前牌的价值
-    public static int getValue(MahjongCard card) {
-        int i = Integer.parseInt(card.getName().substring(2));
-        if (card.getName().substring(2).equals("2"))
-            i += 13;
-        if (card.getName().substring(2).equals("1"))
-            i += 13;
-        if (getColor(card) == 5)
-            i += 2;
-        return i;
-    }
 
     //获取当前牌的花色
     public static int getColor(MahjongCard card) {
@@ -124,26 +114,30 @@ public class Other_Algorithm {
     public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
         Point p = new Point();
         if (flag == 0) {
-            p.x = 50;
-            p.y = (450 / 2) - (list.size() + 1) * 15 / 2;
+            p.x = 80;
+            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
         }
         if (flag == 1) {
-            p.x = (800 / 2) - (list.size() + 1) * 21 / 2;
-            p.y = 450;
+            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 600;
         }
         if (flag == 2) {
-            p.x = 700;
-            p.y = (450 / 2) - (list.size() + 1) * 15 / 2;
+            p.x = 850;
+            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
+        }
+        if (flag == 3) {
+            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 50;
         }
         int len = list.size();
         for (int i = 0; i < len; i++) {
             MahjongCard poker = list.get(i);
-            move(poker, poker.getLocation(), p);
+            Other_Algorithm.move(poker, poker.getLocation(), p);
             m.container.setComponentZOrder(poker, 0);
-            if (flag == 1)
-                p.x += 21;
+            if (flag == 1 || flag == 3)
+                p.x += 30;
             else
-                p.y += 15;
+                p.y += 20;
         }
     }
 

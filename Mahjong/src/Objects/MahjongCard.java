@@ -33,7 +33,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         }
 
         //牌的大小
-        this.setSize(71,96);
+        this.setSize(35,48);
         //把牌显示出来
         this.setVisible(true);
         //给每一张牌添加鼠标监听
