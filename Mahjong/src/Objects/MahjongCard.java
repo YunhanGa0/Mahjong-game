@@ -41,24 +41,20 @@ public class MahjongCard extends JLabel implements MouseListener {
 
     }
 
-    public MahjongCard(GameJFrame gameJFrame, String name, boolean up, boolean Clickable, boolean clicked) {
-        this.gameJFrame = gameJFrame;
-        this.name = name;
-        this.up = up;
-        this.Clickable = Clickable;
-        this.clicked = clicked;
-    }
-
     //显示正面
     public void turnFront() {
-        this.setIcon(new ImageIcon(/*图片链接*/));
+        /*
+        ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile11.png"); // 创建一个图片图标
+        Image image = imageIcon.getImage(); // 获取图标的图片对象
+        Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+        this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+         */
         this.up = true;
     }
 
-
     //显示背面
     public void turnRear() {
-        this.setIcon(new ImageIcon(/*图片链接*/));
+        //this.setIcon(new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile12.png"));
         this.up = false;
     }
 
@@ -77,34 +73,14 @@ public class MahjongCard extends JLabel implements MouseListener {
             Point from = this.getLocation();
             int step;
             if (clicked){
-                step = 20;
+                step = 15;
             }else {
-                step = -20;
+                step = -15;
             }
             clicked = !clicked;
             Point to = new Point(from.x, from.y + step);
             this.setLocation(to);
         }
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
 
     }
 
@@ -169,7 +145,7 @@ public class MahjongCard extends JLabel implements MouseListener {
      * @param canClick
      */
     public void setCanClick(boolean canClick) {
-        this.Clickable = Clickable;
+        this.Clickable = canClick;
     }
 
     /**
@@ -187,6 +163,27 @@ public class MahjongCard extends JLabel implements MouseListener {
     public void setClicked(boolean clicked) {
         this.clicked = clicked;
     }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
 
     public String toString() {
         return "Poker{gameJFrame = " + gameJFrame + ", name = " + name + ", up = " + up + ", Clickable = " + Clickable + ", clicked = " + clicked + "}";

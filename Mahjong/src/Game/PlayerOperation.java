@@ -29,52 +29,125 @@ public class PlayerOperation extends Thread {
     }
 
     //控制游戏的主要流程，包括倒计时、判断玩家行动、更新游戏状态、和判断游戏结束条件等
+    /**
+     *
+     * 游戏流程：
+     *
+     * 初始化棋盘，掷骰子比大小确定庄家，随后发牌
+     *
+     * 发牌后由庄家开始选择打出的牌，并打出
+     *
+     * 打出后的牌进入弃牌堆，之后对其他玩家开始检测是否可以吃，碰，杠，胡
+     *
+     * 如果可以的话，需要显示相对应的按钮，给玩家进行选择
+     *（由于选择后回打乱出牌顺序，所以将三个情况放到checkBreak里统一返回参数）
+     *
+     * 选择过后执行相应操作后，注意turn的转换，然后下一个人继续出牌
+     *
+     *
+     *庄家不摸牌，直接先出一张牌，进判断其他人是否break，没有则到第二个玩家，
+     * 先发一张牌，检测自己有没有胡，有的话就显示胡牌按钮，没有则选择出的牌打出，检测break，没有就下一个
+     *
+     *
+     *
+     *
+     */
+
     @Override
     public void run() {
-
+        // 游戏开始的倒计时
+        while (i > -1 && isRun) {
+            gameJFrame.time[1].setText("倒计时:" + i--);
+            sleep(1);
+        }
+        // 倒计时结束后的操作，这里可以添加发牌逻辑
+        // 例如庄家刚摸到的牌需要打出
+        if (i == -1) {
+            // 玩家打出最后摸到的牌（牌在最后一个位置）
+            gameJFrame.playerList.get(gameJFrame.turn).remove(gameJFrame.playerList.get(gameJFrame.turn).getLast()); // 删除并获取这张牌，然后放到弃牌堆
+            // 弃牌堆.add(刚打出的牌);
+            gameJFrame.currentList.add(gameJFrame.playerList.get(gameJFrame.turn).getLast());
+        }
+        // 初始化庄家，庄家从DealerFlag开始，也是第一个出牌的玩家
         gameJFrame.turn = gameJFrame.DealerFlag;
+        // 主游戏循环
         while (true) {
-            //爷的回合
-            if (gameJFrame.turn == 0) {
-                //如果他们仨没有吃碰杠打断顺序那我就能摸牌出牌
-                if (gameJFrame.CheckBreak() && gameJFrame.CheckBreak() &&gameJFrame.CheckBreak() )
-                    gameJFrame.chulord[0].setEnabled(false);
-                else {
-                    GameJFrame.addcards(0);
-                    gameJFrame.chulord[0].setEnabled(true);
+            // 检查是否有玩家已经胡牌
+            if (win()) {
+                break;
+            }
+            // 处理当前玩家的出牌逻辑
+            processTurn(gameJFrame.turn);
+        }
+    }
+
+    // 处理单个玩家的回合
+    private void processTurn(int playerIndex) {
+        //如果起手14张，说明是庄家需要直接出牌，不需要发牌
+        if(gameJFrame.playerList.get(playerIndex).size() == 14&&playerIndex == 0) {
+            gameJFrame.chulord[0].setEnabled(true);
+            for (MahjongCard cards : gameJFrame.playerList.get(0)) {
+                cards.setCanClick(true);// 可被点击
+            }
+            timeWait(10, 0);  // 玩家有30秒时间进行操作
+            gameJFrame.chulord[0].setVisible(false);
+            gameJFrame.chulord[0].setEnabled(false);
+        }else if (gameJFrame.playerList.get(playerIndex).size() == 14&&!(playerIndex == 0)){
+                // 电脑玩家的操作
+                computerPlayerAction(playerIndex);
+        }else{
+            //正常轮次开始先发牌再打
+            // 给当前玩家发牌
+            Other_Algorithm.addcards(playerIndex);
+            // 如果是玩家，启用出牌按钮等待玩家操作
+            if (playerIndex == 0) {
+                gameJFrame.chulord[0].setEnabled(true);
+                for (MahjongCard cards : gameJFrame.playerList.get(0)) {
+                    cards.setCanClick(true);// 可被点击
                 }
-                turnOn(true);
-                timeWait(30, 1);
-                turnOn(false);
-                //下一个人的回合
-                gameJFrame.turn = (gameJFrame.turn + 1) % 4;
-                if (win())
-                    break;
+                timeWait(10, 0);  // 玩家有30秒时间进行操作
+                gameJFrame.chulord[0].setEnabled(false);
+            } else {
+                // 电脑玩家的操作
+                computerPlayerAction(playerIndex);
             }
-            //电脑1的回合
-            if (gameJFrame.turn == 1) {
-                gameJFrame.addcards(1);
+        }
+
+        // 检查其他玩家是否有吃、碰、杠、胡的机会
+        if (Other_Algorithm.CheckBreak(gameJFrame.currentList.getLast(),playerIndex)) {
+            playerIndex=Other_Algorithm.handlePlayerChoices(playerIndex);
+            // 如果有机会，处理相应的逻辑
+            if (playerIndex == 0) {
+                gameJFrame.chulord[0].setEnabled(true);
+                for (MahjongCard cards : gameJFrame.playerList.get(0)){
+                    cards.setCanClick(true);// 可被点击
+                }
+                timeWait(10, 0);  // 玩家有10秒时间进行操作
+                gameJFrame.chulord[0].setEnabled(false);
+            } else {
+                // 电脑玩家的操作
+                computerPlayerAction(playerIndex);
+            }
+            gameJFrame.turn =(Other_Algorithm.handlePlayerChoices(playerIndex)+1)%4;
+        }else{
+            // 轮到下一个玩家
+            gameJFrame.turn = (gameJFrame.turn + 1) % 4;
+        }
+
+    }
+
+    // 电脑玩家的行动
+    private void computerPlayerAction(int playerIndex) {
+        switch (playerIndex) {
+            case 1:
                 computer1();
-                gameJFrame.turn = (gameJFrame.turn + 1) % 4;
-                if (win())
-                    break;
-            }
-            //电脑2的回合
-            if (gameJFrame.turn == 2) {
-                gameJFrame.addcards(2);
+                break;
+            case 2:
                 computer2();
-                gameJFrame.turn = (gameJFrame.turn + 1) % 4;
-                if (win())
-                    break;
-            }
-            //电脑3的回合
-            if (gameJFrame.turn == 3) {
-                gameJFrame.addcards(3);
+                break;
+            case 3:
                 computer3();
-                gameJFrame.turn = (gameJFrame.turn + 1) % 4;
-                if (win())
-                    break;
-            }
+                break;
         }
     }
 
@@ -116,31 +189,26 @@ public class PlayerOperation extends Thread {
         gameJFrame.Dealer.setVisible(true);
     }
 
-    public void turnOn(boolean flag) {
-        gameJFrame.chulord[0].setVisible(flag);
-        gameJFrame.chulord[1].setVisible(flag);
-    }
-
     //Three computer player
     public void computer1() {
-        timeWait(1, 2);
+        timeWait(1, 1);
         ShowCard(1);
     }
 
     public void computer2() {
-        timeWait(1, 3);
+        timeWait(1, 2);
         ShowCard(2);
     }
 
     public void computer3() {
-        timeWait(1, 4);
+        timeWait(1, 3);
         ShowCard(3);
     }
 
     //倒计时限制玩家操作
     public void timeWait(int n, int player) {
-        if (gameJFrame.currentList.get(player).size() > 0)
-            hideCards(gameJFrame.currentList.get(player));
+        //if (gameJFrame.currentList.get(player).size() > 0)
+        //   hideCards(gameJFrame.currentList.get(player));
         if (player == 0) {
             int i = n;
             while (gameJFrame.nextPlayer == false && i >= 0) {
@@ -150,7 +218,7 @@ public class PlayerOperation extends Thread {
                 i--;
             }
             if (i == -1 && player == 0) {
-                ShowCard(1);
+                ShowCard(0);
             }
             gameJFrame.nextPlayer = false;
         } else {
@@ -165,48 +233,61 @@ public class PlayerOperation extends Thread {
 
     //
     public void ShowCard(int playerIndex) {
+
         // 获取当前玩家手中的麻将牌列表
-        ArrayList<MahjongCard> player=gameJFrame.getplayer(playerIndex);
+        ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
 
-        // 获取当前出牌玩家手中的麻将牌列表
-        ArrayList<MahjongCard> c = new ArrayList<>();
-
-        // 将选择的麻将牌从玩家手牌中移除，并更新玩家的手牌显示位置
-        for (int i = 0; i < player.size(); i++) {
-            MahjongCard card = player.get(i);
-            if (card.isClicked()) {
-                c.add(card);
-            }
-
-            //把当前要出的牌，放到大集合中统一管理
-            gameJFrame.getcurrentList().set(1, c);
-            //在手上的牌中，去掉已经出掉的牌
-            player.removeAll(c);
-
-            //计算坐标并移动牌
-            //移动的目的是要出的牌移动到上方
-            Point point = new Point();
-            point.x = (770 / 2) - (c.size() + 1) * 15 / 2;
-            point.y = 300;
-            for (int j = 0, len = c.size(); j < len; j++) {
-                MahjongCard poker = c.get(i);
-                Other_Algorithm.move(poker, poker.getLocation(), point);
-                point.x += 30;
+        if(playerIndex==0) {
+            //遍历手上的牌，把要出的牌放到临时集合中
+            for (int i = 0; i < player.size(); i++) {
+                MahjongCard card = player.get(i);
+                if (card.isClicked()) {
+                    gameJFrame.currentList.add(card);
+                    //在手上的牌中，去掉已经出掉的牌
+                    player.remove(card);
+                    //计算坐标并移动牌
+                    //移动的目的是要出的牌移动到上方
+                    Point point = new Point();
+                    point.x = (1200 / 2) - 2 * 20 / 2;
+                    point.y = 450;
+                    Other_Algorithm.move(card, card.getLocation(), point);
+                }
             }
 
             //重新摆放剩余的牌
-            Other_Algorithm.rePosition(gameJFrame, player, 1);
-        }
+            Other_Algorithm.order(player);
+            Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
 
-        // 展示出的麻将牌
-        for (MahjongCard cards : gameJFrame.currentList.get(playerIndex)){
-            cards.turnFront();
-        }
+            // 展示出的麻将牌
+            gameJFrame.currentList.getLast().turnFront();
 
+        }else {
+            //遍历手上的牌，把要出的牌放到临时集合中
+            MahjongCard card = player.getLast();
+
+            gameJFrame.currentList.add(card);
+            //在手上的牌中，去掉已经出掉的牌
+            player.remove(card);
+            //计算坐标并移动牌
+            //移动的目的是要出的牌移动到上方
+            Point point = new Point();
+            point.x = (1200 / 2) - 2 * 20 / 2;
+            point.y = 450;
+            Other_Algorithm.move(card, card.getLocation(), point);
+
+            //重新摆放剩余的牌
+            Other_Algorithm.order(player);
+            Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
+
+            // 展示出的麻将牌
+            gameJFrame.currentList.getLast().turnFront();
+
+            System.out.println(gameJFrame.playerList.get(playerIndex).size());
+        }
     }
 
-    //检测是否有玩家胜利
 
+    //检测是否有玩家胜利
     /**
      *
      * 这玩意儿条件有问题，checkhu只是检测手牌和最后一个

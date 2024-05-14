@@ -40,5 +40,4 @@ public class DifficultyJFrame extends JFrame {
         add(panel);
     }
 
-
 }
