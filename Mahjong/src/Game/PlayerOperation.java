@@ -49,8 +49,6 @@ public class PlayerOperation extends Thread {
      * 先发一张牌，检测自己有没有胡，有的话就显示胡牌按钮，没有则选择出的牌打出，检测break，没有就下一个
      *
      *
-     *
-     *
      */
 
     @Override
@@ -60,14 +58,23 @@ public class PlayerOperation extends Thread {
             gameJFrame.time[1].setText("倒计时:" + i--);
             sleep(1);
         }
-        // 倒计时结束后的操作，这里可以添加发牌逻辑
-        // 例如庄家刚摸到的牌需要打出
+
+        // 倒计时结束后的操作，打出摸到的牌或最后一次点击的牌
         if (i == -1) {
             // 玩家打出最后摸到的牌（牌在最后一个位置）
             gameJFrame.playerList.get(gameJFrame.turn).remove(gameJFrame.playerList.get(gameJFrame.turn).getLast()); // 删除并获取这张牌，然后放到弃牌堆
             // 弃牌堆.add(刚打出的牌);
             gameJFrame.currentList.add(gameJFrame.playerList.get(gameJFrame.turn).getLast());
         }
+
+        //✌️的牌可以点击
+        for (MahjongCard cards : gameJFrame.playerList.get(0)) {
+            cards.setCanClick(true);// 可被点击
+        }
+
+        //给庄家发一张牌
+        gameJFrame.playerList.get(gameJFrame.DealerFlag).add(gameJFrame.MahjongCardList.get(gameJFrame.numb));
+
         // 初始化庄家，庄家从DealerFlag开始，也是第一个出牌的玩家
         gameJFrame.turn = gameJFrame.DealerFlag;
         // 主游戏循环
@@ -83,19 +90,17 @@ public class PlayerOperation extends Thread {
 
     // 处理单个玩家的回合
     private void processTurn(int playerIndex) {
+        //System.out.println(gameJFrame.playerList.get(playerIndex).size());
         //如果起手14张，说明是庄家需要直接出牌，不需要发牌
-        if(gameJFrame.playerList.get(playerIndex).size() == 14&&playerIndex == 0) {
+        if(gameJFrame.playerList.get(playerIndex).size() == 14 && playerIndex == 0) {
             gameJFrame.chulord[0].setEnabled(true);
-            for (MahjongCard cards : gameJFrame.playerList.get(0)) {
-                cards.setCanClick(true);// 可被点击
-            }
-            timeWait(10, 0);  // 玩家有30秒时间进行操作
-            gameJFrame.chulord[0].setVisible(false);
+            System.out.println(gameJFrame.playerList.get(playerIndex).size());
+            timeWait(30, 0);  // 玩家有30秒时间进行操作
             gameJFrame.chulord[0].setEnabled(false);
-        }else if (gameJFrame.playerList.get(playerIndex).size() == 14&&!(playerIndex == 0)){
-                // 电脑玩家的操作
-                computerPlayerAction(playerIndex);
-        }else{
+        }else if (gameJFrame.playerList.get(playerIndex).size() == 14 &&!(playerIndex == 0)){
+            // 电脑玩家的操作
+            computerPlayerAction(playerIndex);
+        }else if(gameJFrame.playerList.get(playerIndex).size() == 13){
             //正常轮次开始先发牌再打
             // 给当前玩家发牌
             Other_Algorithm.addcards(playerIndex);
@@ -105,7 +110,7 @@ public class PlayerOperation extends Thread {
                 for (MahjongCard cards : gameJFrame.playerList.get(0)) {
                     cards.setCanClick(true);// 可被点击
                 }
-                timeWait(10, 0);  // 玩家有30秒时间进行操作
+                timeWait(30, 0);  // 玩家有30秒时间进行操作
                 gameJFrame.chulord[0].setEnabled(false);
             } else {
                 // 电脑玩家的操作
@@ -116,13 +121,13 @@ public class PlayerOperation extends Thread {
         // 检查其他玩家是否有吃、碰、杠、胡的机会
         if (Other_Algorithm.CheckBreak(gameJFrame.currentList.getLast(),playerIndex)) {
             playerIndex=Other_Algorithm.handlePlayerChoices(playerIndex);
-            // 如果有机会，处理相应的逻辑
+            // 如果有机会，进行相应的处理
             if (playerIndex == 0) {
                 gameJFrame.chulord[0].setEnabled(true);
                 for (MahjongCard cards : gameJFrame.playerList.get(0)){
                     cards.setCanClick(true);// 可被点击
                 }
-                timeWait(10, 0);  // 玩家有10秒时间进行操作
+                timeWait(30, 0);  // 玩家有10秒时间进行操作
                 gameJFrame.chulord[0].setEnabled(false);
             } else {
                 // 电脑玩家的操作
@@ -262,7 +267,7 @@ public class PlayerOperation extends Thread {
             gameJFrame.currentList.getLast().turnFront();
 
         }else {
-            //遍历手上的牌，把要出的牌放到临时集合中
+
             MahjongCard card = player.getLast();
 
             gameJFrame.currentList.add(card);
@@ -282,7 +287,6 @@ public class PlayerOperation extends Thread {
             // 展示出的麻将牌
             gameJFrame.currentList.getLast().turnFront();
 
-            System.out.println(gameJFrame.playerList.get(playerIndex).size());
         }
     }
 

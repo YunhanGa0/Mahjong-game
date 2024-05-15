@@ -32,6 +32,7 @@ public class Hu_Algorithm {
             return checkHandCardsCanWin(hc);
         }
 
+        //有问题的
         //把手牌中的arraylist转化成此方法可用的普通数组格式
         public static int[] changeFormat(ArrayList<MahjongCard> cards){
             int[] handCards= new int[34];
