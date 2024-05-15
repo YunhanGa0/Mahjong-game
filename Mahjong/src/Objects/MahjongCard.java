@@ -16,9 +16,11 @@ public class MahjongCard extends JLabel implements MouseListener {
     //正反
     private boolean up;
     //能否被点击
-    private boolean Clickable=false;
+    private boolean Clickable = false;
     //当前状态：是否被点击
-    private boolean clicked=false;
+    private boolean clicked = false;
+    //当前是否被进行碰操作
+    private boolean ifPeng = false;
 
     public MahjongCard(GameJFrame m, String name, boolean up){
         this.name=name;
