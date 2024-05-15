@@ -100,11 +100,6 @@ public class Other_Algorithm {
         card.setLocation(to);
     }
 
-    //出牌后放牌
-    public static void moveto(MahjongCard card, int playerIndex){
-
-    }
-
     //重新摆放牌(需要更改位置参数)
     public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
         Point p = new Point();
@@ -135,9 +130,9 @@ public class Other_Algorithm {
             Other_Algorithm.move(poker, poker.getLocation(), p);
             m.container.setComponentZOrder(poker, 0);
             if (flag == 0 || flag == 2)
-                p.x += 30;
+                p.x += 35;
             else
-                p.y += 20;
+                p.y += 25;
         }
     }
 
@@ -155,20 +150,6 @@ public class Other_Algorithm {
         }
         numb++;
 
-        /*
-        //move到指定位置
-
-        if(playerIndex==1){
-            move(newCard,null,null);
-        }
-        if(playerIndex==2){
-            move(newCard,null,null);
-        }
-        if(playerIndex==3){
-            move(newCard,null,null);
-        }
-
-         */
     }
 
 
@@ -200,14 +181,6 @@ public class Other_Algorithm {
         });
     }
 
-
-    //获取当前牌的花色
-    public static int getColor(MahjongCard card) {
-        return Integer.parseInt(card.getName().substring(0, 1));
-    }
-
-
-
     //算分用的，注意翻倍情况
     public static int getScore(ArrayList<MahjongCard> list) {
         int count = 0;
@@ -230,19 +203,5 @@ public class Other_Algorithm {
         }
     }
 
-    //解析牌的值，用于比较牌的大小
-    public List getCardByName(List<MahjongCard> list, String n) {
-        String[] name = n.split(",");
-        ArrayList cardsList = new ArrayList();
-        int j = 0;
-        for (int i = 0, len = list.size(); i < len; i++) {
-            if (j < name.length && list.get(i).getName().equals(name[j])) {
-                cardsList.add(list.get(i));
-                i = 0;
-                j++;
-            }
-        }
-        return cardsList;
-    }
 
 }

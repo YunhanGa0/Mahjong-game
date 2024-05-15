@@ -140,7 +140,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                         MahjongCard card = new MahjongCard(this, i + "-" + j, false);
                         MahjongCardList.add(card);
                         container.add(card);
-                        card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
+                        //card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
                         card.setLocation(455, 315);
                     }
                 }
@@ -149,7 +149,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     MahjongCard card = new MahjongCard(this, i + "-" + 0, false);
                     MahjongCardList.add(card);
                     container.add(card);
-                    card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
+                    //card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
                     card.setLocation(455, 315);
                 }
             }
@@ -198,34 +198,12 @@ public class GameJFrame extends JFrame implements ActionListener {
             container.setComponentZOrder(card, 0);
         }
 
-        /*
-        //先给庄家整一张
-        if(DealerFlag==0){
-            player0.add(MahjongCardList.get(numb));
-        } else if (DealerFlag==1) {
-            player1.add(MahjongCardList.get(numb));
-        } else if (DealerFlag==2) {
-            player2.add(MahjongCardList.get(numb));
-        }else if (DealerFlag==3) {
-            player3.add(MahjongCardList.get(numb));
-        }
-        numb++;
-
-         */
-
         //给牌排序
         for (int i = 0; i <=3; i++) {
             //排序
             Other_Algorithm.order(playerList.get(i));
             //重新摆放顺序
             Other_Algorithm.rePosition(this, playerList.get(i), i);
-            /*
-            if (i!=0){
-                for(int j=0;j<playerList.get(i).size();j++)
-                playerList.get(i).get(j).turnRear();
-            }
-
-             */
         }
 
     }
@@ -258,9 +236,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         } else if (e.getSource() == hulord[0]) {
             //点击胡，进行胡的操作
 
-        }else if (e.getSource() == chulord[0]) {
-            //点击出牌
-
+        }else if (e.getSource() == chulord[0]) { //点击出牌
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
 
@@ -279,8 +255,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     num1++;
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
-
-
+                
                 //重新摆放剩余的牌
                 Other_Algorithm.order(player);
                 Other_Algorithm.rePosition(this, player, 0);
