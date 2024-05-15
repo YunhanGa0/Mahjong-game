@@ -19,6 +19,7 @@ public class MahjongCard extends JLabel implements MouseListener {
     private boolean Clickable = false;
     //当前状态：是否被点击
     private boolean clicked = false;
+
     //当前是否被进行碰操作
     private boolean ifPeng = false;
 
@@ -186,6 +187,9 @@ public class MahjongCard extends JLabel implements MouseListener {
 
     }
 
+    public void setIfPeng(boolean ifPeng) {
+        this.ifPeng = ifPeng;
+    }
 
     public String toString() {
         return "Poker{gameJFrame = " + gameJFrame + ", name = " + name + ", up = " + up + ", Clickable = " + Clickable + ", clicked = " + clicked + "}";

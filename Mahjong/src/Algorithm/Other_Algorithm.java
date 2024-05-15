@@ -40,7 +40,29 @@ public class Other_Algorithm {
         return false;
     }
 
-    public static boolean CheckGang(){ // Method to check if can gang
+    public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
+        ArrayList<MahjongCard> repeatCards = new ArrayList<>();
+
+        // 计数每种牌出现的次数
+        HashMap<MahjongCard, Integer> cardCounts = new HashMap<>();
+        for (MahjongCard card : cards) {
+            cardCounts.put(card, cardCounts.getOrDefault(card, 0) + 1);
+        }
+
+        // 找出出现至少两次的牌
+        for (MahjongCard card : cardCounts.keySet()) {
+            if (cardCounts.get(card) == 3) {
+                repeatCards.add(card);
+            }
+        }
+
+        // 检查comingCard是否与repeatCards中的任何一个相同
+        for (MahjongCard card : repeatCards) {
+            if (card.equals(comingCard)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
