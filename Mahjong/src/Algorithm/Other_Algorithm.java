@@ -5,7 +5,6 @@ import Objects.MahjongCard;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import static Game.GameJFrame.*;
 
@@ -112,7 +111,7 @@ public class Other_Algorithm {
     }
 
     public static ArrayList<MahjongCard> insertIn(ArrayList<MahjongCard> list, int color){
-        ArrayList<MahjongCard> filteredList = new ArrayList<MahjongCard>();
+        ArrayList<MahjongCard> filteredList = new ArrayList<>();
         // 遍历数组中的每一个元素
         for (MahjongCard card : list) {
             // 如果元素等于指定值，则加入filteredList
@@ -124,6 +123,7 @@ public class Other_Algorithm {
         return filteredList;
     }
 
+    //循环检查另外三个玩家有没有吃碰杠
     public static boolean CheckBreak(MahjongCard comingCard,int playerIndex){
         int i=(playerIndex+1)%4;
         while(i!=playerIndex){
@@ -137,6 +137,7 @@ public class Other_Algorithm {
         return false;
     }
 
+    //检测哪个玩家进行了吃，碰，杠操作，返回那个玩家的索引
     public static int handlePlayerChoices(int playerIndex) {
         int i=(playerIndex+1)%4;
         MahjongCard comingCard=gameJFrame.currentList.getLast();
@@ -166,7 +167,7 @@ public class Other_Algorithm {
                 double y = k * i + b;
                 card.setLocation(i, (int) y);
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(6);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -220,6 +221,7 @@ public class Other_Algorithm {
         }
         //将牌放入玩家牌盒
         playerList.get(playerIndex).add(newCard);
+        newCard.turnFront();
         if (playerIndex==0){
             newCard.setCanClick(true);
         }
@@ -259,8 +261,7 @@ public class Other_Algorithm {
     //算分用的，注意翻倍情况
     public static int getScore(ArrayList<MahjongCard> list) {
         int count = 0;
-        for (int i = 0, len = list.size(); i < len; i++) {
-            MahjongCard card = list.get(i);
+        for (MahjongCard card : list) {
             if (card.getName().substring(0, 1).equals("5")) {
                 count += 5;
             }
