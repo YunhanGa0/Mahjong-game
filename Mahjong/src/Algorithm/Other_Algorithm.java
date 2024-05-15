@@ -42,11 +42,86 @@ public class Other_Algorithm {
     }
 
     public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
+        ArrayList<MahjongCard> repeatCards = new ArrayList<>();
+
+        // 计数每种牌出现的次数
+        HashMap<MahjongCard, Integer> cardCounts = new HashMap<>();
+        for (MahjongCard card : cards) {
+            cardCounts.put(card, cardCounts.getOrDefault(card, 0) + 1);
+        }
+
+        // 找出出现至少两次的牌
+        for (MahjongCard card : cardCounts.keySet()) {
+            if (cardCounts.get(card) == 3) {
+                repeatCards.add(card);
+            }
+        }
+
+        // 检查comingCard是否与repeatCards中的任何一个相同
+        for (MahjongCard card : repeatCards) {
+            if (card.equals(comingCard)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){
-        return false;
+        ArrayList<MahjongCard> wan = insertIn(cards,1);
+        ArrayList<MahjongCard> tiao = insertIn(cards,2);
+        ArrayList<MahjongCard> tong = insertIn(cards,3);
+        switch(getColor(comingCard))
+        {
+            case 1 :
+                helpCheckChi(wan,comingCard);
+            case 2 :
+                helpCheckChi(tiao,comingCard);
+            case 3 :
+                helpCheckChi(tong,comingCard);
+            default :
+                return false;
+        }
+    }
+
+    public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard){
+        HashSet<Integer> newValues = new HashSet<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            int current = getColor(list.get(i));
+
+            // Check for n, n+1 consecutive pair
+            if (i < list.size() - 1 && getColor(list.get(i + 1)) == current + 1) {
+                if (current - 1 >= 1) {
+                    newValues.add(current - 1);
+                }
+                if (getColor(list.get(i + 1)) + 1 <= 9) {
+                    newValues.add(getColor(list.get(i + 1)) + 1);
+                }
+            }
+
+            // Check for n, n+2 pair
+            if (i < list.size() - 2 && getColor(list.get(i + 2)) == current + 2) {
+                if (getColor(list.get(i + 1)) >= 1 && getColor(list.get(i + 1)) <= 9) {
+                    newValues.add(getColor(list.get(i + 1)));
+                }
+            }
+        }
+        // Check if the input value is in the newValues set
+        return newValues.contains(getColor(comingCard));
+    }
+
+    public static ArrayList<MahjongCard> insertIn(ArrayList<MahjongCard> list, int color){
+        ArrayList<MahjongCard> filteredList = new ArrayList<MahjongCard>();
+        // 遍历数组中的每一个元素
+        for (MahjongCard card : list) {
+            // 如果元素等于指定值，则加入filteredList
+            if (getColor(card) == color) {
+                filteredList.add(card);
+            }
+        }
+        // 返回新的ArrayList
+        return filteredList;
     }
 
     public static boolean CheckBreak(MahjongCard comingCard,int playerIndex){
@@ -203,5 +278,8 @@ public class Other_Algorithm {
         }
     }
 
+    public static int getColor(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(0, 1));
+    }
 
 }
