@@ -7,13 +7,12 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import static Game.GameJFrame.*;
 
 
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
 
-    static GameJFrame gameJFrame;
+    GameJFrame g;
 
     public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
         ArrayList<MahjongCard> repeatCards = new ArrayList<>();
@@ -41,39 +40,67 @@ public class Other_Algorithm {
         return false;
     }
 
-    public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
+    public static boolean CheckGang(){ // Method to check if can gang
         return false;
     }
 
-    public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){
-        return false;
+    public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Chi
+        ArrayList<MahjongCard> wan = insertIn(cards,1);
+        ArrayList<MahjongCard> tiao = insertIn(cards,2);
+        ArrayList<MahjongCard> tong = insertIn(cards,3);
+        switch(getColor(comingCard))
+        {
+            case 1 :
+                helpCheckChi(wan,comingCard);
+            case 2 :
+                helpCheckChi(tiao,comingCard);
+            case 3 :
+                helpCheckChi(tong,comingCard);
+            default :
+                return false;
+        }
     }
 
-    public static boolean CheckBreak(MahjongCard comingCard,int playerIndex){
-        int i=(playerIndex+1)%4;
-        while(i!=playerIndex){
-            ArrayList<MahjongCard> temp=gameJFrame.playerList.get(i);
-            if(CheckPeng(temp,comingCard)||CheckChi(temp,comingCard)||CheckGang(temp,comingCard)){
-                return true;
-            }else{
-                i=(i+1)%4;
+    public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard){
+        HashSet<Integer> newValues = new HashSet<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            int current = getColor(list.get(i));
+
+            // Check for n, n+1 consecutive pair
+            if (i < list.size() - 1 && getColor(list.get(i + 1)) == current + 1) {
+                if (current - 1 >= 1) {
+                    newValues.add(current - 1);
+                }
+                if (getColor(list.get(i + 1)) + 1 <= 9) {
+                    newValues.add(getColor(list.get(i + 1)) + 1);
+                }
+            }
+
+            // Check for n, n+2 pair
+            if (i < list.size() - 2 && getColor(list.get(i + 2)) == current + 2) {
+                if (getColor(list.get(i + 1)) >= 1 && getColor(list.get(i + 1)) <= 9) {
+                    newValues.add(getColor(list.get(i + 1)));
+                }
             }
         }
-        return false;
+
+        // Check if the input value is in the newValues set
+        return newValues.contains(getColor(comingCard));
     }
 
-    public static int handlePlayerChoices(int playerIndex) {
-        int i=(playerIndex+1)%4;
-        MahjongCard comingCard=gameJFrame.currentList.getLast();
-        while(i!=playerIndex){
-            ArrayList<MahjongCard> temp=gameJFrame.playerList.get(i);
-            if(CheckPeng(temp,comingCard)||CheckChi(temp,comingCard)||CheckGang(temp,comingCard)){
-                break;
-            }else{
-                i=(i+1)%4;
+    public static ArrayList<MahjongCard> insertIn(ArrayList<MahjongCard> list, int color){
+        ArrayList<MahjongCard> filteredList = new ArrayList<MahjongCard>();
+        // 遍历数组中的每一个元素
+        for (MahjongCard card : list) {
+            // 如果元素等于指定值，则加入filteredList
+            if (getColor(card) == color) {
+                filteredList.add(card);
             }
         }
-        return i;
+
+        // 返回新的ArrayList
+        return filteredList;
     }
 
     //移动牌（有移动的动画效果）
@@ -89,6 +116,7 @@ public class Other_Algorithm {
             }
             for (int i = from.x; Math.abs(i - to.x) > 20; i += flag) {
                 double y = k * i + b;
+
                 card.setLocation(i, (int) y);
                 try {
                     Thread.sleep(5);
@@ -100,74 +128,6 @@ public class Other_Algorithm {
         card.setLocation(to);
     }
 
-    //出牌后放牌
-    public static void moveto(MahjongCard card, int playerIndex){
-
-    }
-
-    //重新摆放牌(需要更改位置参数)
-    public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
-        Point p = new Point();
-        //me
-        if (flag == 0) {
-            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
-            p.y = 600;
-        }
-        //right
-        if (flag == 1) {
-            p.x = 850;
-            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
-        }
-        //cross
-        if (flag == 2) {
-            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
-            p.y = 50;
-        }
-        //left
-        if (flag == 3) {
-            p.x = 80;
-            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
-
-        }
-        int len = list.size();
-        for (int i = 0; i < len; i++) {
-            MahjongCard poker = list.get(i);
-            Other_Algorithm.move(poker, poker.getLocation(), p);
-            m.container.setComponentZOrder(poker, 0);
-            if (flag == 0 || flag == 2)
-                p.x += 30;
-            else
-                p.y += 20;
-        }
-    }
-
-    //给玩家摸牌，同时move到指定位置
-    public static void addcards(int playerIndex){
-
-        MahjongCard newCard=MahjongCardList.get(numb);
-        //将牌放入玩家牌盒
-        playerList.get(playerIndex).add(newCard);
-        if (playerIndex==0){
-            newCard.setCanClick(true);
-        }
-        numb++;
-        /*
-        //move到指定位置
-        if(playerIndex==0){
-            move(newCard,new Point(),null);
-        }
-        if(playerIndex==1){
-            move(newCard,null,null);
-        }
-        if(playerIndex==2){
-            move(newCard,null,null);
-        }
-        if(playerIndex==3){
-            move(newCard,null,null);
-        }
-
-         */
-    }
 
 
     //利用牌的价值，将集合中的牌进行排序
@@ -204,7 +164,36 @@ public class Other_Algorithm {
         return Integer.parseInt(card.getName().substring(0, 1));
     }
 
-
+    //重新摆放牌(需要更改位置参数)
+    public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
+        Point p = new Point();
+        if (flag == 0) {
+            p.x = 80;
+            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
+        }
+        if (flag == 1) {
+            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 600;
+        }
+        if (flag == 2) {
+            p.x = 850;
+            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
+        }
+        if (flag == 3) {
+            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 50;
+        }
+        int len = list.size();
+        for (int i = 0; i < len; i++) {
+            MahjongCard poker = list.get(i);
+            Other_Algorithm.move(poker, poker.getLocation(), p);
+            m.container.setComponentZOrder(poker, 0);
+            if (flag == 1 || flag == 3)
+                p.x += 30;
+            else
+                p.y += 20;
+        }
+    }
 
     //算分用的，注意翻倍情况
     public static int getScore(ArrayList<MahjongCard> list) {
@@ -228,8 +217,6 @@ public class Other_Algorithm {
         }
     }
 
-
-
     //解析牌的值，用于比较牌的大小
     public List getCardByName(List<MahjongCard> list, String n) {
         String[] name = n.split(",");
@@ -243,6 +230,11 @@ public class Other_Algorithm {
             }
         }
         return cardsList;
+    }
+
+
+    class MahjongCardIndex {
+        ArrayList<ArrayList<Integer>> indexList = new ArrayList<>();
     }
 
 }
