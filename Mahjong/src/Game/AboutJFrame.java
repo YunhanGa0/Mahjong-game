@@ -15,35 +15,34 @@ public class AboutJFrame extends JFrame {
 
         // 创建文本区域以显示游戏相关信息
         JTextArea aboutText = new JTextArea(
-                "1. 牌型组成\n" +
-                "北京麻将通常使用包含条、饼、万以及东南西北中发白等字牌的144张牌。有些玩法中可能不使用花牌。\n" +
+                "1. Deck Composition\n" +
+                "Beijing Mahjong typically uses a set of 144 tiles, which includes suits of bamboos, dots, characters, and honor tiles such as east, south, west, north, red, green, and white dragons. Some variations might not use flower tiles.\n" +
                 "\n" +
-                "2. 游戏玩家\n" +
-                "北京麻将通常由4名玩家进行，每人初始发牌13张，庄家多抓一张牌。\n" +
+                "2. Players\n" +
+                "Beijing Mahjong is generally played by four players. Each player starts with 13 tiles, with the dealer drawing one extra tile.\n" +
                 "\n" +
-                "3. 胡牌和番种\n" +
-                "基本胡牌：基础的胡牌需要形成4个刻子（或顺子）+ 1对将。\n" +
-                "缺一门：玩家的手牌中必须缺少万、条、饼中的一门，这是北京麻将的一项特殊规定。\n" +
-                "清一色：全部手牌为同一花色的牌。\n" +
-                "对对胡：由4个刻子和1对将组成。\n" +
-                "七小对：手牌由7对相同的牌组成，不需要刻子或顺子。\n" +
-                "杠：玩家可以进行明杠、暗杠和加杠。杠牌后通常可以再抓一张牌。\n" +
+                "3. Winning\n" +
+                "Basic Winning Hand: The basic winning hand requires forming 4 sets (either pungs or chows) + 1 pair of tiles.\n" +
                 "\n" +
-                "4. 打牌过程\n" +
-                "出牌：玩家轮流打出手中不需要的牌。\n" +
-                "吃、碰、杠：玩家可以根据前一家打出的牌进行吃（只能吃前一家）、碰或杠牌。吃牌较少见于北京麻将。\n" +
-                "抓牌：除了初始发牌外，每轮玩家从牌堆中抓牌继续游戏。\n" +
-                "自摸和放炮：自摸指玩家抓起的牌自己胡牌，放炮指玩家打出的牌被其他玩家胡。\n" +
+                "Missing One Suit: Players must lack one of the suits—characters, bamboos, or dots—in their hand, a unique rule in Beijing Mahjong.\n" +
+                "Pure Suit: All tiles in the hand are of the same suit.\n" +
+                "All Pungs: Consists of 4 pungs and 1 pair.\n" +
+                "Seven Pairs: The hand consists of 7 identical pairs, no pungs or chows required.\n" +
+                "Kong: Players can execute an exposed kong, concealed kong, or added kong. Typically, drawing an extra tile follows a kong.\n" +
                 "\n" +
-                "5. 计分规则\n" +
-                "北京麻将的计分可能根据不同的牌馆或地区有所不同，但通常情况下，胡牌的基本分会根据番种（翻倍规则）进行计算。各种杠牌也有对应的得分。\n" +
+                "4. Gameplay\n" +
+                "Discarding: Players take turns discarding unwanted tiles.\n" +
+                "Chow, Pung, Kong: Players can make a chow (only from the previous player), pung, or kong based on the last discarded tile. Chows are less common in Beijing Mahjong.\n" +
+                "Drawing Tiles: Beyond the initial deal, players draw tiles from the wall to continue the game.\n" +
+                "Self-drawn and Discarded Win: Self-drawn refers to winning with a tile drawn by oneself, while discarded win refers to winning with a tile discarded by another player.\n" +
                 "\n" +
-                "6. 庄家规则\n" +
-                "连庄：如果庄家胡牌或者所有玩家荒牌（未胡牌），庄家继续连庄。\n" +
-                "轮庄：如果庄家未胡牌而其他玩家胡牌，下一局的庄家将轮换至下一位玩家。\n" +
+                "5. Dealer Rules\n" +
+                "Continuing Dealer: If the dealer wins or if all players exhaust tiles without winning (a draw), the dealer continues.\n" +
+                "Passing the Deal: If the dealer does not win but another player does, the deal passes to the next player.\n" +
                 "\n" +
-                "7. 荒牌\n" +
-                "当牌局中的牌抓完还没有人胡牌，该局称为荒牌，通常这局不计分或者根据具体规则有所不同。"
+                "6. Linked website\n" +
+                "https://baike.baidu.com/item/%E5%8C%97%E4%BA%AC%E9%BA%BB%E5%B0%86/2093558"
+
         );
         aboutText.setWrapStyleWord(true);
         aboutText.setLineWrap(true);
