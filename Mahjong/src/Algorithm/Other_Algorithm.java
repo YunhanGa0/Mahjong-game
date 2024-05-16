@@ -140,7 +140,7 @@ public class Other_Algorithm {
     //检测哪个玩家进行了吃，碰，杠操作，返回那个玩家的索引
     public static int handlePlayerChoices(int playerIndex) {
         int i=(playerIndex+1)%4;
-        MahjongCard comingCard=gameJFrame.currentList.getLast();
+        MahjongCard comingCard=gameJFrame.currentList.get(gameJFrame.currentList.size()-1);
         while(i!=playerIndex){
             ArrayList<MahjongCard> temp=gameJFrame.playerList.get(i);
             if(CheckPeng(temp,comingCard)||CheckChi(temp,comingCard)||CheckGang(temp,comingCard)){

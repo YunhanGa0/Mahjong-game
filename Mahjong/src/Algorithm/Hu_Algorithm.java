@@ -1,6 +1,5 @@
 package Algorithm;
 
-import Game.GameJFrame;
 import Objects.MahjongCard;
 
 import java.util.ArrayList;
@@ -11,8 +10,7 @@ public class Hu_Algorithm {
         /**
          *
          * 判断手牌是否可以胡牌,使用选将拆分法来实现
-         * @param
-         * <pre>
+
          * 手牌的格式必须转换为如下数据格式,数组的下标表示牌的类型共34种类型,数组的值表示这个类型牌的数量<br>
          * cards[0]                   =                 2<br>
          *      1万                                     共有2张 <br>
@@ -105,14 +103,13 @@ public class Hu_Algorithm {
                 return false;
             }else{
                 int[] checkedCache = {0, 0, 0, 0};
-                for (int i = 0; i < eyeList.size(); i++) {
+                for (int eyeIndex : eyeList) {
                     //将牌所在牌数组中的索引,后面可以根据这个索引直接从牌数组中获取牌的数量
-                    int eyeIndex = eyeList.get(i);
                     //获取将牌的数量
                     int n = cards[eyeIndex];
                     //首先将[将牌]从牌堆中移除,当此将无法完成胡牌条件时,在将此牌放回牌堆,利用回溯法再进行判定下一张将牌
                     cards[eyeIndex] -= 2;
-                    win = handleCardsWithoutEye(cards,eyeIndex / 9,checkedCache);
+                    win = handleCardsWithoutEye(cards, eyeIndex / 9, checkedCache);
                     cards[eyeIndex] = n;
                     if (win) {
                         break;
@@ -291,8 +288,6 @@ public class Hu_Algorithm {
 
         /**
          * 尾数为2的处理方法，形式为  2 2 2
-         * @param n
-         * @return
          */
         private static boolean doubleNumHandle(int n) {
             //获取此数字前面的p1
@@ -323,8 +318,6 @@ public class Hu_Algorithm {
          * 字牌花色的处理逻辑
          * @param cards
          * @param cacheIndex
-         * @param
-         * @return
          */
         private static boolean checkZiCardsWin(int[] cards, int cacheIndex, int[] checkedCache) {
             /*

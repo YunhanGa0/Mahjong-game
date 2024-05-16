@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class PlayerOperation extends Thread {
 
     //游戏主界面
-    GameJFrame gameJFrame;
+    static GameJFrame gameJFrame;
 
     //是否能走
     boolean isRun = true;
@@ -29,7 +29,7 @@ public class PlayerOperation extends Thread {
     //因为线程中的sleep方法有异常，直接调用影响阅读
     public void sleep(int i) {
         try {
-            Thread.sleep((long)i * 1000);
+            Thread.sleep((long)i * 800);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -47,10 +47,12 @@ public class PlayerOperation extends Thread {
             }
             if (i == -1 && player == 0) {
                 // 倒计时结束后的操作，打出摸到的牌或最后一次点击的牌
+                // 弃牌堆(刚打出的牌);
+                MahjongCard dev= gameJFrame.playerList.get(0).get(gameJFrame.currentList.size()-1);
                 // 玩家打出最后摸到的牌（牌在最后一个位置）
-                gameJFrame.playerList.get(gameJFrame.turn).remove(gameJFrame.playerList.get(gameJFrame.turn).getLast()); // 删除并获取这张牌，然后放到弃牌堆
-                // 弃牌堆.add(刚打出的牌);
-                gameJFrame.currentList.add(gameJFrame.playerList.get(gameJFrame.turn).getLast());
+                gameJFrame.playerList.get(0).remove(dev); // 删除并获取这张牌，然后放到弃牌堆
+                gameJFrame.currentList.add(dev);
+
             }
             gameJFrame.nextPlayer = false;
         } else {
@@ -104,8 +106,24 @@ public class PlayerOperation extends Thread {
     public void run() {
         // 游戏开始,掷骰子定庄阶段
         while (i > -1 && isRun) {
-            gameJFrame.time[1].setText("倒计时:" + i--);
+            gameJFrame.time[1].setText("Roll骰子定庄家:");
+            i--;
             sleep(1);
+        }
+
+        if (i == -1){
+            if(gameJFrame.DealerFlag==0){
+                gameJFrame.time[1].setText("你是庄家");
+            }
+            if(gameJFrame.DealerFlag==1){
+                gameJFrame.time[1].setText("下家是庄家");
+            }
+            if(gameJFrame.DealerFlag==2){
+                gameJFrame.time[1].setText("对家是庄家");
+            }
+            if(gameJFrame.DealerFlag==3){
+                gameJFrame.time[1].setText("上家是庄家");
+            }
         }
 
         // 初始化庄家，庄家是第一个出牌的玩家
@@ -125,29 +143,75 @@ public class PlayerOperation extends Thread {
 
     // 处理每个玩家的回合
     private void processTurn(int playerIndex) {
+
+        sleep(1);
         // 给当前玩家发牌
         Other_Algorithm.addcards(playerIndex);
-        // 如果是玩家，启用出牌按钮等待玩家操作
-        if (playerIndex == 0) {
-            gameJFrame.chulord[0].setEnabled(true);
+
+        //如果是✌️
+        if (playerIndex == 0) { // 如果是玩家
+            // 手牌可被点击
             for (MahjongCard cards : gameJFrame.playerList.get(0)) {
-                cards.setCanClick(true);// 可被点击
+                cards.setCanClick(true);
             }
-            timeWait(30, 0);  // 玩家有30秒时间进行操作
-            gameJFrame.chulord[0].setEnabled(false);
+            // 首先检测有没有胡和暗杠
+            if(Hu_Algorithm.checkHu(gameJFrame.playerList.get(0))){
+                //进行胡牌操作
+                gameJFrame.hulord[0].setVisible(true);
+                gameJFrame.hulord[0].setEnabled(true);
+                timeWait(10, 0);  // 玩家有10秒时间进行
+                gameJFrame.hulord[0].setVisible(false);
+                gameJFrame.hulord[0].setEnabled(false);
+                //更改输赢状态（传递boolean值判断win（））
+            } else if(Other_Algorithm.CheckGang(gameJFrame.playerList.get(0),gameJFrame.playerList.get(0).get(gameJFrame.playerList.get(0).size()-1))){
+                //进行暗杠牌操作
+                gameJFrame.Other[2].setVisible(true);
+                gameJFrame.Other[2].setEnabled(true);
+                timeWait(10, 0);  // 玩家有10秒时间进行操作
+                gameJFrame.Other[2].setVisible(false);
+                gameJFrame.Other[2].setEnabled(false);
+            }else {
+                //如果没有操作，那就进行出牌操作
+                gameJFrame.chulord[0].setVisible(true);
+                gameJFrame.chulord[0].setEnabled(true);
+                timeWait(30, 0);  // 玩家有30秒时间进行操作
+                gameJFrame.chulord[0].setVisible(false);//出牌按钮不可见
+                gameJFrame.chulord[0].setEnabled(false);//结束后出牌按钮不可按
+            }
         } else {
             // 电脑玩家的操作
             computerPlayerAction(playerIndex);
         }
-        // 检查其他玩家是否有吃、碰、杠、胡的机会
-        if (Other_Algorithm.CheckBreak(gameJFrame.currentList.getLast(),playerIndex)) { // 如果有机会，进行相应的处理
-            timeWait(5, 0);  // 玩家有30秒时间进行操作
-            //得到进行操作的玩家的索引
-            playerIndex=Other_Algorithm.handlePlayerChoices(playerIndex);
-            //如果是✌️
-            if(playerIndex==0){
-                //选择是否进行吃碰杠操作
-                if(Other_Algorithm.CheckPeng(gameJFrame.playerList.get(0),gameJFrame.currentList.getLast())){
+
+        // 检查其他玩家的操作（碰、杠、吃）
+        boolean actionTaken = false;
+
+        //检测是否有玩家可以进行操作
+        // i出牌，放炮，其他人胡牌
+        for (int j = (gameJFrame.turn + 1) % 4; j != gameJFrame.turn; j = (j + 1) % 4) {
+            MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
+            System.out.println(lastCard.getName());
+            if (Other_Algorithm.CheckGang(gameJFrame.playerList.get(j), lastCard)) {
+                System.out.println(Other_Algorithm.CheckGang(gameJFrame.playerList.get(j), lastCard));
+                System.out.println(j);
+                if (j == 0) { // 玩家操作
+                    gameJFrame.Other[2].setVisible(true);
+                    gameJFrame.Other[2].setEnabled(true);
+                    gameJFrame.chulord[0].setEnabled(true);
+                    timeWait(10, 0);  // 玩家有10秒时间进行操作
+                    gameJFrame.Other[2].setVisible(false);
+                    gameJFrame.Other[2].setEnabled(false);
+                    gameJFrame.chulord[0].setEnabled(false);
+                } else { // 电脑操作
+                    GangCards(j, lastCard);
+                }
+                actionTaken = true;
+                gameJFrame.turn = (j + 1) % 4;
+                break;
+            }
+
+            if (Other_Algorithm.CheckPeng(gameJFrame.playerList.get(j), lastCard)) {
+                if (j == 0) { // 玩家操作
                     gameJFrame.Other[0].setVisible(true);
                     gameJFrame.Other[0].setEnabled(true);
                     gameJFrame.chulord[0].setEnabled(true);
@@ -155,52 +219,38 @@ public class PlayerOperation extends Thread {
                     gameJFrame.Other[0].setVisible(false);
                     gameJFrame.Other[0].setEnabled(false);
                     gameJFrame.chulord[0].setEnabled(false);
+                } else { // 电脑操作
+                    PengCards(j);
                 }
-                if(Other_Algorithm.CheckChi(gameJFrame.playerList.get(0),gameJFrame.currentList.getLast())){
-                    gameJFrame.Other[1].setEnabled(true);
-                    timeWaitOther(5, 0);  // 玩家有5秒时间选择吃还是不吃
-                    gameJFrame.Other[1].setEnabled(false);
-                }
-                if(Other_Algorithm.CheckGang(gameJFrame.playerList.get(0),gameJFrame.currentList.getLast())){
-                    gameJFrame.Other[2].setEnabled(true);
-                    timeWaitOther(5, 0);  // 玩家有5秒时间选择杠还是不杠
-                    gameJFrame.Other[2].setEnabled(false);
-                }
-            }else{ //如果不是✌️
-                if(Other_Algorithm.CheckPeng(gameJFrame.playerList.get(playerIndex),gameJFrame.currentList.getLast())){
-                    //通过弃牌堆找到要碰的牌
-                    MahjongCard pengCard = gameJFrame.currentList.getLast();
-                    //获取中自己手上所有的牌
-                    ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
-                    if(Other_Algorithm.CheckPeng(player,pengCard)){
-                        //先将牌加入到自己的牌中
-                        player.add(pengCard);
-                        //计数
-                        int j=0;
-                        //遍历玩家手牌找到此牌并放到指定位置
-                        for (MahjongCard card : player) {
-                            if (card == pengCard) {
-                                Point point = new Point();
-                                point.x = 200 + j * 35;
-                                point.y = 600;
-                                Other_Algorithm.move(card, card.getLocation(), point);
-                                //碰过的牌不能动了
-                                card.setCanClick(false);
-                                j++;
-                            }
-                        }
-                        ShowCard(playerIndex);
-                    }
-                }
+                actionTaken = true;
+                gameJFrame.turn = (j + 1) % 4;
+                break;
             }
-            gameJFrame.turn =(playerIndex+1)%4;
-        }else{
-            // 轮到下一个玩家
+
+            if (Other_Algorithm.CheckChi(gameJFrame.playerList.get(j), lastCard)) {
+                if (j == 0) { // 玩家操作
+                    gameJFrame.Other[1].setVisible(true);
+                    gameJFrame.Other[1].setEnabled(true);
+                    gameJFrame.chulord[0].setEnabled(true);
+                    timeWaitOther(5, 0);  // 玩家有5秒时间选择吃还是不吃
+                    gameJFrame.Other[1].setVisible(false);
+                    gameJFrame.Other[1].setEnabled(false);
+                    gameJFrame.chulord[0].setEnabled(false);
+                } else { // 电脑操作
+                    EatCards(j);
+                }
+                actionTaken = true;
+                gameJFrame.turn = (j + 1) % 4;
+                break;
+            }
+
+        }
+        sleep(1);
+        // 如果没有其他玩家进行碰、杠、吃等操作，则轮到下一个玩家出牌
+        if (!actionTaken) {
             gameJFrame.turn = (gameJFrame.turn + 1) % 4;
         }
     }
-
-
 
     // 电脑玩家的行动
     private void computerPlayerAction(int playerIndex) {
@@ -233,9 +283,8 @@ public class PlayerOperation extends Thread {
         ShowCard(3);
     }
 
-    //针对电脑玩家的出牌后的一系列操作
-    public void ShowCard(int playerIndex) {
-
+    //机器人出牌
+    public static void ShowCard(int playerIndex) {
         // 获取当前玩家手中的麻将牌列表
         ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
 
@@ -257,8 +306,7 @@ public class PlayerOperation extends Thread {
             }
         }else {
 
-            MahjongCard card = player.get(player.size()-1);
-
+            MahjongCard card = player.get(player.size()-2);
             gameJFrame.currentList.add(card);
             //在手上的牌中，去掉已经出掉的牌
             player.remove(card);
@@ -285,8 +333,83 @@ public class PlayerOperation extends Thread {
         Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
 
         // 展示出的麻将牌
-        gameJFrame.currentList.getLast().turnFront();
+        gameJFrame.currentList.get(gameJFrame.currentList.size()-1).turnFront();
     }
+
+    //机器人的碰牌方法
+    public static void PengCards(int playerIndex){
+        //通过弃牌堆找到要碰的牌
+        MahjongCard pengCard = gameJFrame.currentList.get(gameJFrame.currentList.size()-1);
+        //获取中自己手上所有的牌
+        ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
+        if(Other_Algorithm.CheckPeng(player,pengCard)){
+            //先将牌加入到自己的牌中
+            player.add(pengCard);
+            //计数
+            int j=0;
+            //遍历玩家手牌找到此牌并放到指定位置
+            for (MahjongCard card : player) {
+                if (card == pengCard) {
+                    Point point = new Point();
+                    point.x = 200 + j * 35;
+                    point.y = 600;
+                    Other_Algorithm.move(card, card.getLocation(), point);
+                    //碰过的牌不能动了
+                    card.setCanClick(false);
+                    j++;
+                }
+            }
+            //碰后出牌
+            ShowCard(playerIndex);
+        }
+    }
+
+    //机器人开杠
+    public void GangCards(int playerIndex, MahjongCard GangCard){
+
+        //获取中自己手上所有的牌
+        ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
+        if(Other_Algorithm.CheckPeng(player,GangCard)){
+            //先将牌加入到自己的牌中
+            player.add(GangCard);
+            //计数
+            int j=0;
+            //遍历玩家手牌找到此牌并放到指定位置
+            for (MahjongCard card : player) {
+                if (card == GangCard) {
+                    Point point = new Point();
+                    point.x = 200 + j * 35;
+                    point.y = 600;
+                    Other_Algorithm.move(card, card.getLocation(), point);
+                    //碰过的牌不能动了
+                    card.setCanClick(false);
+                    j++;
+                }
+            }
+            //杠后出牌
+            ShowCard(playerIndex);
+        }
+    }
+
+    //机器人开吃
+    public void EatCards(int playerIndex){}
+
+    //机器人开胡
+    public void HuCards(int playerIndex, MahjongCard HuCard){
+
+        //获取中自己手上所有的牌
+        ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
+
+        //将牌添加进去
+        player.add(HuCard);
+
+        //重新摆放全部的牌
+        Other_Algorithm.order(player);
+        Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
+
+        //展示胡的牌
+    }
+
 
     //检测是否有玩家胜利
     /**
@@ -296,7 +419,6 @@ public class PlayerOperation extends Thread {
      * 让游戏结束，条件是一个玩家点击胡牌按钮才算结束游戏
      *
      * @return
-     *
      */
 
     public boolean win () {

@@ -163,8 +163,6 @@ public class GameJFrame extends JFrame implements ActionListener {
         ArrayList<MahjongCard> player2 = new ArrayList<>();
         ArrayList<MahjongCard> player3 = new ArrayList<>();
 
-
-
         //发牌
         for (int i=0;i<52;i++) {
             MahjongCard card = MahjongCardList.get(i);
@@ -176,14 +174,17 @@ public class GameJFrame extends JFrame implements ActionListener {
             } else if (i % 4 == 1) {
                 player1.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(700, 60 + i * 5));
+                card.turnFront();
                 numb++;
             } else if (i % 4 == 2) {
                 player2.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(270 + (75 * i), 10));
+                card.turnFront();
                 numb++;
             } else if (i % 4 == 3){
                 player3.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(50, 60 + i * 5));
+                card.turnFront();
                 numb++;
             }
 
@@ -248,7 +249,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Other[0]) { //点击碰,进行碰的操作
             //通过弃牌堆找到要碰的牌
-            MahjongCard pengCard = currentList.getLast();
+            MahjongCard pengCard = currentList.get(currentList.size()-1);
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
             if(Other_Algorithm.CheckPeng(player,pengCard)){
@@ -298,7 +299,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         } else if (e.getSource() == Other[2]) { //点击杠，进行杠的操作
             //通过弃牌堆找到要杠的牌
-            MahjongCard gangCard = currentList.getLast();
+            MahjongCard gangCard = currentList.get(currentList.size()-1);
 
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
@@ -356,7 +357,7 @@ public class GameJFrame extends JFrame implements ActionListener {
             ArrayList<MahjongCard> player = playerList.get(0);
 
             //获取到胡到的那张牌
-            MahjongCard huCard= currentList.getLast();
+            MahjongCard huCard= currentList.get(currentList.size()-1);
 
             player.add(huCard);
 
@@ -405,7 +406,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         JButton outCardBut = new JButton("出牌");
         outCardBut.setBounds(500, 550, 60, 20);
         outCardBut.addActionListener(this);
-        outCardBut.setVisible(true);
+        outCardBut.setVisible(false);
         chulord[0] = outCardBut;
         container.add(outCardBut);
 

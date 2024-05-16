@@ -142,7 +142,7 @@ public class MahjongCard extends JLabel implements MouseListener {
      * 获取
      * @return canClick
      */
-    public boolean isCanClick() {
+    public boolean isClickable() {
         return Clickable;
     }
 
