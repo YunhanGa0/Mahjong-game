@@ -430,7 +430,77 @@ public class PlayerOperation extends Thread {
     }
 
     //机器人开吃
-    public void EatCards(int playerIndex){}
+    public void EatCards(int playerIndex){
+        //通过弃牌堆找到要碰的牌
+        MahjongCard chiCard = gameJFrame.currentList.get(gameJFrame.currentList.size()-1);
+        int color = getColor(chiCard);
+        int size = getSize(chiCard);
+        //获取中自己手上所有的牌
+        ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
+        if(Other_Algorithm.CheckChi(player,chiCard)){
+            //先将牌加入到自己的牌中
+            player.add(chiCard);
+            //计数
+            int j=0;
+            boolean smaller = false;
+            boolean bigger = false;
+            for (MahjongCard card : player) {
+                if (getColor(card) == color){
+                    if (getSize(card) == getSize(chiCard)-1){
+                        smaller = true;
+                    } else if (getSize(card) == getSize(chiCard)+1) {
+                        bigger = true;
+                    }
+                }
+            }
+            //遍历玩家手牌找到此牌并放到指定位置
+            for (MahjongCard card : player) {
+                if (getColor(card) == getColor(chiCard) && !smaller){ // 牌堆里没有比chiCard小一张的→找cc+1和cc+2移动
+                    if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
+                        Point point = new Point();
+                        if(playerIndex==1){
+                            point.x = 850;
+                            point.y = 500 - 13 * 20 / 2;
+                        }
+                        if(playerIndex==2){
+                            point.x = 720;
+                            point.y = 50;
+                        }
+                        if(playerIndex==3){
+                            point.x = 80;
+                            point.y = 200 - 13 * 20 / 2;
+                        }
+                        Other_Algorithm.move(card, card.getLocation(), point);
+                        //碰过的牌不能动了
+                        card.setCanClick(false);
+                        j++;
+                    }
+                } else if (getColor(card) == getColor(chiCard) && !bigger) { // 牌堆里没有比chiCard大一张的→找cc-1和cc-2移动
+                    if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
+                        Point point = new Point();
+                        if(playerIndex==1){
+                            point.x = 850;
+                            point.y = 500 - 13 * 20 / 2;
+                        }
+                        if(playerIndex==2){
+                            point.x = 720;
+                            point.y = 50;
+                        }
+                        if(playerIndex==3){
+                            point.x = 80;
+                            point.y = 200 - 13 * 20 / 2;
+                        }
+                        Other_Algorithm.move(card, card.getLocation(), point);
+                        //碰过的牌不能动了
+                        card.setCanClick(false);
+                        j++;
+                    }
+                }
+            }
+            //碰后出牌
+            ShowCard(playerIndex);
+        }
+    }
 
     //机器人开胡
     public void HuCards(int playerIndex, MahjongCard HuCard){
@@ -505,6 +575,13 @@ public class PlayerOperation extends Thread {
         actionTaken=action;
     }
 
+    public static int getColor(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(0, 1));
+    }
+
+    public static int getSize(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(2));
+    }
 }
 
 
