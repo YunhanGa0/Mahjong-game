@@ -25,6 +25,24 @@ public class Hu_Algorithm {
          * @return true可以胡  false
          */
 
+        public static boolean CheckHu(ArrayList<MahjongCard> cards,MahjongCard ComingCard){
+            int[] hc=changeFormat(cards);
+            int color=Integer.parseInt(ComingCard.getName().substring(0, 1));
+            if(color==1){
+                int value=Integer.parseInt(ComingCard.getName().substring(2));
+                hc[value]+=1;
+            }else if (color==2){
+                int value=Integer.parseInt(ComingCard.getName().substring(2));
+                hc[value+8]+=1;
+            }else if (color==3){
+                int value=Integer.parseInt(ComingCard.getName().substring(2));
+                hc[value+17]+=1;
+            }else {
+                hc[color+23]+=1;
+            }
+            return checkHandCardsCanWin(hc);
+        }
+
         public static boolean checkHu(ArrayList<MahjongCard> cards){
             int[] hc=changeFormat(cards);
             return checkHandCardsCanWin(hc);

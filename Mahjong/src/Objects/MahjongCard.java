@@ -23,6 +23,7 @@ public class MahjongCard extends JLabel implements MouseListener {
     //当前是否被进行碰操作
     private boolean ifPeng = false;
 
+
     public MahjongCard(GameJFrame m, String name, boolean up){
         this.name=name;
         this.up=up;
@@ -188,6 +189,10 @@ public class MahjongCard extends JLabel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public boolean getifPeng(){
+        return ifPeng;
     }
 
     public void setIfPeng(boolean ifPeng) {

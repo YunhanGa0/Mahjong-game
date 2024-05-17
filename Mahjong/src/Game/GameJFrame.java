@@ -293,6 +293,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     //下一个玩家可玩
                     this.nextPlayer = true;
                 }
+                PlayerOperation.setaction(true);
             }
         } else if (e.getSource() == Other[1]) { //点击吃，进行吃的操作
 
@@ -349,6 +350,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     //下一个玩家可玩
                     this.nextPlayer = true;
                 }
+                PlayerOperation.setaction(true);
             }
 
         } else if (e.getSource() == hulord[0]) { //点击胡，进行胡的操作

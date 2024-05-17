@@ -15,24 +15,24 @@ public class Other_Algorithm {
     static GameJFrame gameJFrame;
 
     public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
-        ArrayList<MahjongCard> repeatCards = new ArrayList<>();
+        ArrayList<String> repeatCards = new ArrayList<>();
 
-        // 计数每种牌出现的次数
-        HashMap<MahjongCard, Integer> cardCounts = new HashMap<>();
+        // 计数每种牌出现的次数(用名字)
+        HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            cardCounts.put(card, cardCounts.getOrDefault(card, 0) + 1);
+            cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
         }
 
         // 找出出现至少两次的牌
-        for (MahjongCard card : cardCounts.keySet()) {
-            if (cardCounts.get(card) >= 2) {
-                repeatCards.add(card);
+        for (String name : cardCounts.keySet()) {
+            if (cardCounts.get(name) >= 2) {
+                repeatCards.add(name);
             }
         }
 
         // 检查comingCard是否与repeatCards中的任何一个相同
-        for (MahjongCard card : repeatCards) {
-            if (card.equals(comingCard)) {
+        for (String name : repeatCards) {
+            if (name.equals(comingCard.getName())) {
                 return true;
             }
         }
@@ -41,24 +41,24 @@ public class Other_Algorithm {
     }
 
     public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
-        ArrayList<MahjongCard> repeatCards = new ArrayList<>();
+        ArrayList<String> repeatCards = new ArrayList<>();
 
         // 计数每种牌出现的次数
-        HashMap<MahjongCard, Integer> cardCounts = new HashMap<>();
+        HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            cardCounts.put(card, cardCounts.getOrDefault(card, 0) + 1);
+            cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
         }
 
-        // 找出出现至少两次的牌
-        for (MahjongCard card : cardCounts.keySet()) {
-            if (cardCounts.get(card) == 3) {
-                repeatCards.add(card);
+        // 找出出现三次的牌
+        for (String name : cardCounts.keySet()) {
+            if (cardCounts.get(name) >= 3) {
+                repeatCards.add(name);
             }
         }
 
         // 检查comingCard是否与repeatCards中的任何一个相同
-        for (MahjongCard card : repeatCards) {
-            if (card.equals(comingCard)) {
+        for (String name : repeatCards) {
+            if (name.equals(comingCard.getName())) {
                 return true;
             }
         }
@@ -67,6 +67,7 @@ public class Other_Algorithm {
     }
 
     public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){
+
         ArrayList<MahjongCard> wan = insertIn(cards,1);
         ArrayList<MahjongCard> tiao = insertIn(cards,2);
         ArrayList<MahjongCard> tong = insertIn(cards,3);
@@ -81,6 +82,7 @@ public class Other_Algorithm {
             default :
                 return false;
         }
+
     }
 
     public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard){
@@ -121,35 +123,6 @@ public class Other_Algorithm {
         }
         // 返回新的ArrayList
         return filteredList;
-    }
-
-    //循环检查另外三个玩家有没有吃碰杠
-    public static boolean CheckBreak(MahjongCard comingCard,int playerIndex){
-        int i=(playerIndex+1)%4;
-        while(i!=playerIndex){
-            ArrayList<MahjongCard> temp=gameJFrame.playerList.get(i);
-            if(CheckPeng(temp,comingCard)||CheckChi(temp,comingCard)||CheckGang(temp,comingCard)){
-                return true;
-            }else{
-                i=(i+1)%4;
-            }
-        }
-        return false;
-    }
-
-    //检测哪个玩家进行了吃，碰，杠操作，返回那个玩家的索引
-    public static int handlePlayerChoices(int playerIndex) {
-        int i=(playerIndex+1)%4;
-        MahjongCard comingCard=gameJFrame.currentList.get(gameJFrame.currentList.size()-1);
-        while(i!=playerIndex){
-            ArrayList<MahjongCard> temp=gameJFrame.playerList.get(i);
-            if(CheckPeng(temp,comingCard)||CheckChi(temp,comingCard)||CheckGang(temp,comingCard)){
-                break;
-            }else{
-                i=(i+1)%4;
-            }
-        }
-        return i;
     }
 
     //移动牌（有移动的动画效果）
@@ -198,13 +171,14 @@ public class Other_Algorithm {
         if (flag == 3) {
             p.x = 80;
             p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
-
         }
         int len = list.size();
         for (int i = 0; i < len; i++) {
-            MahjongCard poker = list.get(i);
-            Other_Algorithm.move(poker, poker.getLocation(), p);
-            m.container.setComponentZOrder(poker, 0);
+            MahjongCard card = list.get(i);
+            if(card.getifPeng()==false){
+                Other_Algorithm.move(card, card.getLocation(), p);
+                m.container.setComponentZOrder(card, 0);
+            }
             if (flag == 0 || flag == 2)
                 p.x += 35;
             else

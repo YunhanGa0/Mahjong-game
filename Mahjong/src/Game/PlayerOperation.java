@@ -16,6 +16,9 @@ public class PlayerOperation extends Thread {
     //是否能走
     boolean isRun = true;
 
+    // 检查其他玩家的操作（碰、杠、吃）
+    static boolean actionTaken = false;
+
     //倒计时
     int i;
 
@@ -158,83 +161,84 @@ public class PlayerOperation extends Thread {
             if(Hu_Algorithm.checkHu(gameJFrame.playerList.get(0))){
                 //进行胡牌操作
                 gameJFrame.hulord[0].setVisible(true);
-                gameJFrame.hulord[0].setEnabled(true);
                 timeWait(10, 0);  // 玩家有10秒时间进行
                 gameJFrame.hulord[0].setVisible(false);
-                gameJFrame.hulord[0].setEnabled(false);
                 //更改输赢状态（传递boolean值判断win（））
             } else if(Other_Algorithm.CheckGang(gameJFrame.playerList.get(0),gameJFrame.playerList.get(0).get(gameJFrame.playerList.get(0).size()-1))){
                 //进行暗杠牌操作
                 gameJFrame.Other[2].setVisible(true);
-                gameJFrame.Other[2].setEnabled(true);
                 timeWait(10, 0);  // 玩家有10秒时间进行操作
                 gameJFrame.Other[2].setVisible(false);
-                gameJFrame.Other[2].setEnabled(false);
+                if(actionTaken==true) {
+                    gameJFrame.chulord[0].setEnabled(true);
+                    timeWait(10, 0);  // 玩家有10秒时间进行操作
+                    gameJFrame.chulord[0].setEnabled(false);
+                }
+                actionTaken=false;
             }else {
-                //如果没有操作，那就进行出牌操作
+                //如果没有操作，那就只进行出牌操作
                 gameJFrame.chulord[0].setVisible(true);
-                gameJFrame.chulord[0].setEnabled(true);
                 timeWait(30, 0);  // 玩家有30秒时间进行操作
                 gameJFrame.chulord[0].setVisible(false);//出牌按钮不可见
-                gameJFrame.chulord[0].setEnabled(false);//结束后出牌按钮不可按
             }
         } else {
             // 电脑玩家的操作
             computerPlayerAction(playerIndex);
         }
 
-        // 检查其他玩家的操作（碰、杠、吃）
-        boolean actionTaken = false;
-
         //检测是否有玩家可以进行操作
         // i出牌，放炮，其他人胡牌
         for (int j = (gameJFrame.turn + 1) % 4; j != gameJFrame.turn; j = (j + 1) % 4) {
             MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
             System.out.println(lastCard.getName());
+
             if (Other_Algorithm.CheckGang(gameJFrame.playerList.get(j), lastCard)) {
-                System.out.println(Other_Algorithm.CheckGang(gameJFrame.playerList.get(j), lastCard));
-                System.out.println(j);
                 if (j == 0) { // 玩家操作
                     gameJFrame.Other[2].setVisible(true);
-                    gameJFrame.Other[2].setEnabled(true);
-                    gameJFrame.chulord[0].setEnabled(true);
                     timeWait(10, 0);  // 玩家有10秒时间进行操作
                     gameJFrame.Other[2].setVisible(false);
-                    gameJFrame.Other[2].setEnabled(false);
-                    gameJFrame.chulord[0].setEnabled(false);
+                    if(actionTaken==true) {
+                        gameJFrame.chulord[0].setEnabled(true);
+                        timeWait(10, 0);  // 玩家有10秒时间进行操作
+                        gameJFrame.chulord[0].setEnabled(false);
+                    }
+                    actionTaken=false;
                 } else { // 电脑操作
                     GangCards(j, lastCard);
+                    actionTaken=true;
                 }
-                actionTaken = true;
                 gameJFrame.turn = (j + 1) % 4;
                 break;
             }
 
             if (Other_Algorithm.CheckPeng(gameJFrame.playerList.get(j), lastCard)) {
+                System.out.println(Other_Algorithm.CheckPeng(gameJFrame.playerList.get(j), lastCard));
+                System.out.println(j);
                 if (j == 0) { // 玩家操作
                     gameJFrame.Other[0].setVisible(true);
-                    gameJFrame.Other[0].setEnabled(true);
-                    gameJFrame.chulord[0].setEnabled(true);
                     timeWaitOther(5, 0);  // 玩家有5秒时间选择碰还是不碰
                     gameJFrame.Other[0].setVisible(false);
-                    gameJFrame.Other[0].setEnabled(false);
-                    gameJFrame.chulord[0].setEnabled(false);
+                    if(actionTaken==true) {
+                        gameJFrame.chulord[0].setEnabled(true);
+                        timeWait(10, 0);  // 玩家有10秒时间进行操作
+                        gameJFrame.chulord[0].setEnabled(false);
+                    }
+                    actionTaken=false;
                 } else { // 电脑操作
                     PengCards(j);
+                    actionTaken=true;
                 }
-                actionTaken = true;
                 gameJFrame.turn = (j + 1) % 4;
                 break;
             }
 
+            /*
             if (Other_Algorithm.CheckChi(gameJFrame.playerList.get(j), lastCard)) {
                 if (j == 0) { // 玩家操作
                     gameJFrame.Other[1].setVisible(true);
-                    gameJFrame.Other[1].setEnabled(true);
                     gameJFrame.chulord[0].setEnabled(true);
                     timeWaitOther(5, 0);  // 玩家有5秒时间选择吃还是不吃
                     gameJFrame.Other[1].setVisible(false);
-                    gameJFrame.Other[1].setEnabled(false);
                     gameJFrame.chulord[0].setEnabled(false);
                 } else { // 电脑操作
                     EatCards(j);
@@ -244,11 +248,14 @@ public class PlayerOperation extends Thread {
                 break;
             }
 
+             */
+
         }
         sleep(1);
         // 如果没有其他玩家进行碰、杠、吃等操作，则轮到下一个玩家出牌
         if (!actionTaken) {
             gameJFrame.turn = (gameJFrame.turn + 1) % 4;
+            actionTaken=false;
         }
     }
 
@@ -351,11 +358,22 @@ public class PlayerOperation extends Thread {
             for (MahjongCard card : player) {
                 if (card == pengCard) {
                     Point point = new Point();
-                    point.x = 200 + j * 35;
-                    point.y = 600;
+                    if(playerIndex==1){
+                        point.x = 850;
+                        point.y = 500 - 13 * 20 / 2;
+                    }
+                    if(playerIndex==2){
+                        point.x = 720;
+                        point.y = 50;
+                    }
+                    if(playerIndex==3){
+                        point.x = 80;
+                        point.y = 200 - 13 * 20 / 2;
+                    }
                     Other_Algorithm.move(card, card.getLocation(), point);
                     //碰过的牌不能动了
                     card.setCanClick(false);
+                    card.setIfPeng(true);
                     j++;
                 }
             }
@@ -378,8 +396,18 @@ public class PlayerOperation extends Thread {
             for (MahjongCard card : player) {
                 if (card == GangCard) {
                     Point point = new Point();
-                    point.x = 200 + j * 35;
-                    point.y = 600;
+                    if(playerIndex==1){
+                        point.x = 850;
+                        point.y = 500 - 13 * 20 / 2;
+                    }
+                    if(playerIndex==2){
+                        point.x = 720;
+                        point.y = 50;
+                    }
+                    if(playerIndex==3){
+                        point.x = 80;
+                        point.y = 200 - 13 * 20 / 2;
+                    }
                     Other_Algorithm.move(card, card.getLocation(), point);
                     //碰过的牌不能动了
                     card.setCanClick(false);
@@ -444,6 +472,10 @@ public class PlayerOperation extends Thread {
             }
         }
         return false;
+    }
+
+    public static void setaction(boolean action){
+        actionTaken=action;
     }
 
 }
