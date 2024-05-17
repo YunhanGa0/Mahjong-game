@@ -12,7 +12,6 @@ import static Game.GameJFrame.*;
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
 
-    static GameJFrame gameJFrame;
 
     public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
         ArrayList<String> repeatCards = new ArrayList<>();
@@ -186,22 +185,7 @@ public class Other_Algorithm {
         }
     }
 
-    //给玩家摸牌，同时move到指定位置
-    public static void addcards(int playerIndex){
 
-        MahjongCard newCard=MahjongCardList.get(numb);
-        if(playerIndex==0){
-            move(newCard, new Point(455, 315),new Point(800,600));
-        }
-        //将牌放入玩家牌盒
-        playerList.get(playerIndex).add(newCard);
-        newCard.turnFront();
-        if (playerIndex==0){
-            newCard.setCanClick(true);
-        }
-        numb++;
-
-    }
 
 
     //利用牌的价值，将集合中的牌进行排序
