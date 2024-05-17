@@ -59,10 +59,10 @@ public class MenuJFrame extends JFrame implements ActionListener {
 
         switch (command) {
             case "start":
-                new GameJFrame().setVisible(true); // 显示游戏窗口
+                new DifficultyJFrame().setVisible(true); // 显示游戏窗口
                 break;
             case "options":
-                new DifficultyJFrame().setVisible(true); // 显示难度选择窗口
+                new ShinJFrame().setVisible(true); // 显示难度选择窗口
                 break;
             case "help":
                 new AboutJFrame().setVisible(true); // 显示关于游戏窗口
