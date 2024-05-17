@@ -150,26 +150,26 @@ public class Other_Algorithm {
 
     //重新摆放牌(需要更改位置参数)
     public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
-        Point p = new Point();
+        Point p = new Point();  //改下locatipon
         //me
         if (flag == 0) {
-            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
-            p.y = 600;
+            p.x = (1300 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 820;
         }
         //right
         if (flag == 1) {
-            p.x = 850;
-            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
+            p.x = 1120;
+            p.y = (950 / 2) - (list.size() + 1) * 20 / 2;
         }
         //cross
         if (flag == 2) {
-            p.x = (960 / 2) - (list.size() + 1) * 30 / 2;
-            p.y = 50;
+            p.x = (1300 / 2) - (list.size() + 1) * 30 / 2;
+            p.y = 200;
         }
         //left
         if (flag == 3) {
-            p.x = 80;
-            p.y = (680 / 2) - (list.size() + 1) * 20 / 2;
+            p.x = 170;
+            p.y = (950 / 2) - (list.size() + 1) * 20 / 2;
         }
         int len = list.size();
         for (int i = 0; i < len; i++) {

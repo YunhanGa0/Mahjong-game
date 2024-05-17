@@ -2,76 +2,93 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.prefs.Preferences;
 
 public class ShinJFrame extends JFrame {
 
-    private boolean isClassic = false;
+    private static final Preferences prefs = Preferences.userRoot().node(ShinJFrame.class.getName());
+    private static final String PREF_KEY = "isClassic";
+    private JButton classicTileButton;
+    private JButton animatedTileButton;
 
     public ShinJFrame() {
-        // 设置窗口标题
         setTitle("Choose the style of tile");
-        // 设置窗口大小
-        setSize(660, 660); // 根据图片尺寸调整窗口大小
-        // 设置窗口关闭操作
+        setSize(842, 842);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // 设置窗口位置（相对于null，即屏幕中心）
         setLocationRelativeTo(null);
 
-        // 加载背景图片
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Pictures\\Saved Pictures\\微信图片_20240516192551.png"); // 确保路径正确
+        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Downloads\\Shins.png");
         JLabel backgroundLabel = new JLabel(backgroundImage);
-        backgroundLabel.setLayout(null); // 使用绝对布局
+        backgroundLabel.setLayout(null);
 
-        // 创建按钮
-        JButton classicTileButton = new JButton("Classic Tile");
-        JButton animatedTileButton = new JButton("Animated Tile");
+        // 创建自定义的透明按钮
+        classicTileButton = new CustomButton();
+        animatedTileButton = new CustomButton();
 
-        // 设置按钮位置和大小
-        classicTileButton.setBounds(193, 250, 105, 105);
-        animatedTileButton.setBounds(355, 250, 108, 105);
+        classicTileButton.setBounds(249, 325, 130, 130);
+        animatedTileButton.setBounds(468, 325, 130, 130);
 
-        // 设置按钮为透明
-        classicTileButton.setOpaque(false);
-        classicTileButton.setContentAreaFilled(false);
-        classicTileButton.setBorderPainted(false);
+        // 设置按钮初始状态
+        boolean isClassic = prefs.getBoolean(PREF_KEY, false);
+        if (isClassic) {
+            classicTileButton.setSelected(true);
+            animatedTileButton.setSelected(false);
+        } else {
+            animatedTileButton.setSelected(true);
+            classicTileButton.setSelected(false);
+        }
 
-        animatedTileButton.setOpaque(false);
-        animatedTileButton.setContentAreaFilled(false);
-        animatedTileButton.setBorderPainted(false);
-
-        // 添加事件监听器
         classicTileButton.addActionListener(e -> {
-            isClassic = true;
-            classicTileButton.setBackground(Color.white);
-            classicTileButton.setOpaque(true);
-            classicTileButton.setContentAreaFilled(true);
-            animatedTileButton.setBackground(null); // 重置另一个按钮的背景色
-            animatedTileButton.setOpaque(false);
-            animatedTileButton.setContentAreaFilled(false);
+            prefs.putBoolean(PREF_KEY, true);
+            classicTileButton.setSelected(true);
+            animatedTileButton.setSelected(false);
+            repaint();
         });
 
         animatedTileButton.addActionListener(e -> {
-            isClassic = false;
-            animatedTileButton.setBackground(Color.GRAY);
-            animatedTileButton.setOpaque(true);
-            animatedTileButton.setContentAreaFilled(true);
-            classicTileButton.setBackground(null); // 重置另一个按钮的背景色
-            classicTileButton.setOpaque(false);
-            classicTileButton.setContentAreaFilled(false);
+            prefs.putBoolean(PREF_KEY, false);
+            animatedTileButton.setSelected(true);
+            classicTileButton.setSelected(false);
+            repaint();
         });
 
-        // 将按钮添加到背景标签
         backgroundLabel.add(classicTileButton);
         backgroundLabel.add(animatedTileButton);
 
-        // 添加背景标签到窗口
         setContentPane(backgroundLabel);
-
-        // 确保所有内容都可见
         setVisible(true);
     }
 
-    public boolean isClassic() {
-        return isClassic;
+    public boolean getIsClassic() {
+        return prefs.getBoolean(PREF_KEY, false);
+    }
+
+    // 自定义按钮类，绘制透明背景和蓝圈
+    private class CustomButton extends JButton {
+        private boolean isSelected = false;
+
+        public CustomButton() {
+            super();
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+        }
+
+        public void setSelected(boolean selected) {
+            isSelected = selected;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (isSelected) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setColor(Color.BLUE);
+                g2.setStroke(new BasicStroke(3));
+                int diameter = getWidth() / 4;
+                int x = (getWidth() - diameter) / 2;
+                int y = (getHeight() - diameter) / 2;
+                g2.drawOval(x, y, diameter, diameter);
+            }
+        }
     }
 }

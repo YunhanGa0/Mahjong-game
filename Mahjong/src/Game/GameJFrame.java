@@ -98,7 +98,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         initGame();
     }
 
-    private void rollDice() {
+    private void rollDice() { //筛子四个图表来显示点数
 
         Random random = new Random();
 
@@ -130,7 +130,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     //初始化牌
     //准备牌，洗牌，发牌
-    public void initCard() {
+    public void initCard() { //location的位置，牌堆仍中间
 
         for (int i = 0; i <= 9; i++) {
             if (i <= 2) {
@@ -219,7 +219,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //庄家旗帜位置
-    public void setlord(int i) {
+    public void setlord(int i) { //定个位置
         Point point = new Point();
         if (i == 0) {
             point.x = 80;
@@ -403,7 +403,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //添加组件(前端)
-    public void initView() {
+    public void initView() {  //出牌摁扭，调位置
 
         //创建出牌的按钮
         JButton outCardBut = new JButton("出牌");
@@ -473,6 +473,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //设置界面
+    //设置界面
     public void initJFrame() {
         //设置标题
         this.setTitle("Mahjong Game");
@@ -488,9 +489,16 @@ public class GameJFrame extends JFrame implements ActionListener {
         container = this.getContentPane();
         //取消内部默认的居中放置
         container.setLayout(null);
+        //设置背景图片
+        JLabel background = new JLabel(new ImageIcon("C:\\Users\\qwerty\\Pictures\\Saved Pictures\\微信图片_20240517182844.jpg"
+        ));
+        background.setSize(this.getSize());  // 设置背景图片大小与 JFrame 大小匹配
+        container.add(background);  // 添加背景标签
+        container.setComponentZOrder(background, container.getComponentCount() - 1); // 将背景标签置于底层
         //设置背景颜色
         container.setBackground(Color.BLACK);
     }
+
 
     public ArrayList<ArrayList<MahjongCard>> getPlayerList(){
         return playerList;
