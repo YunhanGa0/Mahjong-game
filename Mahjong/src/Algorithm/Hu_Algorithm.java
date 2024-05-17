@@ -25,6 +25,13 @@ public class Hu_Algorithm {
          * @return true可以胡  false
          */
 
+        /**
+         *对于带赖子的胡牌算法
+         * 胡牌需要14张
+         * 首先把赖子牌摘出来
+         * 然后选将
+         *
+        */
         public static boolean CheckHu(ArrayList<MahjongCard> cards,MahjongCard ComingCard){
             int[] hc=changeFormat(cards);
             int color=Integer.parseInt(ComingCard.getName().substring(0, 1));
@@ -362,4 +369,5 @@ public class Hu_Algorithm {
             }
             return true;
         }
+
 }

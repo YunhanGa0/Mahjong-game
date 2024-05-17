@@ -54,15 +54,15 @@ public class GameJFrame extends JFrame implements ActionListener {
     //索引2：对面的电脑玩家
     //索引3：左边的电脑玩家
     //3：对面的
-    public static ArrayList<MahjongCard> currentList = new ArrayList<>();
+    public ArrayList<MahjongCard> currentList = new ArrayList<>();
 
     //集合嵌套集合
     //大集合中有三个小集合
     //小集合中装着每一个玩家的牌
-    public static ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
+    public ArrayList<ArrayList<MahjongCard>> playerList = new ArrayList<>();
 
     //牌盒，装所有的牌
-    public static ArrayList<MahjongCard> MahjongCardList= new ArrayList<>();
+    public ArrayList<MahjongCard> MahjongCardList= new ArrayList<>();
 
     //记录发牌数
     public static int numb;
@@ -295,6 +295,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                 }
                 PlayerOperation.setaction(true);
             }
+
         } else if (e.getSource() == Other[1]) { //点击吃，进行吃的操作
 
 
@@ -476,7 +477,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         //设置标题
         this.setTitle("Mahjong Game");
         //设置大小
-        this.setSize(960, 720);
+        this.setSize(1344, 1008);
         //设置关闭模式
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //设置窗口无法进行调节
@@ -493,6 +494,18 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     public ArrayList<ArrayList<MahjongCard>> getPlayerList(){
         return playerList;
+    }
+
+    public int getNumb(){
+        return numb;
+    }
+
+    public ArrayList<MahjongCard> getCurrentList(){
+        return currentList;
+    }
+
+    public ArrayList<MahjongCard> getMahjongCardList(){
+        return MahjongCardList;
     }
 
 }
