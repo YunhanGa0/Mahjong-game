@@ -140,7 +140,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                         MahjongCardList.add(card);
                         container.add(card);
                         //card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
-                        card.setLocation(455, 315);
+                        card.setLocation(650, 450);
                     }
                 }
             } else {
@@ -149,7 +149,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     MahjongCardList.add(card);
                     container.add(card);
                     //card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
-                    card.setLocation(455, 315);
+                    card.setLocation(650, 450);//455,315
                 }
             }
         }
@@ -261,8 +261,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card == pengCard) {
                         Point point = new Point();
-                        point.x = 200 + j * 35;
-                        point.y = 600;
+                        point.x = 300 + j * 35;    //200
+                        point.y = 800;             //600
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
@@ -280,8 +280,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                         //计算坐标并移动牌
                         //移动的目的是要出的牌移动到上方
                         Point point = new Point();
-                        point.x = (960 / 2) - (num1 + 1) * 30 / 2;
-                        point.y = 500;
+                        point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
+                        point.y = 680;
                         num1++;
                         Other_Algorithm.move(card, card.getLocation(), point);
                     }
@@ -317,8 +317,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card == gangCard) {
                         Point point = new Point();
-                        point.x = 200 + j * 35;
-                        point.y = 550;
+                        point.x = 300 + j * 35;    //200
+                        point.y = 700;             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
@@ -337,8 +337,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                         //计算坐标并移动牌
                         //移动的目的是要出的牌移动到上方
                         Point point = new Point();
-                        point.x = (960 / 2) - (num1 + 1) * 30 / 2;
-                        point.y = 500;
+                        point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
+                        point.y = 680;
                         num1++;
                         Other_Algorithm.move(card, card.getLocation(), point);
                     }
@@ -384,8 +384,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                     //计算坐标并移动牌
                     //移动的目的是要出的牌移动到上方
                     Point point = new Point();
-                    point.x = (960 / 2) - (num1 + 1) * 30 / 2;
-                    point.y = 500;
+                    point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
+                    point.y = 680;
                     num1++;
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
@@ -407,7 +407,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建出牌的按钮
         JButton outCardBut = new JButton("出牌");
-        outCardBut.setBounds(500, 550, 60, 20);
+        outCardBut.setBounds(640, 750, 60, 20); //500 550
         outCardBut.addActionListener(this);
         outCardBut.setVisible(false);
         chulord[0] = outCardBut;
@@ -415,7 +415,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建胡的按钮
         JButton huCardBut = new JButton("胡");
-        huCardBut.setBounds(320, 500, 60, 20);
+        huCardBut.setBounds(780, 750, 60, 20);  //320 500
         huCardBut.addActionListener(this);
         huCardBut.setVisible(false);
         hulord[0] = huCardBut;
@@ -423,7 +423,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建碰的按钮
         JButton pengCardBut = new JButton("碰");
-        pengCardBut.setBounds(430, 550, 60, 20);
+        pengCardBut.setBounds(710, 750, 60, 20);  //430 550
         pengCardBut.addActionListener(this);
         pengCardBut.setVisible(false);
         Other[0] = pengCardBut;
@@ -432,7 +432,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建吃的按钮
         JButton chiCardBut = new JButton("吃");
-        chiCardBut.setBounds(320, 400, 60, 20);
+        chiCardBut.setBounds(570, 750, 60, 20);  //320 400
         chiCardBut.addActionListener(this);
         chiCardBut.setVisible(false);
         Other[1] = chiCardBut;
@@ -440,7 +440,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建杠的按钮
         JButton gangCardBut = new JButton("杠");
-        gangCardBut.setBounds(320, 400, 60, 20);
+        gangCardBut.setBounds(500, 750, 60, 20); //320 400
         gangCardBut.addActionListener(this);
         gangCardBut.setVisible(false);
         Other[2] = gangCardBut;
@@ -458,10 +458,10 @@ public class GameJFrame extends JFrame implements ActionListener {
             time[i].setVisible(false);
             container.add(time[i]);
         }
-        time[0].setBounds(480, 570, 90, 20);
-        time[1].setBounds(800, 350, 90, 20);
-        time[2].setBounds(480, 200, 90, 20);
-        time[3].setBounds(160, 350, 90, 20);
+        time[0].setBounds(628, 780, 90, 20); //480 570
+        time[1].setBounds(948, 560, 90, 20); //800 350
+        time[2].setBounds(628, 300, 90, 20); //480 200
+        time[3].setBounds(278, 560, 90, 20); //160 350
 
 
         //创建庄家图标

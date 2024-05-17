@@ -300,7 +300,7 @@ public class PlayerOperation extends Thread {
     }
 
     //机器人出牌
-    public static void ShowCard(int playerIndex) {
+    public static void ShowCard(int playerIndex) {  //显示出去的牌的位置
         // 获取当前玩家手中的麻将牌列表
         ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
 
@@ -315,8 +315,8 @@ public class PlayerOperation extends Thread {
                     //计算坐标并移动牌
                     //移动的目的是要出的牌移动到上方
                     Point point = new Point();
-                    point.x = (1200 / 2) - 2 * 20 / 2;
-                    point.y = 450;
+                    point.x = (1320 / 2) - 2 * 20 / 2;  //1200
+                    point.y = 680;                      //450
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
             }
@@ -330,16 +330,16 @@ public class PlayerOperation extends Thread {
             //移动的目的是要出的牌移动到上方
             Point point = new Point();
             if(playerIndex==1){
-                point.x = 700;
-                point.y = (680 / 2) - 13 * 20 / 2;
+                point.x = 1040;
+                point.y = (1170 / 2) - 13 * 20 / 2;
             }
             if(playerIndex==2){
-                point.x = (960 / 2) - 13 * 30 / 2;
-                point.y = 100;
+                point.x = (1690 / 2) - 13 * 30 / 2;
+                point.y = 320;
             }
             if(playerIndex==3){
-                point.x = 160;
-                point.y = (680 / 2) - 13 * 20 / 2;
+                point.x = 260;
+                point.y = (1170 / 2) - 13 * 20 / 2;
             }
             Other_Algorithm.move(card, card.getLocation(), point);
 
@@ -353,7 +353,7 @@ public class PlayerOperation extends Thread {
     }
 
     //机器人的碰牌方法
-    public static void PengCards(int playerIndex){
+    public static void PengCards(int playerIndex){  //调位置
         //通过弃牌堆找到要碰的牌
         MahjongCard pengCard = gameJFrame.currentList.get(gameJFrame.currentList.size()-1);
         //获取中自己手上所有的牌
@@ -393,7 +393,7 @@ public class PlayerOperation extends Thread {
     }
 
     //机器人开杠
-    public void GangCards(int playerIndex, MahjongCard GangCard){
+    public void GangCards(int playerIndex, MahjongCard GangCard){  //调位置
 
         //获取中自己手上所有的牌
         ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);

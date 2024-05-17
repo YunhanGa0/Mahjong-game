@@ -82,7 +82,7 @@ public class ShinJFrame extends JFrame {
             super.paintComponent(g);
             if (isSelected) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setColor(Color.BLUE);
+                g2.setColor(Color.black);
                 g2.setStroke(new BasicStroke(3));
                 int diameter = getWidth() / 4;
                 int x = (getWidth() - diameter) / 2;
