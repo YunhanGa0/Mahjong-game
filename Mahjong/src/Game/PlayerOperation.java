@@ -527,7 +527,7 @@ public class PlayerOperation extends Thread {
 
         MahjongCard newCard=gameJFrame.getMahjongCardList().get(numb);
         if(playerIndex==0){
-            Other_Algorithm.move(newCard, new Point(455, 315),new Point(800,600));
+            Other_Algorithm.move(newCard, new Point(650, 450),new Point(950,820));
         }
         //将牌放入玩家牌盒
         gameJFrame.getPlayerList().get(playerIndex).add(newCard);

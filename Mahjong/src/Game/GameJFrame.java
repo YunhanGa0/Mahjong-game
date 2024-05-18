@@ -263,8 +263,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card.getName() == pengCard.getName()) {
                         Point point = new Point();
-                        point.x = 300 + j * 35;    //200
-                        point.y = 800;             //600
+                        point.x = 450 + j * 35;    //200
+                        point.y = 760;             //600
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
@@ -297,8 +297,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card.getName() == gangCard.getName()) {
                         Point point = new Point();
-                        point.x = 300 + j * 35;    //200
-                        point.y = 700;             //550
+                        point.x = 450 + j * 35;    //200
+                        point.y = 820;             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
