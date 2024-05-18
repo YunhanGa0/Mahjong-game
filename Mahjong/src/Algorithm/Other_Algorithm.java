@@ -49,7 +49,7 @@ public class Other_Algorithm {
 
         // 找出出现三次的牌
         for (String name : cardCounts.keySet()) {
-            if (cardCounts.get(name) >= 3) {
+            if (cardCounts.get(name) >= 4) {
                 repeatCards.add(name);
             }
         }
@@ -149,7 +149,8 @@ public class Other_Algorithm {
 
     //重新摆放牌(需要更改位置参数)
     public static void rePosition(GameJFrame m, ArrayList<MahjongCard> list, int flag) {
-        Point p = new Point();  //改下locatipon
+        Point p = new Point();
+        //启始位置
         //me
         if (flag == 0) {
             p.x = (1300 / 2) - (list.size() + 1) * 30 / 2;
@@ -170,22 +171,29 @@ public class Other_Algorithm {
             p.x = 170;
             p.y = (950 / 2) - (list.size() + 1) * 20 / 2;
         }
+
         int len = list.size();
+        /*
         for (int i = 0; i < len; i++) {
             MahjongCard card = list.get(i);
             if(card.getifPeng()==false||card.getifGang()==false||card.getifEat()==false){
+                len--;
+            }
+        }
+
+         */
+        for (int i = 0; i < len; i++) {
+            MahjongCard card = list.get(i);
+            if(card.getifPeng()==false&&card.getifGang()==false&&card.getifEat()==false){
                 Other_Algorithm.move(card, card.getLocation(), p);
                 m.container.setComponentZOrder(card, 0);
             }
-            if (flag == 0 || flag == 2)
+            if (flag == 0 || flag == 2&&(card.getifPeng()==false&&card.getifGang()==false&&card.getifEat()==false))
                 p.x += 35;
             else
                 p.y += 25;
         }
     }
-
-
-
 
     //利用牌的价值，将集合中的牌进行排序
     //o1是原来的，o2是新增的
@@ -193,6 +201,11 @@ public class Other_Algorithm {
         Collections.sort(list, new Comparator<MahjongCard>() {
             @Override
             public int compare(MahjongCard o1, MahjongCard o2) {
+
+                // 检查是否已经碰或杠
+                if ((o1.getifPeng()||o1.getifGang()) && (o2.getifPeng()||o2.getifGang())) return 0;  // 都碰或杠过，不调整顺序
+                if (o1.getifPeng()||o1.getifGang()) return 1;  // o1碰或杠过，应放后面
+                if (o2.getifPeng()||o2.getifGang()) return -1; // o2碰或杠过，应放后面
 
                 //获得最前面的数字，判断花色（1万2条3筒45678东西南北中910发白）
                 int a1 = Integer.parseInt(o1.getName().substring(0, 1));
@@ -202,31 +215,14 @@ public class Other_Algorithm {
                 int b1 = Integer.parseInt(o1.getName().substring(2));
                 int b2 = Integer.parseInt(o2.getName().substring(2));
 
-                //倒序排列
-                int flag = b1 - b2;
-
                 //如果牌的花色一样，则按照价值排序
                 if ((a1-a2) == 0) {
-                    return flag;
+                    return b1-b2;
                 } else {
                     return a1-a2;
                 }
             }
         });
-    }
-
-    //算分用的，注意翻倍情况
-    public static int getScore(ArrayList<MahjongCard> list) {
-        int count = 0;
-        for (MahjongCard card : list) {
-            if (card.getName().substring(0, 1).equals("5")) {
-                count += 5;
-            }
-            if (card.getName().substring(2).equals("2")) {
-                count += 2;
-            }
-        }
-        return count;
     }
 
     //将牌视为不可见状态

@@ -35,17 +35,17 @@ public class Hu_Algorithm {
         public static boolean CheckHu(ArrayList<MahjongCard> cards,MahjongCard ComingCard){
             int[] hc=changeFormat(cards);
             int color=Integer.parseInt(ComingCard.getName().substring(0, 1));
-            if(color==1){
+            if(color==0){
                 int value=Integer.parseInt(ComingCard.getName().substring(2));
-                hc[value]+=1;
-            }else if (color==2){
+                hc[value-1]+=1;
+            }else if (color==1){
                 int value=Integer.parseInt(ComingCard.getName().substring(2));
                 hc[value+8]+=1;
-            }else if (color==3){
+            }else if (color==2){
                 int value=Integer.parseInt(ComingCard.getName().substring(2));
                 hc[value+17]+=1;
             }else {
-                hc[color+23]+=1;
+                hc[color+24]+=1;
             }
             return checkHandCardsCanWin(hc);
         }

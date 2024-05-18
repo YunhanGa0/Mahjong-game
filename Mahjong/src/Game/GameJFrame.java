@@ -41,19 +41,16 @@ public class GameJFrame extends JFrame implements ActionListener {
     int turn;
 
     //记录出牌次数
-    int num1;
+    static int num1,num2,num3,num4;
+    //下一个玩家可以出牌的状态
+    boolean nextPlayer = false;
 
-    //游戏界面中庄家的图标
-    JLabel Dealer;
+    boolean conti=false;
 
-    //集合嵌套集合
-    //大集合中有三个小集合
-    //小集合中装着每一个玩家当前要出的牌
-    //索引0：中间的自己
-    //索引1：右边的电脑玩家
-    //索引2：对面的电脑玩家
-    //索引3：左边的电脑玩家
-    //3：对面的
+    //记录发牌数
+    public static int numb;
+
+    //装着每一个玩家当前要出的牌
     public ArrayList<MahjongCard> currentList = new ArrayList<>();
 
     //集合嵌套集合
@@ -64,16 +61,13 @@ public class GameJFrame extends JFrame implements ActionListener {
     //牌盒，装所有的牌
     public ArrayList<MahjongCard> MahjongCardList= new ArrayList<>();
 
-    //记录发牌数
-    public static int numb;
+    //游戏界面中庄家的图标
+    JLabel Dealer;
 
     //多线程操控游戏流程
     PlayerOperation po;
 
-    //下一个玩家可以出牌的状态
-    boolean nextPlayer = false;
 
-    boolean conti=false;
 
     public GameJFrame() {
         //设置图标
@@ -254,51 +248,45 @@ public class GameJFrame extends JFrame implements ActionListener {
             MahjongCard pengCard = currentList.get(currentList.size()-1);
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
-            if(Other_Algorithm.CheckPeng(player,pengCard)){
-                //先将牌加入到自己的牌中
-                player.add(pengCard);
-                //计数
-                int j=0;
-                //遍历玩家手牌找到此牌并放到指定位置
-                for (MahjongCard card : player) {
-                    if (card.getName() == pengCard.getName()) {
-                        Point point = new Point();
-                        point.x = 450 + j * 35;    //200
-                        point.y = 760;             //600
-                        Other_Algorithm.move(card, card.getLocation(), point);
-                        //碰过的牌不能动了
-                        card.setCanClick(false);
-                        card.setIfPeng(true);
-                        j++;
-                    }
+            //先将牌加入到自己的牌中
+            player.add(pengCard);
+            //计数
+            int j=0;
+            //遍历玩家手牌找到此牌并放到指定位置
+            for (MahjongCard card : player) {
+                if (card.getName().equals(pengCard.getName())) {
+                    Point point = new Point();
+                    point.x = 100 + j * 35;    //200
+                    point.y = 820;             //600
+                    Other_Algorithm.move(card, card.getLocation(), point);
+                    //碰过的牌不能动了
+                    card.setCanClick(false);
+                    //碰后牌不参与出牌操作
+                    card.setIfPeng(true);
+                    j++;
                 }
-                this.conti=true;
-                PlayerOperation.setaction(true);
             }
-
+            this.conti=true;
+            PlayerOperation.setaction(true);
         } else if (e.getSource() == Other[1]) { //点击吃，进行吃的操作
 
 
         } else if (e.getSource() == Other[2]) { //点击杠，进行杠的操作
             //通过弃牌堆找到要杠的牌
             MahjongCard gangCard = currentList.get(currentList.size()-1);
-
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
             if(Other_Algorithm.CheckGang(player,gangCard)) {
-
                 //先将牌加入到自己的牌中
                 player.add(gangCard);
-
                 //计数，用于前端
                 int j = 0;
-
                 //遍历玩家手牌找到此牌并放到指定位置
                 for (MahjongCard card : player) {
-                    if (card.getName() == gangCard.getName()) {
+                    if (card.getName().equals(gangCard.getName())) {
                         Point point = new Point();
-                        point.x = 450 + j * 35;    //200
-                        point.y = 820;             //550
+                        point.x = 100 + j * 35;    //200
+                        point.y = 700;             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
@@ -306,36 +294,9 @@ public class GameJFrame extends JFrame implements ActionListener {
                         j++;
                     }
                 }
-
-                //碰完后轮到玩家出牌
-                //遍历手上的牌，把要出的牌放到临时集合中
-                for (int i = 0; i < player.size(); i++) {
-                    MahjongCard card = player.get(i);
-                    if (card.isClicked()) {
-                        currentList.add(card);
-                        //在手上的牌中，去掉已经出掉的牌
-                        player.remove(card);
-                        //计算坐标并移动牌
-                        //移动的目的是要出的牌移动到上方
-                        Point point = new Point();
-                        point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
-                        point.y = 680;
-                        num1++;
-                        Other_Algorithm.move(card, card.getLocation(), point);
-                    }
-
-                    //重新摆放剩余的牌
-                    Other_Algorithm.order(player);
-                    Other_Algorithm.rePosition(this, player, 0);
-                    //隐藏文本提示
-                    time[0].setVisible(false);
-                    //下一个玩家可玩
-                    this.nextPlayer = true;
-                }
                 this.conti=true;
                 PlayerOperation.setaction(true);
             }
-
         } else if (e.getSource() == hulord[0]) { //点击胡，进行胡的操作
 
             //获取中自己手上所有的牌
@@ -355,7 +316,6 @@ public class GameJFrame extends JFrame implements ActionListener {
         }else if (e.getSource() == chulord[0]) { //点击出牌
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
-
             //遍历手上的牌，把要出的牌放到临时集合中
             for (int i = 0; i < player.size(); i++) {
                 MahjongCard card = player.get(i);
@@ -366,7 +326,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     //计算坐标并移动牌
                     //移动的目的是要出的牌移动到上方
                     Point point = new Point();
-                    point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
+                    point.x = 430 + num1 * 35;
                     point.y = 680;
                     num1++;
                     Other_Algorithm.move(card, card.getLocation(), point);
@@ -385,7 +345,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //添加组件(前端)
-    public void initView() {  //出牌摁扭，调位置
+    public void initView() {  //出牌按钮，调位置
 
         //创建出牌的按钮
         JButton outCardBut = new JButton("出牌");
@@ -397,7 +357,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建胡的按钮
         JButton huCardBut = new JButton("胡");
-        huCardBut.setBounds(710, 750, 60, 20);  //320 500
+        huCardBut.setBounds(780, 750, 60, 20);  //320 500
         huCardBut.addActionListener(this);
         huCardBut.setVisible(false);
         hulord[0] = huCardBut;
@@ -414,7 +374,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建吃的按钮
         JButton chiCardBut = new JButton("吃");
-        chiCardBut.setBounds(640, 750, 60, 20);  //320 400
+        chiCardBut.setBounds(570, 750, 60, 20);  //320 400
         chiCardBut.addActionListener(this);
         chiCardBut.setVisible(false);
         Other[1] = chiCardBut;
@@ -422,7 +382,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建杠的按钮
         JButton gangCardBut = new JButton("杠");
-        gangCardBut.setBounds(710, 750, 60, 20); //320 400
+        gangCardBut.setBounds(500, 750, 60, 20); //320 400
         gangCardBut.addActionListener(this);
         gangCardBut.setVisible(false);
         Other[2] = gangCardBut;
@@ -444,7 +404,6 @@ public class GameJFrame extends JFrame implements ActionListener {
         time[1].setBounds(948, 560, 90, 20); //800 350
         time[2].setBounds(628, 300, 90, 20); //480 200
         time[3].setBounds(278, 560, 90, 20); //160 350
-
 
         //创建庄家图标
         Dealer = new JLabel(new ImageIcon("doudizhu\\image\\dizhu.png"));
