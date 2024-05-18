@@ -73,6 +73,8 @@ public class GameJFrame extends JFrame implements ActionListener {
     //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
 
+    boolean conti=false;
+
     public GameJFrame() {
         //设置图标
         setIconImage(Toolkit.getDefaultToolkit().getImage(""));
@@ -259,40 +261,18 @@ public class GameJFrame extends JFrame implements ActionListener {
                 int j=0;
                 //遍历玩家手牌找到此牌并放到指定位置
                 for (MahjongCard card : player) {
-                    if (card == pengCard) {
+                    if (card.getName() == pengCard.getName()) {
                         Point point = new Point();
                         point.x = 300 + j * 35;    //200
                         point.y = 800;             //600
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
+                        card.setIfPeng(true);
                         j++;
                     }
                 }
-                //碰完后轮到玩家出牌
-                //遍历手上的牌，把要出的牌放到临时集合中
-                for (int i = 0; i < player.size(); i++) {
-                    MahjongCard card = player.get(i);
-                    if (card.isClicked()) {
-                        currentList.add(card);
-                        //在手上的牌中，去掉已经出掉的牌
-                        player.remove(card);
-                        //计算坐标并移动牌
-                        //移动的目的是要出的牌移动到上方
-                        Point point = new Point();
-                        point.x = (1320 / 2) - (num1 + 1) * 30 / 2;
-                        point.y = 680;
-                        num1++;
-                        Other_Algorithm.move(card, card.getLocation(), point);
-                    }
-                    //重新摆放剩余的牌
-                    Other_Algorithm.order(player);
-                    Other_Algorithm.rePosition(this, player, 0);
-                    //隐藏文本提示
-                    time[0].setVisible(false);
-                    //下一个玩家可玩
-                    this.nextPlayer = true;
-                }
+                this.conti=true;
                 PlayerOperation.setaction(true);
             }
 
@@ -315,13 +295,14 @@ public class GameJFrame extends JFrame implements ActionListener {
 
                 //遍历玩家手牌找到此牌并放到指定位置
                 for (MahjongCard card : player) {
-                    if (card == gangCard) {
+                    if (card.getName() == gangCard.getName()) {
                         Point point = new Point();
                         point.x = 300 + j * 35;    //200
                         point.y = 700;             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
                         card.setCanClick(false);
+                        card.setIfGang(true);
                         j++;
                     }
                 }
@@ -351,6 +332,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     //下一个玩家可玩
                     this.nextPlayer = true;
                 }
+                this.conti=true;
                 PlayerOperation.setaction(true);
             }
 
