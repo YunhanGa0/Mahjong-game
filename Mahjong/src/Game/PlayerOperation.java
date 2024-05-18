@@ -184,19 +184,18 @@ public class PlayerOperation extends Thread {
         for (int j = (gameJFrame.turn + 1) % 4; j != gameJFrame.turn; j = (j + 1) % 4) {
             //获取玩家刚打出的牌
             MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
-            /*
+
             if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(j), lastCard)) {
                 if (j == 0) { // 玩家操作
                     gameJFrame.hulord[0].setVisible(true);
                     timeWaitOther(5, 0);  // 玩家有5秒时间选择碰还是不碰
                     gameJFrame.hulord[0].setVisible(false);
                 } else { // 电脑操作
-                    HuCards(j);
+                    HuCards(j,lastCard);
                 }
                 gameJFrame.turn = j;
                 break;
             }
-             */
             //判定是否能杠
             if (Other_Algorithm.CheckGang(gameJFrame.playerList.get(j), lastCard)) {
                 if (j == 0) { // 玩家操作
@@ -362,6 +361,7 @@ public class PlayerOperation extends Thread {
                 gameJFrame.num4++;
             }
             Other_Algorithm.move(c, c.getLocation(), point);
+            //c.turnFrontWithRotation();
         }
         //重新摆放剩余的牌
         Other_Algorithm.order(player);
@@ -523,23 +523,21 @@ public class PlayerOperation extends Thread {
 
     //机器人开胡
     public void HuCards(int playerIndex, MahjongCard HuCard){
-
         //获取中自己手上所有的牌
         ArrayList<MahjongCard> player = gameJFrame.playerList.get(playerIndex);
-
         //将牌添加进去
         player.add(HuCard);
-
         //重新摆放全部的牌
         Other_Algorithm.order(player);
         Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
-
         //展示胡的牌
+        for(MahjongCard card:player){
+            card.turnFront();
+        }
     }
 
     //给玩家摸牌，同时move到指定位置
     public void addcards(int playerIndex){
-
         MahjongCard newCard=gameJFrame.getMahjongCardList().get(numb);
         if(playerIndex==0){
             Other_Algorithm.move(newCard, new Point(650, 450),new Point(950,820));
@@ -551,20 +549,10 @@ public class PlayerOperation extends Thread {
             newCard.setCanClick(true);
         }
         numb++;
-
     }
 
 
     //检测是否有玩家胜利
-    /**
-     *
-     * 这玩意儿条件有问题，checkhu只是检测手牌和最后一个
-     * 到牌堆里的牌能否hu，从而提供一个hu牌按钮，而不能直接
-     * 让游戏结束，条件是一个玩家点击胡牌按钮才算结束游戏
-     *
-     * @return
-     */
-
     public boolean win () {
         if(gameJFrame.numb==122){
             return true;
@@ -601,6 +589,7 @@ public class PlayerOperation extends Thread {
     public static int getSize(MahjongCard card) {
         return Integer.parseInt(card.getName().substring(2));
     }
+
 }
 
 

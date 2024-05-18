@@ -297,21 +297,20 @@ public class GameJFrame extends JFrame implements ActionListener {
                 this.conti=true;
                 PlayerOperation.setaction(true);
             }
-        } else if (e.getSource() == hulord[0]) { //点击胡，进行胡的操作
 
+        } else if (e.getSource() == hulord[0]) { //点击胡，进行胡的操作
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
-
             //获取到胡到的那张牌
             MahjongCard huCard= currentList.get(currentList.size()-1);
-
             player.add(huCard);
-
             //重新摆放剩余的牌
             Other_Algorithm.order(player);
             Other_Algorithm.rePosition(this, player, 0);
             //展示胡了的牌
-
+            for(MahjongCard card:player){
+                card.turnFront();
+            }
 
         }else if (e.getSource() == chulord[0]) { //点击出牌
             //获取中自己手上所有的牌
@@ -331,7 +330,6 @@ public class GameJFrame extends JFrame implements ActionListener {
                     num1++;
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
-
                 //重新摆放剩余的牌
                 Other_Algorithm.order(player);
                 Other_Algorithm.rePosition(this, player, 0);
@@ -339,7 +337,6 @@ public class GameJFrame extends JFrame implements ActionListener {
                 time[0].setVisible(false);
                 //下一个玩家可玩
                 this.nextPlayer=true;
-
             }
         }
     }
