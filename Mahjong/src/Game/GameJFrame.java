@@ -397,7 +397,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建胡的按钮
         JButton huCardBut = new JButton("胡");
-        huCardBut.setBounds(780, 750, 60, 20);  //320 500
+        huCardBut.setBounds(710, 750, 60, 20);  //320 500
         huCardBut.addActionListener(this);
         huCardBut.setVisible(false);
         hulord[0] = huCardBut;
@@ -414,7 +414,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建吃的按钮
         JButton chiCardBut = new JButton("吃");
-        chiCardBut.setBounds(570, 750, 60, 20);  //320 400
+        chiCardBut.setBounds(640, 750, 60, 20);  //320 400
         chiCardBut.addActionListener(this);
         chiCardBut.setVisible(false);
         Other[1] = chiCardBut;
@@ -422,7 +422,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
         //创建杠的按钮
         JButton gangCardBut = new JButton("杠");
-        gangCardBut.setBounds(500, 750, 60, 20); //320 400
+        gangCardBut.setBounds(710, 750, 60, 20); //320 400
         gangCardBut.addActionListener(this);
         gangCardBut.setVisible(false);
         Other[2] = gangCardBut;
