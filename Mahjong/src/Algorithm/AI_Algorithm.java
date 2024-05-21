@@ -86,16 +86,16 @@ public class AI_Algorithm {
                 if (card.getName().equals(pengCard.getName())) {
                     Point point = new Point();
                     if(playerIndex==1){
-                        point.x = 850;
-                        point.y = 370+j*35;
+                        point.x = 1120;      //850
+                        point.y = 570+j*35;  //370
                     }
                     if(playerIndex==2){
-                        point.x = 720+j*35;
-                        point.y = 50;
+                        point.x = 830+j*35;   //720
+                        point.y = 200;        //50
                     }
                     if(playerIndex==3){
-                        point.x = 80;
-                        point.y = 70+j*35;
+                        point.x = 150;        //80
+                        point.y = 120+j*35;   //70
                     }
                     j++;
                     card.setCanClick(false);
@@ -123,16 +123,16 @@ public class AI_Algorithm {
                 if (card.getName().equals(GangCard.getName())) {
                     Point point = new Point();
                     if(playerIndex==1){
-                        point.x = 850;
-                        point.y = 500 - 13 * 20 / 2;
+                        point.x = 1120;      //850
+                        point.y = 570+j*35;  //370
                     }
                     if(playerIndex==2){
-                        point.x = 720;
-                        point.y = 50;
+                        point.x = 830+j*35;   //720
+                        point.y = 200;        //50
                     }
                     if(playerIndex==3){
-                        point.x = 80;
-                        point.y = 200 - 13 * 20 / 2;
+                        point.x = 150;        //80
+                        point.y = 120+j*35;   //70
                     }
                     Other_Algorithm.move(card, card.getLocation(), point);
                     //碰过的牌不能动了
@@ -176,16 +176,16 @@ public class AI_Algorithm {
                     if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
                         Point point = new Point();
                         if(playerIndex==1){
-                            point.x = 850;
-                            point.y = 500 - 13 * 20 / 2;
+                            point.x = 1120;      //850
+                            point.y = 570+j*35;  //370
                         }
                         if(playerIndex==2){
-                            point.x = 720;
-                            point.y = 50;
+                            point.x = 830+j*35;   //720
+                            point.y = 200;        //50
                         }
                         if(playerIndex==3){
-                            point.x = 80;
-                            point.y = 200 - 13 * 20 / 2;
+                            point.x = 150;        //80
+                            point.y = 120+j*35;   //70
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
@@ -197,16 +197,16 @@ public class AI_Algorithm {
                     if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
                         Point point = new Point();
                         if(playerIndex==1){
-                            point.x = 850;
-                            point.y = 500 - 13 * 20 / 2;
+                            point.x = 1120;      //850
+                            point.y = 570+j*35;  //370
                         }
                         if(playerIndex==2){
-                            point.x = 720;
-                            point.y = 50;
+                            point.x = 830+j*35;   //720
+                            point.y = 200;        //50
                         }
                         if(playerIndex==3){
-                            point.x = 80;
-                            point.y = 200 - 13 * 20 / 2;
+                            point.x = 150;        //80
+                            point.y = 120+j*35;   //70
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了

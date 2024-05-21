@@ -59,7 +59,7 @@ public class ShinJFrame extends JFrame {
         setVisible(true);
     }
 
-    public boolean getIsClassic() {
+    public static boolean getIsClassic() {
         return prefs.getBoolean(PREF_KEY, false);
     }
 
