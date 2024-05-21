@@ -7,12 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javax.imageio.ImageIO;
+
 
 
 //麻将类的oop实现
@@ -78,17 +77,16 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.up = false;
     }
 
-    public void turnFrontWithRotation() {
+    public void turnFrontWithRotation(int playerIndex) {
         int i = Integer.parseInt(this.getName().substring(0, 1));
         int j = Integer.parseInt(this.getName().substring(2));
         try {
             // 根据路径加载图片
             BufferedImage originalImage = ImageIO.read(new File("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile" + i + j + ".png"));
-
             // 创建变换对象
             AffineTransform transform = new AffineTransform();
             // 旋转90度
-            transform.rotate(Math.toRadians(90), originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0);
+            transform.rotate(Math.toRadians(90*playerIndex), originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0);
             // 创建变换操作对象
             AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
             // 应用变换
@@ -102,16 +100,6 @@ public class MahjongCard extends JLabel implements MouseListener {
             e.printStackTrace();
         }
     }
-
-    //把图片向右旋转90度后保存到新图片
-    public void setLeftImage() {
-
-    }
-
-    public void setRightImage() {
-
-    }
-
 
     //能不能被点击,能就上升，再被点就下去
     @Override
@@ -130,106 +118,6 @@ public class MahjongCard extends JLabel implements MouseListener {
                 this.setLocation(to);
             }
         }
-    }
-
-    /**
-     * 获取
-     * @return gameJFrame
-     */
-    public GameJFrame getGameJFrame() {
-        return gameJFrame;
-    }
-
-    /**
-     * 设置
-     * @param gameJFrame
-     */
-    public void setGameJFrame(GameJFrame gameJFrame) {
-        this.gameJFrame = gameJFrame;
-    }
-
-    /**
-     * 获取
-     * @return name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 设置
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * 获取
-     * @return up
-     */
-    public boolean isUp() {
-        return up;
-    }
-
-    /**
-     * 设置
-     * @param up
-     */
-    public void setUp(boolean up) {
-        this.up = up;
-    }
-
-    /**
-     * 获取
-     * @return canClick
-     */
-    public boolean isClickable() {
-        return Clickable;
-    }
-
-    /**
-     * 设置
-     * @param canClick
-     */
-    public void setCanClick(boolean canClick) {
-        this.Clickable = canClick;
-    }
-
-    /**
-     * 获取
-     * @return clicked
-     */
-    public boolean isClicked() {
-        return clicked;
-    }
-
-    /**
-     * 设置
-     * @param clicked
-     */
-    public void setClicked(boolean clicked) {
-        this.clicked = clicked;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 
     public boolean getifPeng(){
@@ -256,7 +144,67 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.ifEat = ifEat;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCanClick(boolean canClick) {
+        this.Clickable = canClick;
+    }
+
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public GameJFrame getGameJFrame() {
+        return gameJFrame;
+    }
+
+    public void setGameJFrame(GameJFrame gameJFrame) {
+        this.gameJFrame = gameJFrame;
+    }
+
+    public boolean isUp() {
+        return up;
+    }
+
+
+
+    public boolean isClickable() {
+        return Clickable;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 
     public String toString() {
         return "Poker{gameJFrame = " + gameJFrame + ", name = " + name + ", up = " + up + ", Clickable = " + Clickable + ", clicked = " + clicked + "}";

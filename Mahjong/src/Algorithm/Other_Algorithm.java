@@ -6,66 +6,58 @@ import Objects.MahjongCard;
 import java.awt.*;
 import java.util.*;
 
-import static Game.GameJFrame.*;
-
-
 //判断吃，碰，杠,返回值到GameJFrame中进行后续操作
 public class Other_Algorithm {
 
     public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
         ArrayList<String> repeatCards = new ArrayList<>();
-
-        // 计数每种牌出现的次数(用名字)
+        // 计数每种牌出现的次数
         HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
+            if(card.getifPeng()==false) {
+                cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
+            }
         }
-
         // 找出出现至少两次的牌
         for (String name : cardCounts.keySet()) {
             if (cardCounts.get(name) >= 2) {
                 repeatCards.add(name);
             }
         }
-
         // 检查comingCard是否与repeatCards中的任何一个相同
         for (String name : repeatCards) {
             if (name.equals(comingCard.getName())) {
                 return true;
             }
         }
-
         return false;
     }
 
     public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
         ArrayList<String> repeatCards = new ArrayList<>();
-
         // 计数每种牌出现的次数
         HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
+            if(card.getifPeng()==false) {
+                cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
+            }
         }
-
         // 找出出现三次的牌
         for (String name : cardCounts.keySet()) {
             if (cardCounts.get(name) >= 4) {
                 repeatCards.add(name);
             }
         }
-
         // 检查comingCard是否与repeatCards中的任何一个相同
         for (String name : repeatCards) {
             if (name.equals(comingCard.getName())) {
                 return true;
             }
         }
-
         return false;
     }
 
     public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){
-
         ArrayList<MahjongCard> wan = insertIn(cards,1);
         ArrayList<MahjongCard> tiao = insertIn(cards,2);
         ArrayList<MahjongCard> tong = insertIn(cards,3);
@@ -173,15 +165,6 @@ public class Other_Algorithm {
         }
 
         int len = list.size();
-        /*
-        for (int i = 0; i < len; i++) {
-            MahjongCard card = list.get(i);
-            if(card.getifPeng()==false||card.getifGang()==false||card.getifEat()==false){
-                len--;
-            }
-        }
-
-         */
         for (int i = 0; i < len; i++) {
             MahjongCard card = list.get(i);
             if(card.getifPeng()==false&&card.getifGang()==false&&card.getifEat()==false){
@@ -223,13 +206,6 @@ public class Other_Algorithm {
                 }
             }
         });
-    }
-
-    //将牌视为不可见状态
-    public static void hideCards(ArrayList<MahjongCard> list) {
-        for (int i = 0, len = list.size(); i < len; i++) {
-            list.get(i).setVisible(false);
-        }
     }
 
     public static int getColor(MahjongCard card) {

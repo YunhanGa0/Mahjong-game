@@ -1,5 +1,6 @@
 package Game;
 
+import Algorithm.AI_Algorithm;
 import Algorithm.Other_Algorithm;
 import Objects.MahjongCard;
 
@@ -41,7 +42,10 @@ public class GameJFrame extends JFrame implements ActionListener {
     int turn;
 
     //记录出牌次数
-    static int num1,num2,num3,num4;
+    public static int num1;
+    public static int num2;
+    public static int num3;
+    public static int num4;
     //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
 
@@ -67,6 +71,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     //多线程操控游戏流程
     PlayerOperation po;
 
+    AI_Algorithm ai;
 
 
     public GameJFrame() {
@@ -126,7 +131,7 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     //初始化牌
     //准备牌，洗牌，发牌
-    public void initCard() { //location的位置，牌堆仍中间
+    public void initCard() {
 
         for (int i = 0; i <= 9; i++) {
             if (i <= 2) {
