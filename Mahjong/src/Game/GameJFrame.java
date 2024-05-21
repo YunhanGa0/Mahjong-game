@@ -268,7 +268,55 @@ public class GameJFrame extends JFrame implements ActionListener {
             this.conti=true;
             PlayerOperation.setAction(true);
         } else if (e.getSource() == Other[1]) { //点击吃，进行吃的操作
-
+            //通过弃牌堆找到要碰的牌
+            MahjongCard chiCard = currentList.get(currentList.size()-1);
+            int color = getColor(chiCard);
+            int size = getSize(chiCard);
+            //获取中自己手上所有的牌
+            ArrayList<MahjongCard> player = playerList.get(0);
+            if(Other_Algorithm.CheckChi(player,chiCard)){
+                //先将牌加入到自己的牌中
+                player.add(chiCard);
+                //计数
+                int j=0;
+                boolean smaller = false;
+                boolean bigger = false;
+                for (MahjongCard card : player) {
+                    if (getColor(card) == color){
+                        if (getSize(card) == getSize(chiCard)-1){
+                            smaller = true;
+                        } else if (getSize(card) == getSize(chiCard)+1) {
+                            bigger = true;
+                        }
+                    }
+                }
+                //遍历玩家手牌找到此牌并放到指定位置
+                for (MahjongCard card : player) {
+                    if (getColor(card) == getColor(chiCard) && !smaller){ // 牌堆里没有比chiCard小一张的→找cc+1和cc+2移动
+                        if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
+                            Point point = new Point();
+                            point.x = 100 + j * 35;    //200
+                            point.y = 820;             //600
+                            Other_Algorithm.move(card, card.getLocation(), point);
+                            //碰过的牌不能动了
+                            card.setCanClick(false);
+                            card.setIfEat(true);
+                            j++;
+                        }
+                    } else if (getColor(card) == getColor(chiCard) && !bigger) { // 牌堆里没有比chiCard大一张的→找cc-1和cc-2移动
+                        if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
+                            Point point = new Point();
+                            point.x = 100 + j * 35;    //200
+                            point.y = 820;             //600
+                            Other_Algorithm.move(card, card.getLocation(), point);
+                            //碰过的牌不能动了
+                            card.setCanClick(false);
+                            card.setIfEat(true);
+                            j++;
+                        }
+                    }
+                }
+            }
 
         } else if (e.getSource() == Other[2]) { //点击杠，进行杠的操作
             //通过弃牌堆找到要杠的牌
@@ -426,7 +474,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         //取消内部默认的居中放置
         container.setLayout(null);
         //设置背景图片
-        JLabel background = new JLabel(new ImageIcon("C:\\Users\\qwerty\\Pictures\\Saved Pictures\\微信图片_20240517182844.jpg"
+        JLabel background = new JLabel(new ImageIcon("D://Program//java//Stage2_2//Software Eng//Gitfolder//Mahjong-game//GameJ.jpg"
         ));
         background.setSize(this.getSize());  // 设置背景图片大小与 JFrame 大小匹配
         container.add(background);  // 添加背景标签
@@ -450,6 +498,14 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     public ArrayList<MahjongCard> getMahjongCardList(){
         return MahjongCardList;
+    }
+
+    public static int getColor(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(0, 1));
+    }
+
+    public static int getSize(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(2));
     }
 
 }
