@@ -37,7 +37,7 @@ public class AI_Algorithm {
         while(i>=0){
             MahjongCard card = player.get(i);
             //如果没有碰，吃，杠，说明牌可以出
-            if (card.getifEat()==false&&card.getifPeng()==false&&card.getifGang()==false){
+            if (card.getIfEat()==false&&card.getIfPeng()==false&&card.getIfGang()==false){
                 break;
             }else {i--;}
         }

@@ -141,7 +141,7 @@ public class Hu_Algorithm {
         /**
          * 将手牌分开不同的花色进行分别判定,如果万，条，筒，字牌每种花色都能满足胡牌条件则此手牌一定可以胡
          * @param cards     hand cards
-         * @param checkedCache
+         * checkedCache
          * @return whether can hu
          */
         private static boolean handleCardsWithoutEye(int[] cards,int eyeColor, int[] checkedCache) {
@@ -222,7 +222,7 @@ public class Hu_Algorithm {
                 n = n * 10 + cards[i];
             }
             /*
-             * 0表示此花色己经没有牌,满足3n
+             * 0表示此花色己没有牌,满足3n
              */
             if (n == 0) {
                 return true;
@@ -244,8 +244,7 @@ public class Hu_Algorithm {
 
         /**
          * 拆分这个数字，直到无法拆分为止，当这个数字为0时表示可以完全拆除成功
-         * @param n
-         * @return
+         *
          */
         private static boolean splitCards(int n) {
             int p = 0;
@@ -276,8 +275,7 @@ public class Hu_Algorithm {
 
         /**
          * 单个数字的处理，需要拆分为  1 1 1 形式
-         * @param n
-         * @return
+         *
          */
         private static boolean singleNumHandle(int n) {
             //获取此数字前面的p1
@@ -334,8 +332,6 @@ public class Hu_Algorithm {
 
         /**
          * 字牌花色的处理逻辑
-         * @param cards
-         * @param cacheIndex
          */
         private static boolean checkZiCardsWin(int[] cards, int cacheIndex, int[] checkedCache) {
             /*

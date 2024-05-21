@@ -1,6 +1,5 @@
 package Game;
 
-import Algorithm.AI_Algorithm;
 import Algorithm.Other_Algorithm;
 import Objects.MahjongCard;
 
@@ -20,10 +19,10 @@ public class GameJFrame extends JFrame implements ActionListener {
     public Container container = null;
 
     //管理出牌一个按钮
-    JButton[] chulord = new JButton[1];
+    JButton[] Chu = new JButton[1];
 
     //管理胡牌一个按钮
-    JButton[] hulord = new JButton[1];
+    JButton[] Hu = new JButton[1];
 
     //管理吃牌，碰牌，杠牌三个按钮（顺序是0碰，1吃，2杠）
     JButton[] Other = new JButton[3];
@@ -42,10 +41,8 @@ public class GameJFrame extends JFrame implements ActionListener {
     int turn;
 
     //记录出牌次数
-    public static int num1;
-    public static int num2;
-    public static int num3;
-    public static int num4;
+    public static int num1,num2,num3,num4;
+
     //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
 
@@ -70,9 +67,6 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     //多线程操控游戏流程
     PlayerOperation po;
-
-    AI_Algorithm ai;
-
 
     public GameJFrame() {
         //设置图标
@@ -182,7 +176,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                 //Other_Algorithm.move(card,card.getLocation(),new Point(270 + (75 * i), 10));
                 card.turnFront();
                 numb++;
-            } else if (i % 4 == 3){
+            } else {
                 player3.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(50, 60 + i * 5));
                 card.turnFront();
@@ -272,7 +266,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                 }
             }
             this.conti=true;
-            PlayerOperation.setaction(true);
+            PlayerOperation.setAction(true);
         } else if (e.getSource() == Other[1]) { //点击吃，进行吃的操作
 
 
@@ -300,10 +294,10 @@ public class GameJFrame extends JFrame implements ActionListener {
                     }
                 }
                 this.conti=true;
-                PlayerOperation.setaction(true);
+                PlayerOperation.setAction(true);
             }
 
-        } else if (e.getSource() == hulord[0]) { //点击胡，进行胡的操作
+        } else if (e.getSource() == Hu[0]) { //点击胡，进行胡的操作
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
             //获取到胡到的那张牌
@@ -316,8 +310,7 @@ public class GameJFrame extends JFrame implements ActionListener {
             for(MahjongCard card:player){
                 card.turnFront();
             }
-
-        }else if (e.getSource() == chulord[0]) { //点击出牌
+        }else if (e.getSource() == Chu[0]) { //点击出牌
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
             //遍历手上的牌，把要出的牌放到临时集合中
@@ -354,7 +347,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         outCardBut.setBounds(640, 750, 60, 20); //500 550
         outCardBut.addActionListener(this);
         outCardBut.setVisible(false);
-        chulord[0] = outCardBut;
+        Chu[0] = outCardBut;
         container.add(outCardBut);
 
         //创建胡的按钮
@@ -362,7 +355,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         huCardBut.setBounds(780, 750, 60, 20);  //320 500
         huCardBut.addActionListener(this);
         huCardBut.setVisible(false);
-        hulord[0] = huCardBut;
+        Hu[0] = huCardBut;
         container.add(huCardBut);
 
         //创建碰的按钮

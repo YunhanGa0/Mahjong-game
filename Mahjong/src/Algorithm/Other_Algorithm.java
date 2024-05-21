@@ -14,7 +14,7 @@ public class Other_Algorithm {
         // 计数每种牌出现的次数
         HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            if(card.getifPeng()==false) {
+            if(!card.getIfPeng()) {
                 cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
             }
         }
@@ -33,12 +33,12 @@ public class Other_Algorithm {
         return false;
     }
 
-    public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can gang
+    public static boolean CheckGang(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check gang
         ArrayList<String> repeatCards = new ArrayList<>();
         // 计数每种牌出现的次数
         HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
-            if(card.getifPeng()==false) {
+            if(!card.getIfPeng()) {
                 cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
             }
         }
@@ -129,11 +129,14 @@ public class Other_Algorithm {
             for (int i = from.x; Math.abs(i - to.x) > 20; i += flag) {
                 double y = k * i + b;
                 card.setLocation(i, (int) y);
+                /*
                 try {
                     Thread.sleep(6);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                 */
             }
         }
         card.setLocation(to);
@@ -167,11 +170,11 @@ public class Other_Algorithm {
         int len = list.size();
         for (int i = 0; i < len; i++) {
             MahjongCard card = list.get(i);
-            if(card.getifPeng()==false&&card.getifGang()==false&&card.getifEat()==false){
+            if(!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()){
                 Other_Algorithm.move(card, card.getLocation(), p);
                 m.container.setComponentZOrder(card, 0);
             }
-            if (flag == 0 || flag == 2&&(card.getifPeng()==false&&card.getifGang()==false&&card.getifEat()==false))
+            if (flag == 0 || flag == 2&&(!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()))
                 p.x += 35;
             else
                 p.y += 25;
@@ -181,29 +184,26 @@ public class Other_Algorithm {
     //利用牌的价值，将集合中的牌进行排序
     //o1是原来的，o2是新增的
     public static void order(ArrayList<MahjongCard> list) {
-        Collections.sort(list, new Comparator<MahjongCard>() {
-            @Override
-            public int compare(MahjongCard o1, MahjongCard o2) {
+        Collections.sort(list, (o1, o2) -> {
 
-                // 检查是否已经碰或杠
-                if ((o1.getifPeng()||o1.getifGang()) && (o2.getifPeng()||o2.getifGang())) return 0;  // 都碰或杠过，不调整顺序
-                if (o1.getifPeng()||o1.getifGang()) return 1;  // o1碰或杠过，应放后面
-                if (o2.getifPeng()||o2.getifGang()) return -1; // o2碰或杠过，应放后面
+            // 检查是否已经碰或杠
+            if ((o1.getIfPeng()||o1.getIfGang()) && (o2.getIfPeng()||o2.getIfGang())) return 0;  // 都碰或杠过，不调整顺序
+            if (o1.getIfPeng()||o1.getIfGang()) return 1;  // o1碰或杠过，应放后面
+            if (o2.getIfPeng()||o2.getIfGang()) return -1; // o2碰或杠过，应放后面
 
-                //获得最前面的数字，判断花色（1万2条3筒45678东西南北中910发白）
-                int a1 = Integer.parseInt(o1.getName().substring(0, 1));
-                int a2 = Integer.parseInt(o2.getName().substring(0, 1));
+            //获得最前面的数字，判断花色
+            int a1 = Integer.parseInt(o1.getName().substring(0, 1));
+            int a2 = Integer.parseInt(o2.getName().substring(0, 1));
 
-                //获取后面的值
-                int b1 = Integer.parseInt(o1.getName().substring(2));
-                int b2 = Integer.parseInt(o2.getName().substring(2));
+            //获取后面的值
+            int b1 = Integer.parseInt(o1.getName().substring(2));
+            int b2 = Integer.parseInt(o2.getName().substring(2));
 
-                //如果牌的花色一样，则按照价值排序
-                if ((a1-a2) == 0) {
-                    return b1-b2;
-                } else {
-                    return a1-a2;
-                }
+            //如果牌的花色一样，则按照价值排序
+            if ((a1-a2) == 0) {
+                return b1-b2;
+            } else {
+                return a1-a2;
             }
         });
     }

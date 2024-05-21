@@ -104,7 +104,7 @@ public class MahjongCard extends JLabel implements MouseListener {
     //能不能被点击,能就上升，再被点就下去
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(ifPeng==false||ifEat==false||ifGang==false) {
+        if(!ifPeng || !ifEat || !ifGang) {
             if (Clickable) {
                 Point from = this.getLocation();
                 int step;
@@ -120,7 +120,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         }
     }
 
-    public boolean getifPeng(){
+    public boolean getIfPeng(){
         return ifPeng;
     }
 
@@ -128,7 +128,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.ifPeng = ifPeng;
     }
 
-    public boolean getifGang(){
+    public boolean getIfGang(){
         return ifGang;
     }
 
@@ -136,7 +136,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.ifGang = ifGang;
     }
 
-    public boolean getifEat(){
+    public boolean getIfEat(){
         return ifEat;
     }
 
