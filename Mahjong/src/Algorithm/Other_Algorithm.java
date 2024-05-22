@@ -166,14 +166,13 @@ public class Other_Algorithm {
             p.y = (950 / 2) - (list.size() + 1) * 20 / 2;
         }
 
-        int len = list.size();
-        for (int i = 0; i < len; i++) {
-            MahjongCard card = list.get(i);
-            if(!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()){
+        //int len = list.size();
+        for (MahjongCard card : list) {
+            if (!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()) {
                 Other_Algorithm.move(card, card.getLocation(), p);
                 m.container.setComponentZOrder(card, 0);
             }
-            if (flag == 0 || flag == 2&&(!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()))
+            if (flag == 0 || flag == 2 && (!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()))
                 p.x += 35;
             else
                 p.y += 25;

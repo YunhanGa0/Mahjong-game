@@ -9,8 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static Game.GameJFrame.numb;
-
 public class PlayerOperation extends Thread {
 
     //游戏主界面
@@ -175,16 +173,15 @@ public class PlayerOperation extends Thread {
                             gameJFrame.Chu[0].setVisible(true);
                             timeWait(10, 0);  // 玩家有10秒时间进行操作
                             gameJFrame.Chu[0].setVisible(false);
-                        }else{
-                            if(win())
+                        } else if(win()&&actionTaken) {
                             break;
                         }
                     } else if(Other_Algorithm.CheckGang(gameJFrame.playerList.get(0),gameJFrame.playerList.get(0).get(gameJFrame.playerList.get(0).size()-1))){
                         //进行暗杠牌操作
-                        gameJFrame.Other[2].setVisible(true);
-                        timeWaitOther(10, 0);  // 玩家有10秒时间进行操作
-                        gameJFrame.Other[2].setVisible(false);
-                        //如果杠了，得摸一张牌出牌
+                        gameJFrame.Other[3].setVisible(true);
+                        timeWaitOther(10, 0);  // 玩家有10秒时间进行选择
+                        gameJFrame.Other[3].setVisible(false);
+                        //如果暗杠了，得摸一张牌出牌
                         if(actionTaken) {
                             addCards(gameJFrame.turn);
                             gameJFrame.Chu[0].setVisible(true);
@@ -216,10 +213,8 @@ public class PlayerOperation extends Thread {
                             gameJFrame.Hu[0].setVisible(true);
                             timeWaitOther(5, 0);  // 玩家有5秒时间选择胡还是不胡
                             gameJFrame.Hu[0].setVisible(false);
-                            if(actionTaken){
-                                if (win()){
-                                    break;
-                                }
+                            if (win()&&actionTaken){
+                                break;
                             }
                         } else { // 电脑操作
                             computerPlayerAction(j);
@@ -331,7 +326,7 @@ public class PlayerOperation extends Thread {
 
     //给玩家摸牌，同时move到指定位置
     public void addCards(int playerIndex){
-        MahjongCard newCard=gameJFrame.getMahjongCardList().get(numb);
+        MahjongCard newCard=gameJFrame.getMahjongCardList().get(gameJFrame.getNumb());
         if(playerIndex==0){
             Other_Algorithm.move(newCard, new Point(650, 450),new Point(950,820));
         }
@@ -341,7 +336,7 @@ public class PlayerOperation extends Thread {
         if (playerIndex==0){
             newCard.setCanClick(true);
         }
-        numb++;
+        gameJFrame.changeNUmb();
     }
 
     //检测是否有玩家胜利

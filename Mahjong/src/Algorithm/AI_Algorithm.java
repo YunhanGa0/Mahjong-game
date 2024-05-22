@@ -50,12 +50,12 @@ public class AI_Algorithm {
         if(playerIndex==1){
             point.x = 1040;
             point.y = 290+gameJFrame.num1*35;
-            gameJFrame.num2++;
+            gameJFrame.num1++;
         }
         if(playerIndex==2){
             point.x = 820-gameJFrame.num2*35;
             point.y = 320;
-            gameJFrame.num3++;
+            gameJFrame.num2++;
         }
         if(playerIndex==3){
             point.x = 260;
