@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/MaJiangGame/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Mahjong/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/MahjongPicPNG" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/MahjongPic" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/Mahjong/src/resources" />
     </content>
     <orderEntry type="inheritedJdk" />
