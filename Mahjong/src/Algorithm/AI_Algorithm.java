@@ -1,32 +1,31 @@
 package Algorithm;
 
-import Game.PlayerOperation;
-import com.sun.source.tree.Tree;
 import Game.GameJFrame;
 import Objects.MahjongCard;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 public class AI_Algorithm {
 
     public static void EasyAI(GameJFrame gameJFrame,int playerIndex){
         ArrayList<MahjongCard> player= gameJFrame.getPlayerList().get(playerIndex);
-        MahjongCard current=gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1);
-        if(Hu_Algorithm.checkHu(player)){
-            HuCards(gameJFrame,playerIndex,current);
+        if(gameJFrame.getCurrentList().size()==0) {
+            ShowCard(gameJFrame,playerIndex);
+        }else {
+            MahjongCard current = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
+            if (Hu_Algorithm.checkHu(player)) {
+                HuCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.CheckGang(player, current)) {
+                GangCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.CheckPeng(player, current)) {
+                PengCards(gameJFrame, playerIndex);
+            } else if (Other_Algorithm.CheckChi(player, current)) {
+                EatCards(gameJFrame, playerIndex);
+            } else {
+                ShowCard(gameJFrame, playerIndex);
+            }
         }
-        else if(Other_Algorithm.CheckGang(player,current)){
-            GangCards(gameJFrame,playerIndex,current);
-        }
-        else if(Other_Algorithm.CheckPeng(player,current)){
-            PengCards(gameJFrame,playerIndex);
-        }
-        else if(Other_Algorithm.CheckChi(player,current)){
-            EatCards(gameJFrame,playerIndex);
-        }
-        else{ ShowCard(gameJFrame,playerIndex);}
     }
 
     //机器人出牌
@@ -37,7 +36,7 @@ public class AI_Algorithm {
         while(i>=0){
             MahjongCard card = player.get(i);
             //如果没有碰，吃，杠，说明牌可以出
-            if (card.getIfEat()==false&&card.getIfPeng()==false&&card.getIfGang()==false){
+            if (!card.getIfEat() && !card.getIfPeng() && !card.getIfGang()){
                 break;
             }else {i--;}
         }
@@ -50,18 +49,18 @@ public class AI_Algorithm {
         Point point = new Point();
         if(playerIndex==1){
             point.x = 1040;
-            point.y = 290+gameJFrame.num2*35;
+            point.y = 290+gameJFrame.num1*35;
             gameJFrame.num2++;
         }
         if(playerIndex==2){
-            point.x = 820-gameJFrame.num3*35;
+            point.x = 820-gameJFrame.num2*35;
             point.y = 320;
             gameJFrame.num3++;
         }
         if(playerIndex==3){
             point.x = 260;
-            point.y = 290+gameJFrame.num4*35;
-            gameJFrame.num4++;
+            point.y = 290+gameJFrame.num3*35;
+            gameJFrame.num3++;
         }
         c.setLocation(point.x,point.y);
         //重新摆放剩余的牌

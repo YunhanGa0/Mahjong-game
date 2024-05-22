@@ -1,4 +1,3 @@
-import Game.GameJFrame;
 import Game.MenuJFrame;
 
 import javax.swing.*;

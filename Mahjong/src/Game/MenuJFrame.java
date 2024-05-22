@@ -1,7 +1,6 @@
 package Game;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -58,19 +57,10 @@ public class MenuJFrame extends JFrame implements ActionListener {
         String command = e.getActionCommand();
 
         switch (command) {
-            case "start":
-                new DifficultyJFrame().setVisible(true); // 显示游戏窗口
-                break;
-            case "options":
-                new ShinJFrame().setVisible(true); // 显示难度选择窗口
-                break;
-            case "help":
-                new AboutJFrame().setVisible(true); // 显示关于游戏窗口
-                break;
-            case "exit":
-                System.exit(0);
-                break;
-
+            case "start" -> new DifficultyJFrame().setVisible(true); // 显示游戏窗口
+            case "options" -> new ShinJFrame().setVisible(true); // 显示难度选择窗口
+            case "help" -> new AboutJFrame().setVisible(true); // 显示关于游戏窗口
+            case "exit" -> System.exit(0);
         }
     }
 }

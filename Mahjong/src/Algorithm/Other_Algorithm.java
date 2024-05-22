@@ -72,7 +72,6 @@ public class Other_Algorithm {
             default :
                 return false;
         }
-
     }
 
     public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard){

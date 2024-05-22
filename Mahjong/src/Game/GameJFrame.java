@@ -41,7 +41,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     int turn;
 
     //记录出牌次数
-    public static int num1,num2,num3,num4;
+    public int num0,num1,num2,num3;
 
     //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
@@ -118,8 +118,7 @@ public class GameJFrame extends JFrame implements ActionListener {
             }
         }
 
-        //DealerFlag=dealerIndex;
-        DealerFlag=0;
+        DealerFlag=dealerIndex;
     }
 
 
@@ -214,7 +213,7 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //庄家旗帜位置
-    public void setlord(int i) { //定个位置
+    public void setFlag(int i) { //定个位置
         Point point = new Point();
         if (i == 0) {
             point.x = 80;
@@ -344,7 +343,6 @@ public class GameJFrame extends JFrame implements ActionListener {
                 this.conti=true;
                 PlayerOperation.setAction(true);
             }
-
         } else if (e.getSource() == Hu[0]) { //点击胡，进行胡的操作
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
@@ -358,6 +356,7 @@ public class GameJFrame extends JFrame implements ActionListener {
             for(MahjongCard card:player){
                 card.turnFront();
             }
+            PlayerOperation.setAction(true);
         }else if (e.getSource() == Chu[0]) { //点击出牌
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
@@ -414,7 +413,6 @@ public class GameJFrame extends JFrame implements ActionListener {
         Other[0] = pengCardBut;
         container.add(pengCardBut);
 
-
         //创建吃的按钮
         JButton chiCardBut = new JButton("吃");
         chiCardBut.setBounds(570, 750, 60, 20);  //320 400
@@ -449,7 +447,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         time[3].setBounds(278, 560, 90, 20); //160 350
 
         //创建庄家图标
-        Dealer = new JLabel(new ImageIcon("doudizhu\\image\\dizhu.png"));
+        Dealer = new JLabel(new ImageIcon(""));
         Dealer.setVisible(false);
         Dealer.setSize(40, 40);
         container.add(Dealer);
@@ -506,6 +504,13 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     public static int getSize(MahjongCard card) {
         return Integer.parseInt(card.getName().substring(2));
+    }
+
+    public void adjustPosition(int playerIndex){
+        if(playerIndex==0){ num0--;}
+        else if(playerIndex==1){ num1--;}
+        else if(playerIndex==2){ num2--;}
+        else {num3--;}
     }
 
 }
