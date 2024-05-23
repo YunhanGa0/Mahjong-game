@@ -42,7 +42,7 @@ public class Other_Algorithm {
                 cardCounts.put(card.getName(), cardCounts.getOrDefault(card.getName(), 0) + 1);
             }
         }
-        // 找出出现三次的牌
+        // 找出a出现三次的牌
         for (String name : cardCounts.keySet()) {
             if (cardCounts.get(name) >= 4) {
                 repeatCards.add(name);
@@ -128,14 +128,6 @@ public class Other_Algorithm {
             for (int i = from.x; Math.abs(i - to.x) > 20; i += flag) {
                 double y = k * i + b;
                 card.setLocation(i, (int) y);
-                /*
-                try {
-                    Thread.sleep(6);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                 */
             }
         }
         card.setLocation(to);

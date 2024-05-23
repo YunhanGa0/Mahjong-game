@@ -97,6 +97,7 @@ public class AI_Algorithm {
                         point.y = 70+j*35;
                     }
                     j++;
+                    card.turnFront();
                     card.setCanClick(false);
                     //碰过的牌不能动了
                     card.setIfPeng(true);
@@ -134,6 +135,7 @@ public class AI_Algorithm {
                         point.y = 200 - 13 * 20 / 2;
                     }
                     Other_Algorithm.move(card, card.getLocation(), point);
+                    card.turnFront();
                     //碰过的牌不能动了
                     card.setCanClick(false);
                     card.setIfGang(true);
@@ -187,6 +189,7 @@ public class AI_Algorithm {
                             point.y = 200 - 13 * 20 / 2;
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
+                        card.turnFront();
                         //碰过的牌不能动了
                         card.setCanClick(false);
                         card.setIfEat(true);

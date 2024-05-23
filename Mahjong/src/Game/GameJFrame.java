@@ -94,6 +94,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         //打牌之前的准备工作
         //展示抢地主和不抢地主两个按钮并且再创建三个集合用来装三个玩家准备要出的牌
         initGame();
+
     }
 
     //Roll骰子并显示大小确定庄家
@@ -125,6 +126,16 @@ public class GameJFrame extends JFrame implements ActionListener {
         DealerFlag=dealerIndex;
     }
 
+    public void getLai(){
+        //牌底摸一张赖子牌
+        MahjongCard Lai=MahjongCardList.get(135);
+        //翻到正面
+        Lai.turnFront();
+        //放到牌桌中央
+        Lai.setLocation(650, 450);
+        Lai.setVisible(true);
+        System.out.println(Lai.getName());
+    }
 
     //初始化牌
     //准备牌，洗牌，发牌
@@ -138,6 +149,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                         MahjongCardList.add(card);
                         container.add(card);
                         //card.setCardImage("Mahjong/MahjongPic/tile"+i+j+".png"); // 设置牌的图片
+                        card.setVisible(false);
                         card.setLocation(650, 450);
                     }
                 }
@@ -147,6 +159,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     MahjongCardList.add(card);
                     container.add(card);
                     //card.setCardImage("Mahjong/MahjongPic/tile"+i+0+".png"); // 设置牌的图片
+                    card.setVisible(false);
                     card.setLocation(650, 450);//455,315
                 }
             }
@@ -167,22 +180,26 @@ public class GameJFrame extends JFrame implements ActionListener {
             if (i % 4 == 0) {
                 player0.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(180 + i * 7, 600));
+                card.setVisible(true);
                 card.turnFront();
                 numb++;
             } else if (i % 4 == 1) {
                 player1.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(700, 60 + i * 5));
-                card.turnFront();
+                card.setVisible(true);
+                //card.turnFront();
                 numb++;
             } else if (i % 4 == 2) {
                 player2.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(270 + (75 * i), 10));
-                card.turnFront();
+                card.setVisible(true);
+                //card.turnFront();
                 numb++;
             } else {
                 player3.add(card);
                 //Other_Algorithm.move(card,card.getLocation(),new Point(50, 60 + i * 5));
-                card.turnFront();
+                card.setVisible(true);
+                //card.turnFront();
                 numb++;
             }
 
@@ -203,6 +220,9 @@ public class GameJFrame extends JFrame implements ActionListener {
             Other_Algorithm.rePosition(this, playerList.get(i), i);
         }
 
+        //展示赖子牌
+        getLai();
+
     }
 
     //打牌之前的准备工作
@@ -210,9 +230,10 @@ public class GameJFrame extends JFrame implements ActionListener {
         //展示自己前面的倒计时文本
         time[0].setVisible(true);
         //倒计时10秒
-        po = new PlayerOperation(this, 10);
+        po = new PlayerOperation(this, 5);
         //开启倒计时
         po.start();
+
     }
 
     //庄家旗帜位置
@@ -481,7 +502,7 @@ public class GameJFrame extends JFrame implements ActionListener {
             time[i].setVisible(false);
             container.add(time[i]);
         }
-        time[0].setBounds(628, 780, 90, 20); //480 570
+        time[0].setBounds(628, 780, 100, 20); //480 570
         time[1].setBounds(948, 560, 90, 20); //800 350
         time[2].setBounds(628, 300, 90, 20); //480 200
         time[3].setBounds(278, 560, 90, 20); //160 350
