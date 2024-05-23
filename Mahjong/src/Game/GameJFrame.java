@@ -45,6 +45,10 @@ public class GameJFrame extends JFrame implements ActionListener {
     public int num2;
     public int num3;
 
+    //记录chi peng gang发生次数
+    private static int cpgCount = 0;
+
+
     //下一个玩家可以出牌的状态
     boolean nextPlayer = false;
 
@@ -258,8 +262,8 @@ public class GameJFrame extends JFrame implements ActionListener {
             for (MahjongCard card : player) {
                 if (card.getName().equals(pengCard.getName())) {
                     Point point = new Point();
-                    point.x = 100 + j * 35;    //200
-                    point.y = 820;             //600
+                    point.x = 220 + j * 35;    //200
+                    point.y = 820 -(cpgCount*50);             //600
                     Other_Algorithm.move(card, card.getLocation(), point);
                     //碰过的牌不能动了
                     card.setCanClick(false);
@@ -268,6 +272,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     j++;
                 }
             }
+            cpgCount++;
             //操作完成
             this.conti=true;
             //更新是否进行操作的状态
@@ -300,8 +305,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                     if (getColor(card) == getColor(chiCard) && !smaller){ // 牌堆里没有比chiCard小一张的→找cc+1和cc+2移动
                         if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
                             Point point = new Point();
-                            point.x = 100 + j * 35;    //200
-                            point.y = 820;             //600
+                            point.x = 220 + j * 35;    //200
+                            point.y = 820-(cpgCount*50);             //600
                             Other_Algorithm.move(card, card.getLocation(), point);
                             //碰过的牌不能动了
                             card.setCanClick(false);
@@ -311,8 +316,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                     } else if (getColor(card) == getColor(chiCard) && !bigger) { // 牌堆里没有比chiCard大一张的→找cc-1和cc-2移动
                         if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
                             Point point = new Point();
-                            point.x = 100 + j * 35;    //200
-                            point.y = 820;             //600
+                            point.x = 220 + j * 35;    //200
+                            point.y = 820-(cpgCount*50);             //600
                             Other_Algorithm.move(card, card.getLocation(), point);
                             //碰过的牌不能动了
                             card.setCanClick(false);
@@ -322,6 +327,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                     }
                 }
             }
+            cpgCount++;
             this.conti=true;
             PlayerOperation.setAction(true);
         } else if (e.getSource() == Other[2]) { //点击杠，进行杠的操作
@@ -338,8 +344,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card.getName().equals(gangCard.getName())) {
                         Point point = new Point();
-                        point.x = 100 + j * 35;    //200
-                        point.y = 700;             //550
+                        point.x = 220 + j * 35;    //200
+                        point.y = 820-(cpgCount*50);             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //杠过的牌不能动了
                         card.setCanClick(false);
@@ -347,6 +353,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                         j++;
                     }
                 }
+                cpgCount++;
                 this.conti=true;
                 PlayerOperation.setAction(true);
             }
@@ -362,8 +369,8 @@ public class GameJFrame extends JFrame implements ActionListener {
                 for (MahjongCard card : player) {
                     if (card.getName().equals(gangCard.getName())) {
                         Point point = new Point();
-                        point.x = 100 + j * 35;    //200
-                        point.y = 700;             //550
+                        point.x = 220 + j * 35;    //200
+                        point.y = 820-(cpgCount*50);             //550
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //杠过的牌不能动了
                         card.setCanClick(false);
@@ -371,6 +378,7 @@ public class GameJFrame extends JFrame implements ActionListener {
                         j++;
                     }
                 }
+                cpgCount++;
                 this.conti=true;
                 PlayerOperation.setAction(true);
             }

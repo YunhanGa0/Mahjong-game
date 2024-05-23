@@ -7,6 +7,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class AI_Algorithm {
+    public static int cpg1Count=0;
+    public static int cpg2Count=0;
+    public static  int cpg3Count=0;
+    public static boolean is1=false;
+    public static boolean is2=false;
+    public static boolean is3=false;
 
     public static void EasyAI(GameJFrame gameJFrame,int playerIndex){
         ArrayList<MahjongCard> player= gameJFrame.getPlayerList().get(playerIndex);
@@ -71,7 +77,7 @@ public class AI_Algorithm {
     }
 
     //机器人的碰牌方法
-    public static void PengCards(GameJFrame gameJFrame,int playerIndex){  //调位置
+    public static void PengCards(GameJFrame gameJFrame,int playerIndex){
         //通过弃牌堆找到要碰的牌
         MahjongCard pengCard = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1);
         //获取中自己手上所有的牌
@@ -85,16 +91,19 @@ public class AI_Algorithm {
                 if (card.getName().equals(pengCard.getName())) {
                     Point point = new Point();
                     if(playerIndex==1){
-                        point.x = 1120;      //850
-                        point.y = 570+j*35;  //370
+                        point.x = 1120-cpg1Count*40;      //850
+                        point.y = 610+j*35;  //370
+                        is1=true;
                     }
                     if(playerIndex==2){
-                        point.x = 830+j*35;   //720
-                        point.y = 200;        //50
+                        point.x = 850+j*35;   //720
+                        point.y = 200+cpg2Count*50;        //50
+                        is2=true;
                     }
                     if(playerIndex==3){
-                        point.x = 150;        //80
+                        point.x = 170+cpg3Count*40;        //80
                         point.y = 120+j*35;   //70
+                        is3=true;
                     }
                     j++;
                     card.setCanClick(false);
@@ -103,13 +112,25 @@ public class AI_Algorithm {
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
             }
+            if (is1){
+                cpg1Count++;
+                is1=false;
+            }
+            if (is2){
+                cpg2Count++;
+                is2=false;
+            }
+            if (is3){
+                cpg3Count++;
+                is3=false;
+            }
             //碰后出牌
             ShowCard(gameJFrame,playerIndex);
         }
     }
 
     //机器人开杠
-    public static void GangCards(GameJFrame gameJFrame,int playerIndex, MahjongCard GangCard){  //调位置
+    public static void GangCards(GameJFrame gameJFrame,int playerIndex, MahjongCard GangCard){
         //获取中自己手上所有的牌
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
         if(Other_Algorithm.CheckPeng(player,GangCard)){
@@ -122,16 +143,19 @@ public class AI_Algorithm {
                 if (card.getName().equals(GangCard.getName())) {
                     Point point = new Point();
                     if(playerIndex==1){
-                        point.x = 1120;      //850
-                        point.y = 570+j*35;  //370
+                        point.x = 1120-cpg1Count*40;      //850
+                        point.y = 610+j*35;  //370
+                        is1=true;
                     }
                     if(playerIndex==2){
-                        point.x = 830+j*35;   //720
-                        point.y = 200;        //50
+                        point.x = 850+j*35;   //720
+                        point.y = 200+cpg2Count*50;        //50
+                        is2=true;
                     }
                     if(playerIndex==3){
-                        point.x = 150;        //80
+                        point.x = 170+cpg3Count*40;        //80
                         point.y = 120+j*35;   //70
+                        is3=true;
                     }
                     Other_Algorithm.move(card, card.getLocation(), point);
                     //碰过的牌不能动了
@@ -139,6 +163,18 @@ public class AI_Algorithm {
                     card.setIfGang(true);
                     j++;
                 }
+            }
+            if (is1){
+                cpg1Count++;
+                is1=false;
+            }
+            if (is2){
+                cpg2Count++;
+                is2=false;
+            }
+            if (is3){
+                cpg3Count++;
+                is3=false;
             }
             //杠后出牌
             ShowCard(gameJFrame,playerIndex);
@@ -175,16 +211,19 @@ public class AI_Algorithm {
                     if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
                         Point point = new Point();
                         if(playerIndex==1){
-                            point.x = 1120;      //850
-                            point.y = 570+j*35;  //370
+                            point.x = 1120-cpg1Count*40;      //850
+                            point.y = 610+j*35;  //370
+                            is1=true;
                         }
                         if(playerIndex==2){
-                            point.x = 830+j*35;   //720
-                            point.y = 200;        //50
+                            point.x = 850+j*35;   //720
+                            point.y = 200+cpg2Count*50;        //50
+                            is2=true;
                         }
                         if(playerIndex==3){
-                            point.x = 150;        //80
+                            point.x = 170+cpg3Count*40;        //80
                             point.y = 120+j*35;   //70
+                            is3=true;
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
@@ -196,16 +235,19 @@ public class AI_Algorithm {
                     if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
                         Point point = new Point();
                         if(playerIndex==1){
-                            point.x = 1120;      //850
-                            point.y = 570+j*35;  //370
+                            point.x = 1120-cpg1Count*40;      //850
+                            point.y = 610+j*35;  //370
+                            is1=true;
                         }
                         if(playerIndex==2){
-                            point.x = 830+j*35;   //720
-                            point.y = 200;        //50
+                            point.x = 850+j*35;   //720
+                            point.y = 200+cpg2Count*50;        //50
+                            is2=true;
                         }
                         if(playerIndex==3){
-                            point.x = 150;        //80
+                            point.x = 170+cpg3Count*40;        //80
                             point.y = 120+j*35;   //70
+                            is3=true;
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
                         //碰过的牌不能动了
@@ -214,6 +256,18 @@ public class AI_Algorithm {
                         j++;
                     }
                 }
+            }
+            if (is1){
+                cpg1Count++;
+                is1=false;
+            }
+            if (is2){
+                cpg2Count++;
+                is2=false;
+            }
+            if (is3){
+                cpg3Count++;
+                is3=false;
             }
             //碰后出牌
             ShowCard(gameJFrame,playerIndex);
