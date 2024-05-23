@@ -28,6 +28,7 @@ public class MahjongCard extends JLabel implements MouseListener {
 
 
     public MahjongCard(GameJFrame m, String name, boolean up){
+        this.gameJFrame=m;
         this.name=name;
         this.up=up;
         if (this.up){
@@ -40,7 +41,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         //牌的大小
         this.setSize(35,48);
         //把牌显示出来
-        this.setVisible(true);
+        this.setVisible(false);
         //给每一张牌添加鼠标监听
         this.addMouseListener(this);
 
@@ -67,6 +68,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
         this.up = false;
     }
+
 
     //能不能被点击,能就上升，再被点就下去
     @Override
@@ -104,7 +106,7 @@ public class MahjongCard extends JLabel implements MouseListener {
     }
 
     public boolean getIfEat(){
-        return ifEat;
+        return this.ifEat;
     }
 
     public void setIfEat(boolean ifEat) {

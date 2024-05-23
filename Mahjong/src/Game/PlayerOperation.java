@@ -82,6 +82,11 @@ public class PlayerOperation extends Thread {
                     gameJFrame.num0++;
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
+                //重新摆放剩余的牌
+                Other_Algorithm.order(play);
+                Other_Algorithm.rePosition(gameJFrame, play, 0);
+                // 展示出的麻将牌
+                gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1).turnFront();
                 sleep(1);
             }
             gameJFrame.nextPlayer = false;
@@ -122,30 +127,31 @@ public class PlayerOperation extends Thread {
     public void run() {
         // 游戏开始,掷骰子定庄阶段
         while (i > -1 && isRun) {
-            gameJFrame.time[1].setText("Roll骰子定庄家:");
+            gameJFrame.time[0].setText("Roll骰子定庄家:");
             sleep(1);
             i--;
         }
         if (i == -1){
             if(gameJFrame.DealerFlag==0){
-                gameJFrame.time[1].setText("你是庄家");
+                gameJFrame.time[0].setText("你是庄家");
             }
             if(gameJFrame.DealerFlag==1){
-                gameJFrame.time[1].setText("下家是庄家");
+                gameJFrame.time[0].setText("下家是庄家");
             }
             if(gameJFrame.DealerFlag==2){
-                gameJFrame.time[1].setText("对家是庄家");
+                gameJFrame.time[0].setText("对家是庄家");
             }
             if(gameJFrame.DealerFlag==3){
-                gameJFrame.time[1].setText("上家是庄家");
+                gameJFrame.time[0].setText("上家是庄家");
             }
         }
+
         // 初始化庄家，庄家是第一个出牌的玩家
         gameJFrame.turn = gameJFrame.DealerFlag;
         // 主游戏循环
         while (!win()) {
             try {
-                Thread.currentThread().sleep(20);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -332,10 +338,11 @@ public class PlayerOperation extends Thread {
         }
         //将牌放入玩家牌盒
         gameJFrame.getPlayerList().get(playerIndex).add(newCard);
-        newCard.turnFront();
         if (playerIndex==0){
+            newCard.turnFront();
             newCard.setCanClick(true);
         }
+        newCard.setVisible(true);
         gameJFrame.changeNUmb();
     }
 

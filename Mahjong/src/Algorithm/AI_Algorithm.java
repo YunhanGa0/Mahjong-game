@@ -106,6 +106,7 @@ public class AI_Algorithm {
                         is3=true;
                     }
                     j++;
+                    card.turnFront();
                     card.setCanClick(false);
                     //碰过的牌不能动了
                     card.setIfPeng(true);
@@ -158,6 +159,7 @@ public class AI_Algorithm {
                         is3=true;
                     }
                     Other_Algorithm.move(card, card.getLocation(), point);
+                    card.turnFront();
                     //碰过的牌不能动了
                     card.setCanClick(false);
                     card.setIfGang(true);
@@ -226,6 +228,7 @@ public class AI_Algorithm {
                             is3=true;
                         }
                         Other_Algorithm.move(card, card.getLocation(), point);
+                        card.turnFront();
                         //碰过的牌不能动了
                         card.setCanClick(false);
                         card.setIfEat(true);
