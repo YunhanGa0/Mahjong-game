@@ -85,6 +85,9 @@ public class GameJFrame extends JFrame implements ActionListener {
         //添加组件
         initView();
 
+        //初始化庄家图标
+        initDealerFlag();
+
         //界面显示出来
         //先展示界面再发牌，因为发牌里面有动画，界面不展示出来，动画无法展示
         this.setVisible(true);
@@ -101,34 +104,97 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     }
 
-    //Roll骰子并显示大小确定庄家
-    private void rollDice() {
-        Random random = new Random();
+//Roll骰子并显示大小确定庄家
+private void rollDice() {
+    Random random = new Random();
 
-        // 每个玩家掷骰子
-        int[] diceResults = new int[4]; // 假设有四个玩家
+    while (true) {
+        // 每个玩家掷两个骰子
+        int[][] diceResults = new int[4][2]; // 假设有四个玩家，每个玩家两个骰子
+        int[] totalResults = new int[4]; // 每个玩家的总点数
         for (int j = 0; j < diceResults.length; j++) {
-            diceResults[j] = random.nextInt(12) + 1;
+            diceResults[j][0] = random.nextInt(6) + 1;
+            diceResults[j][1] = random.nextInt(6) + 1;
+            totalResults[j] = diceResults[j][0] + diceResults[j][1];
         }
 
-        //图形化骰子到窗口
-        for (int diceResult : diceResults) {
-            System.out.println(diceResult);
+        // 图形化骰子到窗口
+        for (int j = 0; j < diceResults.length; j++) {
+            System.out.println("Player " + (j + 1) + " dice results: " + diceResults[j][0] + ", " + diceResults[j][1]);
+            // 在窗口中显示骰子图像
+            showDiceImages(j, diceResults[j][0], diceResults[j][1]);
         }
 
         // 确定骰子点数最大的玩家，设为庄家
         int maxDice = 0;
         int dealerIndex = 0;  // 庄家索引
-        for (int j = 0; j < diceResults.length; j++) {
-            if (diceResults[j] > maxDice) {
-                maxDice = diceResults[j];
+        boolean tie = false;
+        for (int j = 0; j < totalResults.length; j++) {
+            if (totalResults[j] > maxDice) {
+                maxDice = totalResults[j];
                 dealerIndex = j;
+                tie = false;
+            } else if (totalResults[j] == maxDice) {
+                tie = true; // 如果有平局，则标记为平局
             }
         }
 
-        //设置为庄家的回合
-        DealerFlag=dealerIndex;
+        if (!tie) { // 如果没有平局，确定庄家
+            // 设置为庄家的回合
+            DealerFlag = dealerIndex;
+            setFlag(dealerIndex); // 调用setFlag方法显示庄家图标
+            break;
+        } else {
+            System.out.println("Tie detected. Re-rolling the dice.");
+        }
+
     }
+}
+
+    // 显示骰子图像的方法
+    private void showDiceImages(int playerIndex, int dice1, int dice2) {
+        // 根据玩家索引和骰子点数在窗口中显示骰子图像
+        // 例如：在特定位置显示骰子1和骰子2的图像
+        String diceImagePath1 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice"+ dice1 + ".png";
+        String diceImagePath2 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice"+ dice2 + ".png";
+
+        JLabel diceLabel1 = new JLabel(new ImageIcon(diceImagePath1));
+        JLabel diceLabel2 = new JLabel(new ImageIcon(diceImagePath2));
+        diceLabel1.setSize(70, 70);
+        diceLabel2.setSize(70, 70);
+
+        // 设置骰子图像位置
+        Point point1 = new Point();
+        Point point2 = new Point();
+        switch (playerIndex) {
+            case 0:
+                point1.setLocation(600, 700);
+                point2.setLocation(680, 700);
+                break;
+            case 1:
+                point1.setLocation(1000, 450);
+                point2.setLocation(1080, 450);
+                break;
+            case 2:
+                point1.setLocation(600, 100);
+                point2.setLocation(680, 100);
+                break;
+            case 3:
+                point1.setLocation(220, 450);
+                point2.setLocation(300, 450);
+                break;
+        }
+
+        diceLabel1.setLocation(point1);
+        diceLabel2.setLocation(point2);
+
+        container.add(diceLabel1);
+        container.add(diceLabel2);
+        container.setComponentZOrder(diceLabel1, 0);
+        container.setComponentZOrder(diceLabel2, 0);
+    }
+
+
 
     public void getLai(){
         //牌底摸一张赖子牌
@@ -241,31 +307,51 @@ public class GameJFrame extends JFrame implements ActionListener {
     }
 
     //庄家旗帜位置
-    public void setFlag(int i) { //定个位置
+    public void setFlag(int i) {
         Point point = new Point();
-        if (i == 0) {
-            point.x = 80;
-            point.y = 20;
-            DealerFlag = 0;
-        }
-        if (i == 1) {
-            point.x = 80;
-            point.y = 430;
-            DealerFlag = 1;
-        }
-        if (i == 2) {
-            point.x = 700;
-            point.y = 20;
-           DealerFlag = 2;
-        }
-        if (i == 3) {
-            point.x = 700;
-            point.y = 20;
-            DealerFlag = 3;
+        switch (i) {
+            case 0:
+                point.x = 160;
+                point.y = 825;
+                DealerFlag = 0;
+                break;
+            case 1:
+                point.x = 1200;
+                point.y = 730;
+                DealerFlag = 1;
+                break;
+            case 2:
+                point.x = 900;
+                point.y = 120;
+                DealerFlag = 2;
+                break;
+            case 3:
+                point.x = 70;
+                point.y = 160;
+                DealerFlag = 3;
+                break;
         }
         Dealer.setLocation(point);
         Dealer.setVisible(true);
     }
+
+    //在初始化方法中设置庄家图标
+    //在初始化方法中设置庄家图标
+    private void initDealerFlag() {
+        ImageIcon originalIcon = new ImageIcon("C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\flag.png");
+        Image originalImage = originalIcon.getImage();
+        // 设置缩放后的大小
+        int width = 40;
+        int height = 40;
+        Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+        Dealer = new JLabel(scaledIcon);
+        Dealer.setVisible(false);
+        Dealer.setSize(width, height);
+        container.add(Dealer);
+    }
+
 
     //点击按钮进行的事件
     @Override
@@ -431,10 +517,17 @@ public class GameJFrame extends JFrame implements ActionListener {
                     player.remove(card);
                     //计算坐标并移动牌到展示区
                     Point point = new Point();
-                    point.x = 430 + num0 * 35;
-                    point.y = 680;
-                    num0++;
-                    Other_Algorithm.move(card, card.getLocation(), point);
+                    if (num0/13==0){
+                        point.x = 430 + (num0) * 35;
+                        point.y = 730;
+                        num0++;
+                        Other_Algorithm.move(card, card.getLocation(), point);
+                    }
+                    else {
+                        point.x = 430 + (num0-13) * 35;
+                        point.y = 680;
+                        num0++;
+                        Other_Algorithm.move(card, card.getLocation(), point);}
                 }
                 //重新摆放剩余的牌
                 Other_Algorithm.order(player);

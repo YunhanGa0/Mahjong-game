@@ -54,18 +54,33 @@ public class AI_Algorithm {
         //移动的目的是要出的牌移动到上方
         Point point = new Point();
         if(playerIndex==1){
-            point.x = 1040;
-            point.y = 290+gameJFrame.num1*35;
+            if (gameJFrame.num1/13==0) {
+                point.x = 1040;
+                point.y = 290 + gameJFrame.num1 * 35;
+            }else {
+                point.x = 1000;
+                point.y = 290 + (gameJFrame.num1-13) * 35;
+            }
             gameJFrame.num1++;
         }
         if(playerIndex==2){
-            point.x = 820-gameJFrame.num2*35;
-            point.y = 320;
+            if (gameJFrame.num2/13==0) {
+                point.x = 820-gameJFrame.num2*35;
+                point.y = 310;
+            }else {
+                point.x = 820-(gameJFrame.num2-13)*35;
+                point.y = 360;
+            }
             gameJFrame.num2++;
         }
         if(playerIndex==3){
-            point.x = 260;
-            point.y = 290+gameJFrame.num3*35;
+            if (gameJFrame.num2/13==0) {
+                point.x = 260;
+                point.y = 290+gameJFrame.num3*35;
+            }else {
+                point.x = 300;
+                point.y = 290+(gameJFrame.num3-13)*35;
+            }
             gameJFrame.num3++;
         }
         c.setLocation(point.x,point.y);
