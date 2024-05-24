@@ -144,6 +144,7 @@ public class PlayerOperation extends Thread {
             if(gameJFrame.DealerFlag==3){
                 gameJFrame.time[0].setText("上家是庄家");
             }
+            gameJFrame.hideDice();
         }
 
         // 初始化庄家，庄家是第一个出牌的玩家

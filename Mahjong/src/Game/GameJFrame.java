@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+
 public class GameJFrame extends JFrame implements ActionListener {
 
     //获取界面中的隐藏容器
@@ -78,6 +82,9 @@ public class GameJFrame extends JFrame implements ActionListener {
     public GameJFrame() {
         //设置图标
         setIconImage(Toolkit.getDefaultToolkit().getImage(""));
+
+        // BGM
+        new Thread(() -> playBackgroundMusic("C:\\Users\\qwerty\\Downloads\\5c8a181d9e6af98360.wav")).start();
 
         //设置界面
         initJFrame();
@@ -151,17 +158,19 @@ private void rollDice() {
     }
 }
 
-    // 显示骰子图像的方法
     private void showDiceImages(int playerIndex, int dice1, int dice2) {
         // 根据玩家索引和骰子点数在窗口中显示骰子图像
-        // 例如：在特定位置显示骰子1和骰子2的图像
-        String diceImagePath1 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice"+ dice1 + ".png";
-        String diceImagePath2 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice"+ dice2 + ".png";
+        String diceImagePath1 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice" + dice1 + ".png";
+        String diceImagePath2 = "C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\Dice" + dice2 + ".png";
 
         JLabel diceLabel1 = new JLabel(new ImageIcon(diceImagePath1));
         JLabel diceLabel2 = new JLabel(new ImageIcon(diceImagePath2));
-        diceLabel1.setSize(70, 70);
-        diceLabel2.setSize(70, 70);
+        diceLabel1.setSize(55, 55);
+        diceLabel2.setSize(55, 55);
+
+        // 给每个标签加一个名字
+        diceLabel1.setName("DiceLabel1");
+        diceLabel2.setName("DiceLabel2");
 
         // 设置骰子图像位置
         Point point1 = new Point();
@@ -172,12 +181,12 @@ private void rollDice() {
                 point2.setLocation(680, 700);
                 break;
             case 1:
-                point1.setLocation(1000, 450);
-                point2.setLocation(1080, 450);
+                point1.setLocation(950, 450);
+                point2.setLocation(1030, 450);
                 break;
             case 2:
-                point1.setLocation(600, 100);
-                point2.setLocation(680, 100);
+                point1.setLocation(600, 300);
+                point2.setLocation(680, 300);
                 break;
             case 3:
                 point1.setLocation(220, 450);
@@ -194,6 +203,17 @@ private void rollDice() {
         container.setComponentZOrder(diceLabel2, 0);
     }
 
+    public void hideDice() {
+        // 遍历所有组件，找到所有的JLabel并隐藏
+        for (Component component : container.getComponents()) {
+            if (component instanceof JLabel) {
+                JLabel label = (JLabel) component;
+                if (label.getIcon() != null && label.getIcon().toString().contains("Dice")) {
+                    label.setVisible(false);
+                }
+            }
+        }
+    }
 
 
     public void getLai(){
@@ -335,7 +355,7 @@ private void rollDice() {
         Dealer.setVisible(true);
     }
 
-    //在初始化方法中设置庄家图标
+
     //在初始化方法中设置庄家图标
     private void initDealerFlag() {
         ImageIcon originalIcon = new ImageIcon("C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\flag.png");
@@ -519,13 +539,13 @@ private void rollDice() {
                     Point point = new Point();
                     if (num0/13==0){
                         point.x = 430 + (num0) * 35;
-                        point.y = 730;
+                        point.y = 690;
                         num0++;
                         Other_Algorithm.move(card, card.getLocation(), point);
                     }
                     else {
                         point.x = 430 + (num0-13) * 35;
-                        point.y = 680;
+                        point.y = 640;
                         num0++;
                         Other_Algorithm.move(card, card.getLocation(), point);}
                 }
@@ -617,7 +637,6 @@ private void rollDice() {
     }
 
     //设置界面
-    //设置界面
     public void initJFrame() {
         //设置标题
         this.setTitle("Mahjong Game");
@@ -642,6 +661,38 @@ private void rollDice() {
         //设置背景颜色
         container.setBackground(Color.BLACK);
     }
+    public static void playBackgroundMusic(String filePath) {
+        try {
+            // 获取音频输入流
+            File audioFile = new File(filePath);
+            if (!audioFile.exists()) {
+                System.err.println("音频文件不存在: " + filePath);
+                return;
+            }
+
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            // 获取音频格式
+            AudioFormat format = audioStream.getFormat();
+            // 获取音频数据行
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            Clip audioClip = (Clip) AudioSystem.getLine(info);
+            // 打开音频数据行
+            audioClip.open(audioStream);
+            // 设置循环播放
+            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+            // 开始播放
+            audioClip.start();
+
+        } catch (UnsupportedAudioFileException e) {
+            System.err.println("不支持的音频文件格式: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("音频文件读取错误: " + e.getMessage());
+        } catch (LineUnavailableException e) {
+            System.err.println("音频设备不可用: " + e.getMessage());
+        }
+    }
+
+
 
     public ArrayList<ArrayList<MahjongCard>> getPlayerList(){
         return playerList;

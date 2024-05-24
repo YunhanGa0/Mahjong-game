@@ -66,10 +66,10 @@ public class AI_Algorithm {
         if(playerIndex==2){
             if (gameJFrame.num2/13==0) {
                 point.x = 820-gameJFrame.num2*35;
-                point.y = 310;
+                point.y = 340;
             }else {
                 point.x = 820-(gameJFrame.num2-13)*35;
-                point.y = 360;
+                point.y = 390;
             }
             gameJFrame.num2++;
         }
