@@ -8,8 +8,8 @@ public class ShinJFrame extends JFrame {
 
     private static final Preferences prefs = Preferences.userRoot().node(ShinJFrame.class.getName());
     private static final String PREF_KEY = "isClassic";
-    private JButton classicTileButton;
-    private JButton animatedTileButton;
+    private final JButton classicTileButton;
+    private final JButton animatedTileButton;
 
     public ShinJFrame() {
         setTitle("Choose the style of tile");
@@ -64,7 +64,7 @@ public class ShinJFrame extends JFrame {
     }
 
     // 自定义按钮类，绘制透明背景和蓝圈
-    private class CustomButton extends JButton {
+    private static class CustomButton extends JButton {
         private boolean isSelected = false;
 
         public CustomButton() {

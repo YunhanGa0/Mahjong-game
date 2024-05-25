@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuJFrame extends JFrame implements ActionListener {
-    private JLabel backgroundLabel;
+    private final JLabel backgroundLabel;
 
     public MenuJFrame() {
         setTitle("Mahjong Game");

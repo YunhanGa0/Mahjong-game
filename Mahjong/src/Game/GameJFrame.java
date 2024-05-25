@@ -176,22 +176,22 @@ private void rollDice() {
         Point point1 = new Point();
         Point point2 = new Point();
         switch (playerIndex) {
-            case 0:
+            case 0 -> {
                 point1.setLocation(600, 700);
                 point2.setLocation(680, 700);
-                break;
-            case 1:
+            }
+            case 1 -> {
                 point1.setLocation(950, 450);
                 point2.setLocation(1030, 450);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 point1.setLocation(600, 300);
                 point2.setLocation(680, 300);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 point1.setLocation(220, 450);
                 point2.setLocation(300, 450);
-                break;
+            }
         }
 
         diceLabel1.setLocation(point1);
@@ -206,15 +206,13 @@ private void rollDice() {
     public void hideDice() {
         // 遍历所有组件，找到所有的JLabel并隐藏
         for (Component component : container.getComponents()) {
-            if (component instanceof JLabel) {
-                JLabel label = (JLabel) component;
+            if (component instanceof JLabel label) {
                 if (label.getIcon() != null && label.getIcon().toString().contains("Dice")) {
                     label.setVisible(false);
                 }
             }
         }
     }
-
 
     public MahjongCard getLai(){
         //牌底摸一张赖子牌
@@ -331,26 +329,26 @@ private void rollDice() {
     public void setFlag(int i) {
         Point point = new Point();
         switch (i) {
-            case 0:
+            case 0 -> {
                 point.x = 160;
                 point.y = 825;
                 DealerFlag = 0;
-                break;
-            case 1:
+            }
+            case 1 -> {
                 point.x = 1200;
                 point.y = 730;
                 DealerFlag = 1;
-                break;
-            case 2:
+            }
+            case 2 -> {
                 point.x = 900;
                 point.y = 120;
                 DealerFlag = 2;
-                break;
-            case 3:
+            }
+            case 3 -> {
                 point.x = 70;
                 point.y = 160;
                 DealerFlag = 3;
-                break;
+            }
         }
         Dealer.setLocation(point);
         Dealer.setVisible(true);
@@ -541,14 +539,13 @@ private void rollDice() {
                     if (num0/13==0){
                         point.x = 430 + (num0) * 35;
                         point.y = 690;
-                        num0++;
-                        Other_Algorithm.move(card, card.getLocation(), point);
                     }
                     else {
                         point.x = 430 + (num0-13) * 35;
                         point.y = 640;
-                        num0++;
-                        Other_Algorithm.move(card, card.getLocation(), point);}
+                    }
+                    num0++;
+                    Other_Algorithm.move(card, card.getLocation(), point);
                 }
                 //重新摆放剩余的牌
                 Other_Algorithm.order(player);
