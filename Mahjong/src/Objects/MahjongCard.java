@@ -47,6 +47,10 @@ public class MahjongCard extends JLabel implements MouseListener {
 
     }
 
+    public MahjongCard(String name){
+        this.name=name;
+    }
+
     //显示正面
     public void turnFront() {
         int i=Integer.parseInt(this.getName().substring(0, 1));

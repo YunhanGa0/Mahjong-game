@@ -216,7 +216,7 @@ private void rollDice() {
     }
 
 
-    public void getLai(){
+    public MahjongCard getLai(){
         //牌底摸一张赖子牌
         MahjongCard Lai=MahjongCardList.get(135);
         //翻到正面
@@ -225,6 +225,7 @@ private void rollDice() {
         Lai.setLocation(650, 450);
         Lai.setVisible(true);
         System.out.println(Lai.getName());
+        return Lai;
     }
 
     //初始化牌
