@@ -14,14 +14,11 @@ public class PlayerOperation extends Thread {
     //游戏主界面
     GameJFrame gameJFrame;
 
-    //是否能走
-    boolean isRun = true;
+    //倒计时
+    Integer i;
 
     // 检查其他玩家的操作（碰、杠、吃）
     static boolean actionTaken = false;
-
-    //倒计时
-    int i;
 
     public PlayerOperation(GameJFrame m, int i) {
         this.gameJFrame = m;
@@ -30,7 +27,6 @@ public class PlayerOperation extends Thread {
 
     //定义一个方法用来暂停N秒
     //参数为等待的时间
-    //因为线程中的sleep方法有异常，直接调用影响阅读
     public void sleep(int i) {
         try {
             Thread.sleep((long)i * 900);
@@ -51,25 +47,27 @@ public class PlayerOperation extends Thread {
             }
             if (i == -1) {
                 // 倒计时结束后的操作，打出摸到的牌或最后一次点击的牌
-                // 弃牌堆(刚打出的牌);
-                //遍历手上的牌，把要出的牌放到临时集合中
-                ArrayList<MahjongCard> play=gameJFrame.getPlayerList().get(0);
-                for (int j = 0; j < play.size(); j++) {
-                    MahjongCard card = play.get(j);
-                    if (card.isClicked()&&(!card.getIfGang() && !card.getIfPeng() && !card.getIfEat())) {
-                        gameJFrame.currentList.add(card);
-                        //在手上的牌中，去掉已经出掉的牌
-                        play.remove(card);
-                        //计算坐标并移动牌
-                        //移动的目的是要出的牌移动到上方
-                        Point point = new Point();
-                        point.x = 430 + gameJFrame.num0 * 35;
-                        point.y = 680;
-                        gameJFrame.num0++;
-                        Other_Algorithm.move(card, card.getLocation(), point);
+                ArrayList<MahjongCard> play = gameJFrame.getPlayerList().get(0);
+                if(checkClicked()) {
+                    // 倒计时结束后的操作，打出摸到的牌或最后一次点击的牌
+                    // 弃牌堆(刚打出的牌);
+                    //遍历手上的牌，把要出的牌放到临时集合中
+                    for (int j = 0; j < play.size(); j++) {
+                        MahjongCard card = play.get(j);
+                        if (card.isClicked() && (!card.getIfGang() && !card.getIfPeng() && !card.getIfEat())) {
+                            gameJFrame.currentList.add(card);
+                            //在手上的牌中，去掉已经出掉的牌
+                            play.remove(card);
+                            //计算坐标并移动牌
+                            //移动的目的是要出的牌移动到上方
+                            Point point = new Point();
+                            point.x = 430 + gameJFrame.num0 * 35;
+                            point.y = 680;
+                            gameJFrame.num0++;
+                            Other_Algorithm.move(card, card.getLocation(), point);
+                        }
                     }
-                }
-                if (gameJFrame.currentList.size()==0){
+                }else{
                     MahjongCard card=play.get(play.size()-1);
                     gameJFrame.currentList.add(card);
                     //在手上的牌中，去掉已经出掉的牌
@@ -126,7 +124,7 @@ public class PlayerOperation extends Thread {
     @Override
     public void run() {
         // 游戏开始,掷骰子定庄阶段
-        while (i > -1 && isRun) {
+        while (i > -1) {
             gameJFrame.time[0].setText("Roll骰子定庄家:");
             sleep(1);
             i--;
@@ -213,7 +211,6 @@ public class PlayerOperation extends Thread {
                 for (int j = (gameJFrame.turn + 1) % 4; j != gameJFrame.turn; j = (j + 1) % 4) {
                     //获取玩家刚打出的牌
                     MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
-
                     //判定是否能胡
                     if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(j), lastCard)) {
                         if (j == 0) { // 玩家操作
@@ -345,6 +342,16 @@ public class PlayerOperation extends Thread {
         }
         newCard.setVisible(true);
         gameJFrame.changeNUmb();
+    }
+
+    public boolean checkClicked(){
+        ArrayList<MahjongCard> player=gameJFrame.getPlayerList().get(0);
+        for(MahjongCard card: player){
+            if (card.isClicked()==true){
+                return true;
+            }
+        }
+        return false;
     }
 
     //检测是否有玩家胜利

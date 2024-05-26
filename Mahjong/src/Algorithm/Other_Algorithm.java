@@ -174,12 +174,12 @@ public class Other_Algorithm {
     //利用牌的价值，将集合中的牌进行排序
     //o1是原来的，o2是新增的
     public static void order(ArrayList<MahjongCard> list) {
-        Collections.sort(list, (o1, o2) -> {
+        list.sort((o1, o2) -> {
 
             // 检查是否已经碰或杠
-            if ((o1.getIfPeng()||o1.getIfGang()) && (o2.getIfPeng()||o2.getIfGang())) return 0;  // 都碰或杠过，不调整顺序
-            if (o1.getIfPeng()||o1.getIfGang()) return 1;  // o1碰或杠过，应放后面
-            if (o2.getIfPeng()||o2.getIfGang()) return -1; // o2碰或杠过，应放后面
+            if ((o1.getIfPeng() || o1.getIfGang()) && (o2.getIfPeng() || o2.getIfGang())) return 0;  // 都碰或杠过，不调整顺序
+            if (o1.getIfPeng() || o1.getIfGang()) return 1;  // o1碰或杠过，应放后面
+            if (o2.getIfPeng() || o2.getIfGang()) return -1; // o2碰或杠过，应放后面
 
             //获得最前面的数字，判断花色
             int a1 = Integer.parseInt(o1.getName().substring(0, 1));
@@ -190,10 +190,10 @@ public class Other_Algorithm {
             int b2 = Integer.parseInt(o2.getName().substring(2));
 
             //如果牌的花色一样，则按照价值排序
-            if ((a1-a2) == 0) {
-                return b1-b2;
+            if ((a1 - a2) == 0) {
+                return b1 - b2;
             } else {
-                return a1-a2;
+                return a1 - a2;
             }
         });
     }
