@@ -57,49 +57,59 @@ public class Other_Algorithm {
         return false;
     }
 
-    public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard){
-        ArrayList<MahjongCard> wan = insertIn(cards,1);
-        ArrayList<MahjongCard> tiao = insertIn(cards,2);
-        ArrayList<MahjongCard> tong = insertIn(cards,3);
-        switch(getColor(comingCard))
-        {
-            case 1 :
-                helpCheckChi(wan,comingCard);
-            case 2 :
-                helpCheckChi(tiao,comingCard);
-            case 3 :
-                helpCheckChi(tong,comingCard);
-            default :
+    public static boolean CheckChi(ArrayList<MahjongCard> cards, MahjongCard comingCard) {
+        ArrayList<MahjongCard> wan = insertIn(cards, 1);
+        ArrayList<MahjongCard> tiao = insertIn(cards, 2);
+        ArrayList<MahjongCard> tong = insertIn(cards, 3);
+        switch (getColor(comingCard)) {
+            case 1:
+                return helpCheckChi(wan, comingCard);
+            case 2:
+                return helpCheckChi(tiao, comingCard);
+            case 3:
+                return helpCheckChi(tong, comingCard);
+            default:
                 return false;
         }
     }
 
-    public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard){
-        HashSet<Integer> newValues = new HashSet<>();
+    public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard) {
+        int comingValue = getValue(comingCard);
+        HashSet<Integer> validValues = new HashSet<>();
 
+        // 遍历当前牌组，查找可以与comingCard组成顺子的牌
         for (int i = 0; i < list.size(); i++) {
-            int current = getColor(list.get(i));
+            int currentValue = getValue(list.get(i));
 
-            // Check for n, n+1 consecutive pair
-            if (i < list.size() - 1 && getColor(list.get(i + 1)) == current + 1) {
-                if (current - 1 >= 1) {
-                    newValues.add(current - 1);
-                }
-                if (getColor(list.get(i + 1)) + 1 <= 9) {
-                    newValues.add(getColor(list.get(i + 1)) + 1);
+            // 检查当前牌和前一张牌是否与comingCard组成顺子
+            if (i > 0) {
+                int prevValue = getValue(list.get(i - 1));
+                if (prevValue == comingValue - 1 && currentValue == comingValue + 1) {
+                    return true; // (prevValue, comingValue, currentValue) 组成顺子
                 }
             }
 
-            // Check for n, n+2 pair
-            if (i < list.size() - 2 && getColor(list.get(i + 2)) == current + 2) {
-                if (getColor(list.get(i + 1)) >= 1 && getColor(list.get(i + 1)) <= 9) {
-                    newValues.add(getColor(list.get(i + 1)));
+            // 检查当前牌和后一张牌是否与comingCard组成顺子
+            if (i < list.size() - 1) {
+                int nextValue = getValue(list.get(i + 1)); // 获取下一张牌的值
+                if (currentValue == comingValue - 1 && nextValue == comingValue + 1) {
+                    return true; // (currentValue, comingValue, nextValue) 组成顺子
+                }
+            }
+
+            // 检查当前牌和后两张牌是否与comingCard组成顺子
+            if (i < list.size() - 2) {
+                int nextValue = getValue(list.get(i + 1)); // 获取下一张牌的值
+                int nextNextValue = getValue(list.get(i + 2)); // 获取下两张牌的值
+                if (currentValue == comingValue - 2 && nextNextValue == comingValue + 2) {
+                    return true; // (currentValue, comingValue, nextNextValue) 组成顺子
                 }
             }
         }
-        // Check if the input value is in the newValues set
-        return newValues.contains(getColor(comingCard));
+
+        return false; // 没有找到可以组成顺子的组合
     }
+
 
     public static ArrayList<MahjongCard> insertIn(ArrayList<MahjongCard> list, int color){
         ArrayList<MahjongCard> filteredList = new ArrayList<>();
@@ -202,4 +212,8 @@ public class Other_Algorithm {
         return Integer.parseInt(card.getName().substring(0, 1));
     }
 
+    // 获取牌的值
+    public static int getValue(MahjongCard card) {
+        return Integer.parseInt(card.getName().substring(2));
+    }
 }
