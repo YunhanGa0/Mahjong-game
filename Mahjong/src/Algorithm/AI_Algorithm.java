@@ -20,7 +20,7 @@ public class AI_Algorithm {
             ShowCard(gameJFrame,playerIndex);
         }else {
             MahjongCard current = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
-            if (Hu_Algorithm.checkHu(player)) {
+            if (Hu_Algorithm.CheckHu(player,gameJFrame.getLai())) {
                 HuCards(gameJFrame, playerIndex, current);
             } else if (Other_Algorithm.CheckGang(player, current)) {
                 GangCards(gameJFrame, playerIndex, current);

@@ -7,355 +7,393 @@ import java.util.List;
 
 //判断是否胡牌的算法
 public class Hu_Algorithm {
-        /**
-         *
-         * 判断手牌是否可以胡牌,使用选将拆分法来实现
+    static int g_NeedHunCount;
 
-         * 手牌的格式必须转换为如下数据格式,数组的下标表示牌的类型共34种类型,数组的值表示这个类型牌的数量<br>
-         * cards[0]                   =                 2<br>
-         *      1万                                     共有2张 <br>
-         * int[] cards = {<br>
-         *          2,0,0,0,0,0,0,0,0, //-- 1-9万<br>
-         *          0,0,0,0,0,0,0,0,0, //-- 1-9条<br>
-         *          0,0,0,0,0,0,0,0,0, //-- 1-9筒<br>
-         *          0,0,0,0,0,0,0 //- 东南西北中发白<br>
-         *     };
-         *</pre>
-         *
-         * @return true可以胡  false
-         */
+    public static void order(ArrayList<MahjongCard> list) {
+        list.sort((o1, o2) -> {
+            //获得最前面的数字，判断花色
+            int a1 = Integer.parseInt(o1.getName().substring(0, 1));
+            int a2 = Integer.parseInt(o2.getName().substring(0, 1));
 
-        public static boolean CheckHu(ArrayList<MahjongCard> cards,MahjongCard ComingCard){
-            int[] hc=changeFormat(cards);
-            int color=Integer.parseInt(ComingCard.getName().substring(0, 1));
-            if(color==0){
-                int value=Integer.parseInt(ComingCard.getName().substring(2));
-                hc[value-1]+=1;
-            }else if (color==1){
-                int value=Integer.parseInt(ComingCard.getName().substring(2));
-                hc[value+8]+=1;
-            }else if (color==2){
-                int value=Integer.parseInt(ComingCard.getName().substring(2));
-                hc[value+17]+=1;
-            }else {
-                hc[color+24]+=1;
+            //获取后面的值
+            int b1 = Integer.parseInt(o1.getName().substring(2));
+            int b2 = Integer.parseInt(o2.getName().substring(2));
+
+            //如果牌的花色一样，则按照价值排序
+            if ((a1 - a2) == 0) {
+                return b1 - b2;
+            } else {
+                return a1 - a2;
             }
-            return checkHandCardsCanWin(hc);
+        });
+    }
+
+    // 按照花色分离麻将数组（0是混，1是万，2是条，3是筒，4是字）
+    private static ArrayList<ArrayList<MahjongCard>> separateArr(ArrayList<MahjongCard> mjArr, MahjongCard hunMj) {
+        ArrayList<ArrayList<MahjongCard>> reArr = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            reArr.add(new ArrayList<>());
         }
-
-        public static boolean checkHu(ArrayList<MahjongCard> cards){
-            int[] hc=changeFormat(cards);
-            return checkHandCardsCanWin(hc);
+        int ht =  Integer.parseInt(hunMj.getName().substring(0, 1));
+        int hv = Integer.parseInt(hunMj.getName().substring(2));
+        for (MahjongCard mj : mjArr) {
+            int t = Integer.parseInt(mj.getName().substring(0, 1));
+            int v = Integer.parseInt(mj.getName().substring(2));
+            if(t==0&&ht!=t){
+                reArr.get(1).add(mj);
+                order(reArr.get(1));
+            }else if(t==1&&ht!=t){
+                reArr.get(2).add(mj);
+                order(reArr.get(2));
+            }else if(t==2&&ht!=t){
+                reArr.get(3).add(mj);
+                order(reArr.get(3));
+            }else if(t>=3&&ht!=t){
+                reArr.get(4).add(mj);
+                order(reArr.get(4));
+            }else if(ht==t&&hv==v){
+                reArr.get(0).add(mj);
+                order(reArr.get(0));
+            }
         }
+        return reArr;
+    }
 
-        //有问题的
-        //把手牌中的arraylist转化成此方法可用的普通数组格式
-        public static int[] changeFormat(ArrayList<MahjongCard> cards){
-            int[] handCards= new int[34];
-            for (MahjongCard c: cards ){
-                int color=Integer.parseInt(c.getName().substring(0, 1));
-                if(color==1){
-                    int value=Integer.parseInt(c.getName().substring(2));
-                    handCards[value]+=1;
-                }else if (color==2){
-                    int value=Integer.parseInt(c.getName().substring(2));
-                    handCards[value+8]+=1;
-                }else if (color==3){
-                    int value=Integer.parseInt(c.getName().substring(2));
-                    handCards[value+17]+=1;
-                }else {
-                    handCards[color+23]+=1;
-                }
-            }
-            return handCards;
+    // 检查两张牌是否能组成有效组合
+    private static boolean test2Combine(MahjongCard MahjongCard1, MahjongCard MahjongCard2) {
+        int t1 = Integer.parseInt(MahjongCard1.getName().substring(0, 1));
+        int t2 = Integer.parseInt(MahjongCard2.getName().substring(0, 1));
+        int v1 = Integer.parseInt(MahjongCard1.getName().substring(2));
+        int v2 = Integer.parseInt(MahjongCard2.getName().substring(2));
+        return t1 == t2 && v1 == v2;
+    }
+
+    // 检查三张牌是否能组成有效组合
+    private static boolean test3Combine(MahjongCard MahjongCard1, MahjongCard MahjongCard2,MahjongCard MahjongCard3) {
+        //类型不同返回否
+        int t1 = Integer.parseInt(MahjongCard1.getName().substring(0, 1));
+        int t2 = Integer.parseInt(MahjongCard2.getName().substring(0, 1));
+        int t3 = Integer.parseInt(MahjongCard3.getName().substring(0, 1));
+        if (t1 != t2 || t1 != t3) {
+            return false;
         }
+        //如果类型一样，继续检测
+        int v1 = Integer.parseInt(MahjongCard1.getName().substring(2));
+        int v2 = Integer.parseInt(MahjongCard2.getName().substring(2));
+        int v3 = Integer.parseInt(MahjongCard3.getName().substring(2));
+        //如果组成刻子
+        if (v1 == v2 && v1 == v3) {
+            return true;
+        }
+        //不是条万筒返回否
+        if (t3 == 3) {
+            return false;
+        }
+        //检查是否为顺子
+        return (v1 + 1) == v2 && (v1 + 2) == v3;
+    }
 
-        public static boolean checkHandCardsCanWin(int[] handCards) {
+    // 获取需要赖子的数量
+    private static int getModNeedNum(int arrLem, boolean isJiang) {
+        if (arrLem <= 0){
+            return 0;
+        }
+        int modNum = arrLem % 3;
+        int[] needNumArr = {0, 2, 1};
+        if (isJiang) {
+            needNumArr = new int[]{2, 1, 0};
+        }
+        return needNumArr[modNum];
+    }
 
-            int[] cards = new int[34];
-            int cardsCount = 0;
-            for (int i = 0; i < 34; ++i) {
-                cards[i] = handCards[i];
-                cardsCount+= handCards[i];
-            }
-            //当手牌数量不满足3n+2时不构成胡牌条件
-            if (!(cardsCount >= 2 && cardsCount <= 14 && (cardsCount - 2) % 3 == 0)) {
-                return false;
-            }
-            /*
-             * 用来存储所有可以做将的牌型
-             */
-            List<Integer> eyeList = new ArrayList<>();
-            /*
-             *   遍历所有的牌类型，找到牌的数量大于等于2的牌
-             */
-            for (int i = 0; i < 34; ++i) {
-                //这种类型牌最小值
-                int min = (i / 9) * 9;
-                //为种类型牌最大值
-                int max = min + 8;
-                //字牌的特殊处理,字牌的个数为7而其它类型数量为9
-                if (max == 35) max = 33;
-                if (cards[i] == 1 &&
-                        (i - 2 < min || cards[i - 2] == 0) &&
-                        (i - 1 < min || cards[i - 1] == 0) &&
-                        (i + 1 > max || cards[i + 1] == 0) &&
-                        (i + 2 > max || cards[i + 2] == 0)) {
-                    //这种散牌直接无法胡,除非有赖子牌的情况下
-                    return false;
+    // 递归函数计算子数组中需要的赖子数
+    private static void getNeedHunInSub(ArrayList<MahjongCard> subArr, int hNum) {
+        // 如果已确定不需要赖子，直接返回
+        if (g_NeedHunCount == 0) {
+            return;
+        }
+        // 获取子数组长度
+        int lArr = subArr.size();
+
+        // 如果当前赖子数加上按最小组合需要的赖子数已经超过了当前记录的最少赖子数，返回
+        if (hNum + getModNeedNum(lArr, false) >= g_NeedHunCount) {
+            return;
+        }
+        // 根据子数组的长度处理不同情况
+        if (lArr == 0) {
+            // 如果子数组为空，更新最少赖子数为当前计数和已有赖子数的较小值
+            g_NeedHunCount = Math.min(hNum, g_NeedHunCount);
+        } else if (lArr == 1) {
+            // 如果子数组长度为1，至少需要两个赖子，更新最少赖子数
+            g_NeedHunCount = Math.min(hNum + 2, g_NeedHunCount);
+        } else if (lArr == 2) {
+            // 如果子数组长度为2，分析两张牌的情况
+            int t = Integer.parseInt(subArr.get(0).getName().substring(0, 1)); // 获取第一张牌的类型
+            int v0 = Integer.parseInt(subArr.get(0).getName().substring(2)) ; // 获取第一张牌的数值
+            int v1 = Integer.parseInt(subArr.get(1).getName().substring(2)) ; // 获取第二张牌的数值
+            if (t >=3) {
+                // 如果是字牌
+                if (v0 == v1) {
+                    // 如果两张字牌相同，则需要一个赖子
+                    g_NeedHunCount = Math.min(hNum + 1, g_NeedHunCount);
                 }
-                if (cards[i] >= 2) {
-                    eyeList.add(i);
-                }
+            } else if ((v1 - v0) < 3) {
+                // 如果是数牌且两张牌的数值差小于3，也认为需要一个赖子
+                g_NeedHunCount = Math.min(hNum + 1, g_NeedHunCount);
             }
-
-            /*
-             * 遍历所有的将来判断是否可以胡
-             */
-            boolean win = false;
-
-            /*
-             * 如果没有任何的将直接断定无法胡牌
-             */
-            if (eyeList.size() == 0){
-                return false;
-            }else{
-                int[] checkedCache = {0, 0, 0, 0};
-                for (int eyeIndex : eyeList) {
-                    //将牌所在牌数组中的索引,后面可以根据这个索引直接从牌数组中获取牌的数量
-                    //获取将牌的数量
-                    int n = cards[eyeIndex];
-                    //首先将[将牌]从牌堆中移除,当此将无法完成胡牌条件时,在将此牌放回牌堆,利用回溯法再进行判定下一张将牌
-                    cards[eyeIndex] -= 2;
-                    win = handleCardsWithoutEye(cards, eyeIndex / 9, checkedCache);
-                    cards[eyeIndex] = n;
-                    if (win) {
-                        break;
+        } else if(lArr>=3){
+            // 处理数组长度大于2的情况
+            int t = Integer.parseInt(subArr.get(0).getName().substring(0, 1)); // 牌的类型
+            int v0 = Integer.parseInt(subArr.get(0).getName().substring(2)); // 第一张牌的数值
+            int arrLen=subArr.size();
+            for (int i = 1; i < arrLen; i++) {
+                if (hNum + getModNeedNum(lArr - 3, false) >= g_NeedHunCount) {
+                    break;
+                }
+                int v1 = Integer.parseInt(subArr.get(i).getName().substring(2));
+                if (v1 - v0 > 1) {
+                    break;
+                }
+                if (i + 2 < arrLen && Integer.parseInt(subArr.get(i + 2).getName().substring(2)) == v1) {
+                    continue;
+                }
+                if (i + 1 < arrLen) {
+                    MahjongCard tmp1 = subArr.get(0);
+                    MahjongCard tmp2 = subArr.get(i);
+                    MahjongCard tmp3 = subArr.get(i + 1);
+                    if (test3Combine(tmp1, tmp2, tmp3)) {
+                        // 尝试移除三张牌并递归检查
+                        subArr.remove(tmp1);
+                        subArr.remove(tmp2);
+                        subArr.remove(tmp3);
+                        getNeedHunInSub(subArr, hNum);
+                        subArr.add(tmp1);
+                        subArr.add(tmp2);
+                        subArr.add(tmp3);
+                        order(subArr);
                     }
                 }
             }
-            return win;
-        }
-
-
-        /**
-         * 将手牌分开不同的花色进行分别判定,如果万，条，筒，字牌每种花色都能满足胡牌条件则此手牌一定可以胡
-         * @param cards     hand cards
-         * checkedCache
-         * @return whether can hu
-         */
-        private static boolean handleCardsWithoutEye(int[] cards,int eyeColor, int[] checkedCache) {
-            /*
-             *  遍历万,条,筒三种花色依次判定此种花色是否可以构造胡牌条件,如果每种花色都可以构造胡牌条件3n则此手牌一定可以胡
-             *  这里利用的是分而治之的思想
-             */
-            for (int i = 0; i < 3; i++) {
-                /*
-                 * 参数中传入的将的花色是否和当前遍历的花色一样,如果一样则不处理,如果不一样则将其它花色的胡的判定结果存储起来
-                 * 方便下次在遍历同样花色的将的时候,其它的花色的判定直接从缓存中获取不需要在重新判定,提升算法效率
-                 * 比如当前传入的将为 7万 我们可以把 条,筒两种花色的判定结果保存起来
-                 * 当传入的将为 8万时  我们可以直接从缓存中获取到其它 条,筒花色的判定结果无需重新判定
-                 */
-                int cacheIndex = -1;
-                if (eyeColor != i) {
-                    cacheIndex = i;
+            int v1 = Integer.parseInt(subArr.get(1).getName().substring(2));
+            // 进一步检查需要赖子的情况
+            if (hNum + getModNeedNum(lArr - 2, false) + 1 < g_NeedHunCount) {
+                if (t == 4 ) {
+                    if(v0 == v1) {
+                        MahjongCard tmp1 = subArr.get(0);
+                        MahjongCard tmp2 = subArr.get(1);
+                        subArr.remove(tmp1);
+                        subArr.remove(tmp2);
+                        getNeedHunInSub(subArr, hNum + 1);
+                        subArr.add(tmp1);
+                        subArr.add(tmp2);
+                        order(subArr);
+                    }
                 }
-                /*
-                 * 遍历手牌中指定花色的牌
-                 */
-                boolean win = checkNormalCardsWin(cards, i * 9, i * 9 + 8,cacheIndex,checkedCache);
-                /*
-                 * 当前花色如果不是传入的将的花色则将判定结果进行存储 1表示判定成功 2表示判定失败
-                 */
-                if (cacheIndex >0 && win){
-                    checkedCache[i] = 1;
-                }
-                if (cacheIndex >0 && !win){
-                    checkedCache[i] = 2;
-                }
-                if (!win){
-                    return false;
-                }
-            }
-            /*
-             * 处理字牌花色,字牌的花色为 3
-             */
-            int cacheIndex = -1;
-            if (eyeColor != 3){
-                cacheIndex = 3;
-            }
-            return checkZiCardsWin(cards,cacheIndex,checkedCache);
-        }
-
-        /**
-         * 检查当前花色是否满足胡牌条件 即是否满足 3n
-         * @param cards 手牌
-         * @param beginIndex 当前花色开始索引
-         * @param endIndex 当前花色结束索引
-         * @param cacheIndex 要查询的缓存的花色索引
-         * @param checkedCache 缓存
-         * @return 是否可以胡 true / false
-         */
-        private static boolean checkNormalCardsWin(int[] cards, int beginIndex, int endIndex,int cacheIndex, int[] checkedCache) {
-            /*
-             * 如果当前要判定的花色与将的花色一样那么 cacheIndex 值为-1,不从缓存中获取
-             * 否则从缓存中拿判定的结果,无需重新判定
-             */
-            if (cacheIndex >= 0) {
-                int n = checkedCache[cacheIndex];
-                if (n > 0) {
-                    return n - 1 == 0;
+                else{
+                    arrLen=subArr.size();
+                    for(int i=0;i<arrLen;i++){
+                        if(hNum + getModNeedNum(lArr-2,false) +1  >= g_NeedHunCount){
+                            break;
+                        }
+                        int v4 = Integer.parseInt(subArr.get(i).getName().substring(2));
+                        if((i+1)!=arrLen){
+                            int v5 = Integer.parseInt(subArr.get(i+1).getName().substring(2));
+                            if(v4==v5){
+                                continue;
+                            }
+                        }
+                        int diff=v4-v0;
+                        if(diff<3){
+                            MahjongCard tmp1 = subArr.get(0);
+                            MahjongCard tmp2 = subArr.get(i);
+                            subArr.remove(tmp1);
+                            subArr.remove(tmp2);
+                            getNeedHunInSub(subArr, hNum + 1);
+                            subArr.add(tmp1);
+                            subArr.add(tmp2);
+                            order(subArr);
+                        }
+                        if(diff>=1){
+                            break;
+                        }
+                    }
                 }
             }
-
-            /*
-             * 将当前花色中所有的牌组成一个数字，方便后面进行判定.因为万，条，筒每种花色都有9张牌，所以我们可以使用一个9位数的数字来表示这个花色
-             * 此数字从低位到高位分别保存1万-9万 或 1-9条 1-9筒,位数表示牌的类型,比如个位表示1万 十位表示2万 千万表示3万,而位数上面的值表示牌的数量
-             * 这其实和我们之前使用数组的道理是一样的,数组的索引表示牌类型，数组的值表示此牌的个数
-             * 举个例子，如下这个数字  101000111 它表示有 1个1万 1个2万  1个3万  0个4万5万6万 1个7万 0个8万 1个9万,示意图如下所示：
-             *
-             * 1        0       1       0       0       0       1           1       1
-             * 9万      8万     7万      6万     5万     4万      3万         2万      1万
-             */
-            int n = 0;
-            for (int i = beginIndex; i <= endIndex; i++) {
-                n = n * 10 + cards[i];
-            }
-            /*
-             * 0表示此花色己没有牌,满足3n
-             */
-            if (n == 0) {
-                return true;
-            }
-            /*
-             * 检查当前花色牌的数量是否满足 3n
-             * 由于n是由多张牌组成,我们要判断此数字上面所有位数上面的数字的和是否能被3整除
-             * 由简单的数学知识得知: 想要判断一个数字上面所有位数上面的和能被整除，只要此数字能被3整除即可
-             */
-            if (n  % 3 != 0) {
-                return false;
-            }
-
-            /*
-             * 开始拆分此数字n,如果数字n可以拆分成n个顺子或者刻子则可以胡
-             */
-            return splitCards(n);
-        }
-
-        /**
-         * 拆分这个数字，直到无法拆分为止，当这个数字为0时表示可以完全拆除成功
-         *
-         */
-        private static boolean splitCards(int n) {
-            int p = 0;
-            while (true) {
-                if (n == 0) return true;
-                /*
-                 * 找到低位数上不为0的数字
-                 */
-                while (n > 0) {
-                    p = n % 10;//获取个位数
-                    n = n / 10;//将n去掉低位数
-                    if (p != 0) break;
-                }
-                /*
-                 * 1和4是一样的处理方法 4可以拆分为 1和3,3直接是刻子不用作处理
-                 */
-                if (p == 1 || p == 4) {
-                    return singleNumHandle(n);
-
-                } else if (p == 2) {
-                    return doubleNumHandle(n);
-
-                } //刻字不用作处理
-
+            if (hNum + getModNeedNum(lArr - 1, false) + 2 < g_NeedHunCount) {
+                MahjongCard tmp = subArr.get(0);
+                subArr.remove(tmp);
+                getNeedHunInSub(subArr, hNum + 2);
+                subArr.add(tmp);
+                order(subArr);
             }
         }
+    }
 
-        /**
-         * 单个数字的处理，需要拆分为  1 1 1 形式
-         *
-         */
-        private static boolean singleNumHandle(int n) {
-            //获取此数字前面的p1
-            int p1 = n % 10;
-            //获取此数字前面的p2
-            int p2 = (n % 100) / 10;
-
-            if (p1 == 0) {
-                return false;
+    // 检查牌组是否能胡牌
+    private static boolean canHu(int hunNum, ArrayList<MahjongCard> arr) {
+        ArrayList<MahjongCard> tmpArr = new ArrayList<>(arr);
+        int arrLen = tmpArr.size();
+        if (arrLen == 0) {
+            return hunNum >= 2;
+        }
+        if (hunNum < getModNeedNum(arrLen, true)) {
+            return false;
+        }
+        for (int i = 0; i < arrLen; i++) {
+            if (i == arrLen - 1) {
+                if (hunNum > 0) {
+                    MahjongCard tmp = tmpArr.get(i);
+                    hunNum--;
+                    tmpArr.remove(tmpArr.get(i));
+                    g_NeedHunCount = 4;
+                    getNeedHunInSub(tmpArr, 0);
+                    if (g_NeedHunCount <= hunNum) {
+                        return true;
+                    }
+                    hunNum++;
+                    tmpArr.add(tmp);
+                    Other_Algorithm.order(tmpArr);
+                }
             } else {
-                n -= 1;
+                if (i + 2 == arrLen || Integer.parseInt(tmpArr.get(i).getName().substring(2)) != Integer.parseInt(tmpArr.get(i + 2) .getName().substring(2))) {
+                    if (test2Combine(tmpArr.get(i), tmpArr.get(i + 1))) {
+                        MahjongCard tmp1 = tmpArr.get(i);
+                        MahjongCard tmp2 = tmpArr.get(i + 1);
+                        tmpArr.remove(tmp1);
+                        tmpArr.remove(tmp2);
+                        g_NeedHunCount = 4;
+                        getNeedHunInSub(tmpArr, 0);
+                        if (g_NeedHunCount<= hunNum) {
+                            return true;
+                        }
+                        tmpArr.add(tmp1);
+                        tmpArr.add(tmp2);
+                        Other_Algorithm.order(tmpArr);
+                    }
+                    if (hunNum > 0 && Integer.parseInt(tmpArr.get(i).getName().substring(2)) != Integer.parseInt(tmpArr.get(i + 1)  .getName().substring(2))){
+                        hunNum--;
+                        MahjongCard tmp = tmpArr.get(i);
+                        tmpArr.remove(tmp);
+                        g_NeedHunCount= 4;
+                        getNeedHunInSub(tmpArr, 0);
+                        if (g_NeedHunCount<= hunNum) {
+                            return true;
+                        }
+                        hunNum++;
+                        tmpArr.add(tmp);
+                        Other_Algorithm.order(tmpArr);
+                    }
+                }
             }
-
-            if (p2 == 0) {
-                return false;
-            } else {
-                n -= 10;
-            }
-            //当n ==0 表示此花色的牌完全满足 3n法则 可以胡牌
-            if (n == 0) {
-                return true;
-            }
-
-            return splitCards(n);
         }
+        return false;
+    }
 
-        /**
-         * 尾数为2的处理方法，形式为  2 2 2
-         */
-        private static boolean doubleNumHandle(int n) {
-            //获取此数字前面的p1
-            int p1 = n % 10;
-            //获取此数字前面的p2
-            int p2 = (n % 100) / 10;
-
-            if (p1 < 2) {
-                return false;
-            } else {
-                n -= 2;
-            }
-
-            if (p2 < 2) {
-                return false;
-            } else {
-                n -= 20;
-            }
-            //当n ==0 表示此花色的牌完全满足 3n法则 可以胡牌
-            if (n == 0) {
-                return true;
-            }
-
-            return splitCards(n);
-        }
-
-        /**
-         * 字牌花色的处理逻辑
-         */
-        private static boolean checkZiCardsWin(int[] cards, int cacheIndex, int[] checkedCache) {
-            /*
-             * 如果当前要判定的花色与将的花色一样那么 cacheIndex 值为-1,不从缓存中获取
-             * 否则从缓存中拿判定的结果,无需重新判定
-             */
-            if (cacheIndex >= 0) {
-                int n = checkedCache[cacheIndex];
-                if (n > 0) {
-                    return n - 1 == 0;
-                }
-            }
-            /*
-             * 字牌的索引为 27至 34 字牌的判定很简单因为字牌只能是组成刻子不能组成顺子,所以我们只需要判定此牌的个数是否为3即可
-             */
-            for (int i = 27; i < 34; i++) {
-                int n = cards[i];
-                if (n == 0) {
-                    continue;
-                }
-                if (n != 3){
-                    return false;
-                }
-            }
+    // 主函数：检查是否胡牌
+    // 测试是否胡牌
+    public static boolean CheckHu( ArrayList<MahjongCard> mjArr,MahjongCard mj, MahjongCard hunMj) {
+        ArrayList<MahjongCard> tmpArr = new ArrayList<>(mjArr);
+        //加入当前麻将
+        tmpArr.add(mj);
+        ArrayList<ArrayList<MahjongCard>> sptArr = separateArr(tmpArr, hunMj);
+        int curHunNum = sptArr.get(0).size();
+        if (curHunNum > 3) {
             return true;
         }
+        int[] ndHunArr = new int[4];
+        for (int i = 1; i < 5; i++) {
+            g_NeedHunCount= 4;
+            getNeedHunInSub(sptArr.get(i), 0);
+            ndHunArr[i - 1] = g_NeedHunCount;
+        }
+        boolean isHu;
+        // 将在万中
+        int ndHunAll = ndHunArr[1] + ndHunArr[2] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(1));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在饼中
+        ndHunAll = ndHunArr[0] + ndHunArr[2] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(2));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在条中
+        ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(3));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在风中
+        ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[2];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(4));
+            return isHu;
+        }
+        return false;
+    }
+
+    public static boolean CheckHu(ArrayList<MahjongCard> mjArr, MahjongCard hunMj) {
+        ArrayList<MahjongCard> tmpArr = new ArrayList<>(mjArr);
+        ArrayList<ArrayList<MahjongCard>> sptArr = separateArr(tmpArr, hunMj);
+        int curHunNum = sptArr.get(0).size();
+        if (curHunNum > 3) {
+            return true;
+        }
+        int[] ndHunArr = new int[4];
+        for (int i = 1; i < 5; i++) {
+            g_NeedHunCount= 4;
+            getNeedHunInSub(sptArr.get(i), 0);
+            ndHunArr[i - 1] = g_NeedHunCount;
+        }
+        boolean isHu;
+        // 将在万中
+        int ndHunAll = ndHunArr[1] + ndHunArr[2] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(1));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在饼中
+        ndHunAll = ndHunArr[0] + ndHunArr[2] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(2));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在条中
+        ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(3));
+            if (isHu) {
+                return true;
+            }
+        }
+        // 将在风中
+        ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[2];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = canHu(hasNum, sptArr.get(4));
+            return isHu;
+        }
+        return false;
+    }
+
 
 }

@@ -159,16 +159,17 @@ public class PlayerOperation extends Thread {
                 // 处理当前玩家的出牌逻辑
                 // 给当前玩家发牌
                 addCards(gameJFrame.turn);
-                // 手牌可被点击
-                for (MahjongCard cards : gameJFrame.playerList.get(0)) {
-                    if(!cards.getIfPeng()&&!cards.getIfGang()&&!cards.getIfEat()) {
-                        cards.setCanClick(true);
-                    }
-                }
+
                 //如果是✌️
                 if (gameJFrame.turn == 0) { // 如果是玩家
+                    // 手牌可被点击
+                    for (MahjongCard cards : gameJFrame.playerList.get(0)) {
+                        if(!cards.getIfPeng()&&!cards.getIfGang()&&!cards.getIfEat()) {
+                            cards.setCanClick(true);
+                        }
+                    }
                     // 首先检测有没有胡和暗杠
-                    if(Hu_Algorithm.checkHu(gameJFrame.playerList.get(0))){
+                    if(Hu_Algorithm.CheckHu(gameJFrame.playerList.get(0),gameJFrame.getLai())){
                         //进行胡牌操作
                         gameJFrame.Hu[0].setVisible(true);
                         timeWaitOther(10,0);// 玩家有10秒时间进行选择
@@ -212,7 +213,7 @@ public class PlayerOperation extends Thread {
                     //获取玩家刚打出的牌
                     MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
                     //判定是否能胡
-                    if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(j), lastCard)) {
+                    if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(j), lastCard,gameJFrame.getLai())) {
                         if (j == 0) { // 玩家操作
                             gameJFrame.Hu[0].setVisible(true);
                             timeWaitOther(5, 0);  // 玩家有5秒时间选择胡还是不胡
@@ -302,7 +303,6 @@ public class PlayerOperation extends Thread {
         }
     }
 
-
     // 电脑玩家的行动
     private void computerPlayerAction(int playerIndex) {
         switch (playerIndex) {
@@ -341,13 +341,13 @@ public class PlayerOperation extends Thread {
             newCard.setCanClick(true);
         }
         newCard.setVisible(true);
-        gameJFrame.changeNUmb();
+        gameJFrame.changeNumb();
     }
 
     public boolean checkClicked(){
         ArrayList<MahjongCard> player=gameJFrame.getPlayerList().get(0);
         for(MahjongCard card: player){
-            if (card.isClicked()==true){
+            if (card.isClicked()){
                 return true;
             }
         }
@@ -362,7 +362,7 @@ public class PlayerOperation extends Thread {
             return true;
         }
         for (int i = 0; i < 4; i++) {
-            if (Hu_Algorithm.checkHu(gameJFrame.playerList.get(i))) {
+            if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(i),gameJFrame.getLai())) {
                 String s;
                 if (i == 0) {
                     s = "恭喜你，胜利了!";

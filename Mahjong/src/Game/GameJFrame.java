@@ -6,12 +6,10 @@ import Objects.MahjongCard;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -407,7 +405,6 @@ private void rollDice() {
             //通过弃牌堆找到要吃的牌
             MahjongCard chiCard = currentList.get(currentList.size()-1);
             int color = getColor(chiCard);
-            int size = getSize(chiCard);
             //获取中自己手上所有的牌
             ArrayList<MahjongCard> player = playerList.get(0);
             if(Other_Algorithm.CheckChi(player,chiCard)){
@@ -651,8 +648,8 @@ private void rollDice() {
         //取消内部默认的居中放置
         container.setLayout(null);
         //设置背景图片
-        JLabel background = new JLabel(new ImageIcon("D://Program//java//Stage2_2//Software Eng//Gitfolder//Mahjong-game//GameJ.jpg"
-        ));
+        JLabel background = new JLabel(new ImageIcon("D://Program//java//Stage2_2//Software Eng//Gitfolder//Mahjong-game//GameJ.jpg"));
+        //JLabel background = new JLabel(new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/微信图片_20240517182844.jpg"));
         background.setSize(this.getSize());  // 设置背景图片大小与 JFrame 大小匹配
         container.add(background);  // 添加背景标签
         container.setComponentZOrder(background, container.getComponentCount() - 1); // 将背景标签置于底层
@@ -700,7 +697,7 @@ private void rollDice() {
         return numb;
     }
 
-    public void changeNUmb(){numb++;}
+    public void changeNumb(){numb++;}
 
     public ArrayList<MahjongCard> getCurrentList(){
         return currentList;

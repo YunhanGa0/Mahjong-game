@@ -11,6 +11,7 @@ public class Other_Algorithm {
 
     public static boolean CheckPeng(ArrayList<MahjongCard> cards, MahjongCard comingCard){ // Method to check if can Peng
         ArrayList<String> repeatCards = new ArrayList<>();
+
         // 计数每种牌出现的次数
         HashMap<String, Integer> cardCounts = new HashMap<>();
         for (MahjongCard card : cards) {
@@ -24,6 +25,7 @@ public class Other_Algorithm {
                 repeatCards.add(name);
             }
         }
+
         // 检查comingCard是否与repeatCards中的任何一个相同
         for (String name : repeatCards) {
             if (name.equals(comingCard.getName())) {
@@ -61,21 +63,16 @@ public class Other_Algorithm {
         ArrayList<MahjongCard> wan = insertIn(cards, 1);
         ArrayList<MahjongCard> tiao = insertIn(cards, 2);
         ArrayList<MahjongCard> tong = insertIn(cards, 3);
-        switch (getColor(comingCard)) {
-            case 1:
-                return helpCheckChi(wan, comingCard);
-            case 2:
-                return helpCheckChi(tiao, comingCard);
-            case 3:
-                return helpCheckChi(tong, comingCard);
-            default:
-                return false;
-        }
+        return switch (getColor(comingCard)) {
+            case 1 -> helpCheckChi(wan, comingCard);
+            case 2 -> helpCheckChi(tiao, comingCard);
+            case 3 -> helpCheckChi(tong, comingCard);
+            default -> false;
+        };
     }
 
     public static boolean helpCheckChi(ArrayList<MahjongCard> list, MahjongCard comingCard) {
         int comingValue = getValue(comingCard);
-        HashSet<Integer> validValues = new HashSet<>();
 
         // 遍历当前牌组，查找可以与comingCard组成顺子的牌
         for (int i = 0; i < list.size(); i++) {
@@ -99,7 +96,6 @@ public class Other_Algorithm {
 
             // 检查当前牌和后两张牌是否与comingCard组成顺子
             if (i < list.size() - 2) {
-                int nextValue = getValue(list.get(i + 1)); // 获取下一张牌的值
                 int nextNextValue = getValue(list.get(i + 2)); // 获取下两张牌的值
                 if (currentValue == comingValue - 2 && nextNextValue == comingValue + 2) {
                     return true; // (currentValue, comingValue, nextNextValue) 组成顺子
@@ -187,9 +183,9 @@ public class Other_Algorithm {
         list.sort((o1, o2) -> {
 
             // 检查是否已经碰或杠
-            if ((o1.getIfPeng() || o1.getIfGang()) && (o2.getIfPeng() || o2.getIfGang())) return 0;  // 都碰或杠过，不调整顺序
-            if (o1.getIfPeng() || o1.getIfGang()) return 1;  // o1碰或杠过，应放后面
-            if (o2.getIfPeng() || o2.getIfGang()) return -1; // o2碰或杠过，应放后面
+            if ((o1.getIfPeng() || o1.getIfGang()||o1.getIfEat()) && (o2.getIfPeng() || o2.getIfGang()||o2.getIfEat())) return 0;  // 都碰或杠或吃过，不调整顺序
+            if (o1.getIfPeng() || o1.getIfGang()||o1.getIfEat()) return 1;  // o1碰或杠或吃过，应放后面
+            if (o2.getIfPeng() || o2.getIfGang()||o2.getIfEat()) return -1; // o2碰或杠或吃过，应放后面
 
             //获得最前面的数字，判断花色
             int a1 = Integer.parseInt(o1.getName().substring(0, 1));
