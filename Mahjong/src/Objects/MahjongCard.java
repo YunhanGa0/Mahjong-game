@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 //麻将类的oop实现
 public class MahjongCard extends JLabel implements MouseListener {
@@ -77,18 +78,24 @@ public class MahjongCard extends JLabel implements MouseListener {
     //能不能被点击,能就上升，再被点就下去
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(!ifPeng || !ifEat || !ifGang) {
-            if (Clickable) {
-                Point from = this.getLocation();
-                int step;
-                if (clicked) {
-                    step = 15;
-                } else {
-                    step = -15;
-                }
-                clicked = !clicked;
-                Point to = new Point(from.x, from.y + step);
-                this.setLocation(to);
+        if (Clickable && !ifPeng && !ifGang && !ifEat) {
+            toggleClicked();
+            handleAllCardsClickability();
+        }
+    }
+
+    private void toggleClicked() {
+        this.clicked = !this.clicked;
+        Point location = this.getLocation();
+        location.y += this.clicked ? -15 : 15;
+        this.setLocation(location);
+    }
+
+    private void handleAllCardsClickability() {
+        ArrayList<MahjongCard> cards = gameJFrame.getPlayerList().get(0);  // Assuming index 0 is the human player
+        for (MahjongCard card : cards) {
+            if (card != this) {
+                card.setCanClick(!this.clicked);
             }
         }
     }

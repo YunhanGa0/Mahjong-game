@@ -10,7 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class PlayerOperation extends Thread {
-
     //游戏主界面
     GameJFrame gameJFrame;
 
@@ -68,6 +67,7 @@ public class PlayerOperation extends Thread {
                         }
                     }
                 }else{
+                    // 没有点击去掉摸到的牌
                     MahjongCard card=play.get(play.size()-1);
                     gameJFrame.currentList.add(card);
                     //在手上的牌中，去掉已经出掉的牌
@@ -130,6 +130,7 @@ public class PlayerOperation extends Thread {
             i--;
         }
         if (i == -1){
+            //显示庄家信息
             if(gameJFrame.DealerFlag==0){
                 gameJFrame.time[0].setText("你是庄家");
             }
@@ -142,9 +143,9 @@ public class PlayerOperation extends Thread {
             if(gameJFrame.DealerFlag==3){
                 gameJFrame.time[0].setText("上家是庄家");
             }
+            //隐藏骰子
             gameJFrame.hideDice();
         }
-
         // 初始化庄家，庄家是第一个出牌的玩家
         gameJFrame.turn = gameJFrame.DealerFlag;
         // 主游戏循环
@@ -159,15 +160,14 @@ public class PlayerOperation extends Thread {
                 // 处理当前玩家的出牌逻辑
                 // 给当前玩家发牌
                 addCards(gameJFrame.turn);
-
+                // 手牌可被点击
+                for (MahjongCard cards : gameJFrame.playerList.get(0)) {
+                    if(!cards.getIfPeng()&&!cards.getIfGang()&&!cards.getIfEat()) {
+                        cards.setCanClick(true);
+                    }
+                }
                 //如果是✌️
                 if (gameJFrame.turn == 0) { // 如果是玩家
-                    // 手牌可被点击
-                    for (MahjongCard cards : gameJFrame.playerList.get(0)) {
-                        if(!cards.getIfPeng()&&!cards.getIfGang()&&!cards.getIfEat()) {
-                            cards.setCanClick(true);
-                        }
-                    }
                     // 首先检测有没有胡和暗杠
                     if(Hu_Algorithm.CheckHu(gameJFrame.playerList.get(0),gameJFrame.getLai())){
                         //进行胡牌操作
@@ -208,7 +208,7 @@ public class PlayerOperation extends Thread {
                 }
 
                 //检测是否有玩家可以进行操作
-                // i出牌，放炮，其他人胡牌
+                //出牌，放炮，其他人胡牌
                 for (int j = (gameJFrame.turn + 1) % 4; j != gameJFrame.turn; j = (j + 1) % 4) {
                     //获取玩家刚打出的牌
                     MahjongCard lastCard = gameJFrame.currentList.get(gameJFrame.currentList.size() - 1);
@@ -296,7 +296,6 @@ public class PlayerOperation extends Thread {
                 // 如果没有其他玩家进行碰、杠、吃等操作，则轮到下一个玩家出牌
                 if (!actionTaken) {
                     gameJFrame.turn = (gameJFrame.turn + 1) % 4;
-                    //actionTaken=false;
                 }
                 sleep(1);
             }

@@ -21,7 +21,7 @@ public class Other_Algorithm {
         }
         // 找出出现至少两次的牌
         for (String name : cardCounts.keySet()) {
-            if (cardCounts.get(name) >= 2) {
+            if (cardCounts.get(name) == 2) {
                 repeatCards.add(name);
             }
         }
