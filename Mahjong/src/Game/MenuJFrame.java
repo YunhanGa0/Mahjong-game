@@ -15,7 +15,8 @@ public class MenuJFrame extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
 
         // 背景图片加载和设置
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Pictures\\Saved Pictures\\微信图片_20240512132059.png");
+        ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/MahjongPic/Menu.jpg"));
+
         backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setBounds(0, 0, 842, 842);
         add(backgroundLabel);

@@ -10,7 +10,7 @@ public class DifficultyJFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Downloads\\Difficulty.png");
+        ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/MahjongPic/Difficulty.png"));
         JLabel backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setLayout(null); // 使用绝对布局
 

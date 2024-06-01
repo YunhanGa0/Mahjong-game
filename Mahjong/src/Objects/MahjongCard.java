@@ -1,6 +1,8 @@
 package Objects;
 
 import Game.GameJFrame;
+import Game.ShinJFrame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -54,26 +56,44 @@ public class MahjongCard extends JLabel implements MouseListener {
 
     //显示正面
     public void turnFront() {
-        int i=Integer.parseInt(this.getName().substring(0, 1));
-        int j= Integer.parseInt(this.getName().substring(2));
-        ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/tile"+i+j+".png"); // 创建一个图片图标
-        //ImageIcon imageIcon = new ImageIcon("C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\tile"+i+j+".png"); // 创建一个图片图标
-        Image image = imageIcon.getImage(); // 获取图标的图片对象
-        Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-        this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-        this.up = true;
+        if (!ShinJFrame.getIsClassic()) {
+            int i = Integer.parseInt(this.getName().substring(0, 1));
+            int j = Integer.parseInt(this.getName().substring(2));
+            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/tile"+i+j+".png"); // 创建一个图片图标
+            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/tile" + i + j + ".png")); // 创建一个图片图标
+            Image image = imageIcon.getImage(); // 获取图标的图片对象
+            Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+            this.up = true;
+        }else {
+            int i = Integer.parseInt(this.getName().substring(0, 1));
+            int j = Integer.parseInt(this.getName().substring(2));
+            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/tile"+i+j+".png"); // 创建一个图片图标
+            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/tilee" + i + j + ".png")); // 创建一个图片图标
+            Image image = imageIcon.getImage(); // 获取图标的图片对象
+            Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+            this.up = true;
+        }
     }
-
     //显示背面
     public void turnRear() {
-        ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile01.png"); // 创建一个背面图标
-        //ImageIcon imageIcon = new ImageIcon("C:\\Users\\qwerty\\Downloads\\MahjongPic\\MahjongPic\\back0.png");
-        Image image = imageIcon.getImage(); // 获取图标的图片对象
-        Image scaledImage = image.getScaledInstance(35,48, Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-        this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-        this.up = false;
-    }
+        if (!ShinJFrame.getIsClassic()) {
+            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile01.png"); // 创建一个背面图标
+            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/back0.jpg"));
+            Image image = imageIcon.getImage(); // 获取图标的图片对象
+            Image scaledImage = image.getScaledInstance(35, 48, Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+            this.up = false;
+        }else {
+            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/back1.jpg"));
+            Image image = imageIcon.getImage(); // 获取图标的图片对象
+            Image scaledImage = image.getScaledInstance(35, 48, Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
+            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
+            this.up = false;
+        }
 
+    }
 
     //能不能被点击,能就上升，再被点就下去
     @Override

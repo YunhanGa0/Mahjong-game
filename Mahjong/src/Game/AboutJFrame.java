@@ -10,7 +10,7 @@ public class AboutJFrame extends JFrame {
         setLocationRelativeTo(null);
 
         // Load the background image
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Downloads\\Help.jpg"); // Ensure the path is correct
+        ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/MahjongPic/Help.jpg")); // Ensure the path is correct
 
         // Create a panel with a custom paintComponent to draw the background image
         JPanel backgroundPanel = new JPanel() {

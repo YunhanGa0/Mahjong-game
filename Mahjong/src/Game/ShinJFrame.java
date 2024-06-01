@@ -17,7 +17,7 @@ public class ShinJFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\qwerty\\Downloads\\Shins.png");
+        ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/MahjongPic/Shin.png"));
         JLabel backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setLayout(null);
 

@@ -82,7 +82,7 @@ public class GameJFrame extends JFrame implements ActionListener {
         setIconImage(Toolkit.getDefaultToolkit().getImage(""));
 
         // BGM
-        new Thread(() -> playBackgroundMusic("C:\\Users\\qwerty\\Downloads\\5c8a181d9e6af98360.wav")).start();
+        new Thread(() -> playBackgroundMusic(getClass().getResource("/MahjongPic/BGM.wav").getPath())).start();
 
         //设置界面
         initJFrame();
@@ -648,7 +648,7 @@ private void rollDice() {
         //取消内部默认的居中放置
         container.setLayout(null);
         //设置背景图片
-        JLabel background = new JLabel(new ImageIcon("D://Program//java//Stage2_2//Software Eng//Gitfolder//Mahjong-game//GameJ.jpg"));
+        JLabel background = new JLabel(new ImageIcon(getClass().getResource("/MahjongPic/Table.jpg")));
         //JLabel background = new JLabel(new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/微信图片_20240517182844.jpg"));
         background.setSize(this.getSize());  // 设置背景图片大小与 JFrame 大小匹配
         container.add(background);  // 添加背景标签
