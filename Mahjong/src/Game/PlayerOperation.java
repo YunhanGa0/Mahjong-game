@@ -45,6 +45,7 @@ public class PlayerOperation extends Thread {
                 i--;
             }
             if (i == -1) {
+                gameJFrame.Chu[0].setVisible(false);
                 // 倒计时结束后的操作，打出摸到的牌或最后一次点击的牌
                 ArrayList<MahjongCard> play = gameJFrame.getPlayerList().get(0);
                 if(checkClicked()) {
@@ -63,6 +64,7 @@ public class PlayerOperation extends Thread {
                             point.x = 430 + gameJFrame.num0 * 35;
                             point.y = 680;
                             gameJFrame.num0++;
+                            card.setCanClick(false);
                             Other_Algorithm.move(card, card.getLocation(), point);
                         }
                     }
@@ -78,6 +80,7 @@ public class PlayerOperation extends Thread {
                     point.x = 430 + gameJFrame.num0 * 35;
                     point.y = 680;
                     gameJFrame.num0++;
+                    card.setCanClick(false);
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
                 //重新摆放剩余的牌
@@ -288,7 +291,7 @@ public class PlayerOperation extends Thread {
                         } else { // 电脑操作
                             computerPlayerAction(j);
                         }
-
+                        gameJFrame.adjustPosition(gameJFrame.turn);
                         gameJFrame.turn = j;
                         break;
                     }
@@ -361,7 +364,7 @@ public class PlayerOperation extends Thread {
             return true;
         }
         for (int i = 0; i < 4; i++) {
-            if (Hu_Algorithm.CheckHu(gameJFrame.playerList.get(i),gameJFrame.getLai())) {
+            if (Hu_Algorithm.CheckHu(gameJFrame.getPlayerList().get(i),gameJFrame.getLai())) {
                 String s;
                 if (i == 0) {
                     s = "恭喜你，胜利了!";

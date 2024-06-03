@@ -168,7 +168,7 @@ public class Other_Algorithm {
         for (MahjongCard card : list) {
             if (!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()) {
                 Other_Algorithm.move(card, card.getLocation(), p);
-                m.container.setComponentZOrder(card, 0);
+                m.getContentPane().setComponentZOrder(card, 0);
             }
             if (flag == 0 || flag == 2 && (!card.getIfPeng() && !card.getIfGang() && !card.getIfEat()))
                 p.x += 35;
@@ -201,6 +201,7 @@ public class Other_Algorithm {
             } else {
                 return a1 - a2;
             }
+
         });
     }
 

@@ -77,6 +77,8 @@ public class GameJFrame extends JFrame implements ActionListener {
     //多线程操控游戏流程
     PlayerOperation po;
 
+    private JLabel background;
+
     public GameJFrame() {
         //设置图标
         setIconImage(Toolkit.getDefaultToolkit().getImage(""));
@@ -109,52 +111,52 @@ public class GameJFrame extends JFrame implements ActionListener {
 
     }
 
-//Roll骰子并显示大小确定庄家
-private void rollDice() {
-    Random random = new Random();
+    //Roll骰子并显示大小确定庄家
+    private void rollDice() {
+        Random random = new Random();
 
-    while (true) {
-        // 每个玩家掷两个骰子
-        int[][] diceResults = new int[4][2]; // 假设有四个玩家，每个玩家两个骰子
-        int[] totalResults = new int[4]; // 每个玩家的总点数
-        for (int j = 0; j < diceResults.length; j++) {
-            diceResults[j][0] = random.nextInt(6) + 1;
-            diceResults[j][1] = random.nextInt(6) + 1;
-            totalResults[j] = diceResults[j][0] + diceResults[j][1];
-        }
-
-        // 图形化骰子到窗口
-        for (int j = 0; j < diceResults.length; j++) {
-            System.out.println("Player " + (j + 1) + " dice results: " + diceResults[j][0] + ", " + diceResults[j][1]);
-            // 在窗口中显示骰子图像
-            showDiceImages(j, diceResults[j][0], diceResults[j][1]);
-        }
-
-        // 确定骰子点数最大的玩家，设为庄家
-        int maxDice = 0;
-        int dealerIndex = 0;  // 庄家索引
-        boolean tie = false;
-        for (int j = 0; j < totalResults.length; j++) {
-            if (totalResults[j] > maxDice) {
-                maxDice = totalResults[j];
-                dealerIndex = j;
-                tie = false;
-            } else if (totalResults[j] == maxDice) {
-                tie = true; // 如果有平局，则标记为平局
+        while (true) {
+            // 每个玩家掷两个骰子
+            int[][] diceResults = new int[4][2]; // 假设有四个玩家，每个玩家两个骰子
+            int[] totalResults = new int[4]; // 每个玩家的总点数
+            for (int j = 0; j < diceResults.length; j++) {
+                diceResults[j][0] = random.nextInt(6) + 1;
+                diceResults[j][1] = random.nextInt(6) + 1;
+                totalResults[j] = diceResults[j][0] + diceResults[j][1];
             }
-        }
 
-        if (!tie) { // 如果没有平局，确定庄家
-            // 设置为庄家的回合
-            DealerFlag = dealerIndex;
-            setFlag(dealerIndex); // 调用setFlag方法显示庄家图标
-            break;
-        } else {
-            System.out.println("Tie detected. Re-rolling the dice.");
-        }
+            // 图形化骰子到窗口
+            for (int j = 0; j < diceResults.length; j++) {
+                System.out.println("Player " + (j + 1) + " dice results: " + diceResults[j][0] + ", " + diceResults[j][1]);
+                // 在窗口中显示骰子图像
+                showDiceImages(j, diceResults[j][0], diceResults[j][1]);
+            }
 
+            // 确定骰子点数最大的玩家，设为庄家
+            int maxDice = 0;
+            int dealerIndex = 0;  // 庄家索引
+            boolean tie = false;
+            for (int j = 0; j < totalResults.length; j++) {
+                if (totalResults[j] > maxDice) {
+                    maxDice = totalResults[j];
+                    dealerIndex = j;
+                    tie = false;
+                } else if (totalResults[j] == maxDice) {
+                    tie = true; // 如果有平局，则标记为平局
+                }
+            }
+
+            if (!tie) { // 如果没有平局，确定庄家
+                // 设置为庄家的回合
+                DealerFlag = dealerIndex;
+                setFlag(dealerIndex); // 调用setFlag方法显示庄家图标
+                break;
+            } else {
+                System.out.println("Tie detected. Re-rolling the dice.");
+            }
+
+        }
     }
-}
 
     private void showDiceImages(int playerIndex, int dice1, int dice2) {
         // 根据玩家索引和骰子点数在窗口中显示骰子图像
@@ -197,8 +199,7 @@ private void rollDice() {
 
         container.add(diceLabel1);
         container.add(diceLabel2);
-        container.setComponentZOrder(diceLabel1, 0);
-        container.setComponentZOrder(diceLabel2, 0);
+        container.setComponentZOrder(background, container.getComponentCount() - 1); // 确保背景图片始终在底层
     }
 
     public void hideDice() {
@@ -320,7 +321,6 @@ private void rollDice() {
         po = new PlayerOperation(this, 5);
         //开启倒计时
         po.start();
-
     }
 
     //庄家旗帜位置
@@ -648,14 +648,12 @@ private void rollDice() {
         //取消内部默认的居中放置
         container.setLayout(null);
         //设置背景图片
-        JLabel background = new JLabel(new ImageIcon(getClass().getResource("/MahjongPic/Table.jpg")));
-        //JLabel background = new JLabel(new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/微信图片_20240517182844.jpg"));
+        background = new JLabel(new ImageIcon(getClass().getResource("/MahjongPic/Table.jpg")));
         background.setSize(this.getSize());  // 设置背景图片大小与 JFrame 大小匹配
         container.add(background);  // 添加背景标签
-        container.setComponentZOrder(background, container.getComponentCount() - 1); // 将背景标签置于底层
-        //设置背景颜色
-        container.setBackground(Color.BLACK);
+        container.setComponentZOrder(background, container.getComponentCount() - 1 ); // 将背景标签置于底层
     }
+
     public static void playBackgroundMusic(String filePath) {
         try {
             // 获取音频输入流
