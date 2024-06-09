@@ -3,259 +3,311 @@ package Algorithm;
 import Objects.MahjongCard;
 
 import java.util.ArrayList;
-import java.util.List;
 
-//判断是否胡牌的算法
+// Algorithm to determine if a hand is a winning hand
 public class Hu_Algorithm {
+
     static int g_NeedHunCount;
 
+    // Sort the hand (specifically for hands that have been split)
     public static void order(ArrayList<MahjongCard> list) {
-        list.sort((o1, o2) -> {
-            //获得最前面的数字，判断花色
-            int a1 = Integer.parseInt(o1.getName().substring(0, 1));
-            int a2 = Integer.parseInt(o2.getName().substring(0, 1));
-
-            //获取后面的值
-            int b1 = Integer.parseInt(o1.getName().substring(2));
-            int b2 = Integer.parseInt(o2.getName().substring(2));
-
-            //如果牌的花色一样，则按照价值排序
-            if ((a1 - a2) == 0) {
-                return b1 - b2;
-            } else {
-                return a1 - a2;
+        int t = Integer.parseInt(list.get(0).getName().substring(0, 1));
+        int n = list.size();
+        if (n == 0) {
+            return;
+        }
+        if (t <= 2) { // If it is a number tile
+            boolean swapped;
+            for (int i = 0; i < n - 1; i++) {
+                swapped = false;
+                for (int j = 0; j < n - 1 - i; j++) {
+                    if (list.get(j).getValue() > list.get(j + 1).getValue()) {
+                        MahjongCard temp = list.get(j);
+                        list.set(j, list.get(j + 1));
+                        list.set(j + 1, temp);
+                        swapped = true;
+                    }
+                }
+                if (!swapped) {
+                    break;
+                }
             }
-        });
+        } else { // If it is a wind tile
+            boolean swapped;
+            for (int i = 0; i < n - 1; i++) {
+                swapped = false;
+                for (int j = 0; j < n - 1 - i; j++) {
+                    if (list.get(j).getColor() >list.get(j + 1).getColor()) {
+                        MahjongCard temp = list.get(j);
+                        list.set(j, list.get(j + 1));
+                        list.set(j + 1, temp);
+                        swapped = true;
+                    }
+                }
+                if (!swapped) break;
+            }
+        }
     }
 
-    // 按照花色分离麻将数组（0是混，1是万，2是条，3是筒，4是字）
-    private static ArrayList<ArrayList<MahjongCard>> separateArr(ArrayList<MahjongCard> mjArr, MahjongCard hunMj) {
-        ArrayList<ArrayList<MahjongCard>> reArr = new ArrayList<>();
+    // Separate the Mahjong tiles by suit (0 is joker, 1 is characters, 2 is bamboos, 3 is dots, 4 is winds)
+    private static ArrayList<ArrayList<MahjongCard>> separateCards(ArrayList<MahjongCard> cards, MahjongCard Lai) {
+        ArrayList<ArrayList<MahjongCard>> divided = new ArrayList<>();
+        // Separate the hand by suit
         for (int i = 0; i < 5; i++) {
-            reArr.add(new ArrayList<>());
+            divided.add(new ArrayList<>());
         }
-        int ht =  Integer.parseInt(hunMj.getName().substring(0, 1));
-        int hv = Integer.parseInt(hunMj.getName().substring(2));
-        for (MahjongCard mj : mjArr) {
-            int t = Integer.parseInt(mj.getName().substring(0, 1));
-            int v = Integer.parseInt(mj.getName().substring(2));
-            if(t==0&&ht!=t){
-                reArr.get(1).add(mj);
-                order(reArr.get(1));
-            }else if(t==1&&ht!=t){
-                reArr.get(2).add(mj);
-                order(reArr.get(2));
-            }else if(t==2&&ht!=t){
-                reArr.get(3).add(mj);
-                order(reArr.get(3));
-            }else if(t>=3&&ht!=t){
-                reArr.get(4).add(mj);
-                order(reArr.get(4));
-            }else if(ht==t&&hv==v){
-                reArr.get(0).add(mj);
-                order(reArr.get(0));
+        // Get the suit and value of Lai
+        int ht = Lai.getColor();
+        int hv = Lai.getValue();
+        // Traverse the current hand and separate
+        for (MahjongCard card : cards) {
+            // Get the suit and value of the current tile
+            int t = card.getColor();
+            int v = card.getValue();
+            if (t == 0 && (ht != t || hv != v)) { // Characters
+                divided.get(1).add(card);
+                order(divided.get(1));
+            } else if (t == 1 && (ht != t || hv != v)) { // Bamboos
+                divided.get(2).add(card);
+                order(divided.get(2));
+            } else if (t == 2 && (ht != t || hv != v)) { // Dots
+                divided.get(3).add(card);
+                order(divided.get(3));
+            } else if (t >= 3 && (ht != t || hv != v)) { // Winds
+                divided.get(4).add(card);
+                order(divided.get(4));
+            } else if (ht == t && hv == v) { // Lai
+                divided.get(0).add(card);
+                order(divided.get(0));
             }
         }
-        return reArr;
+        return divided;
     }
 
-    // 检查两张牌是否能组成有效组合
-    private static boolean test2Combine(MahjongCard MahjongCard1, MahjongCard MahjongCard2) {
-        int t1 = Integer.parseInt(MahjongCard1.getName().substring(0, 1));
-        int t2 = Integer.parseInt(MahjongCard2.getName().substring(0, 1));
-        int v1 = Integer.parseInt(MahjongCard1.getName().substring(2));
-        int v2 = Integer.parseInt(MahjongCard2.getName().substring(2));
-        return t1 == t2 && v1 == v2;
+    // Check if two tiles form a pair
+    private static boolean test2Combine(MahjongCard card1, MahjongCard card2) {
+        int t1 = card1.getColor();
+        int t2 = card2.getColor();
+        int v1 = card1.getValue();
+        int v2 = card2.getValue();
+        if (t1 <= 2) {
+            return t1 == t2 && v1 == v2;
+        } else {
+            return t1 == t2;
+        }
     }
 
-    // 检查三张牌是否能组成有效组合
-    private static boolean test3Combine(MahjongCard MahjongCard1, MahjongCard MahjongCard2,MahjongCard MahjongCard3) {
-        //类型不同返回否
-        int t1 = Integer.parseInt(MahjongCard1.getName().substring(0, 1));
-        int t2 = Integer.parseInt(MahjongCard2.getName().substring(0, 1));
-        int t3 = Integer.parseInt(MahjongCard3.getName().substring(0, 1));
+    // Check if three tiles can form a sequence or a triplet
+    private static boolean test3Combine(MahjongCard card1, MahjongCard card2, MahjongCard card3) {
+        // If the three tiles have different types, return false
+        int t1 = card1.getColor();
+        int t2 = card2.getColor();
+        int t3 = card3.getColor();
         if (t1 != t2 || t1 != t3) {
             return false;
         }
-        //如果类型一样，继续检测
-        int v1 = Integer.parseInt(MahjongCard1.getName().substring(2));
-        int v2 = Integer.parseInt(MahjongCard2.getName().substring(2));
-        int v3 = Integer.parseInt(MahjongCard3.getName().substring(2));
-        //如果组成刻子
+        // If the types are the same, continue checking
+        int v1 = card1.getValue();
+        int v2 = card2.getValue();
+        int v3 = card3.getValue();
+        // If they form a triplet
         if (v1 == v2 && v1 == v3) {
             return true;
         }
-        //不是条万筒返回否
-        if (t3 == 3) {
+        // If it is a wind tile, return false
+        if (t3 >= 3) {
             return false;
         }
-        //检查是否为顺子
+        // Check if they form a sequence
         return (v1 + 1) == v2 && (v1 + 2) == v3;
     }
 
-    // 获取需要赖子的数量
-    private static int getModNeedNum(int arrLem, boolean isJiang) {
-        if (arrLem <= 0){
+    // Get the number of jokers needed to complete the hand
+    private static int getModNeedNum(int len, boolean isJiang) {
+        // If the length is less than or equal to 0
+        if (len <= 0) {
             return 0;
         }
-        int modNum = arrLem % 3;
-        int[] needNumArr = {0, 2, 1};
+        // Calculate the remainder when divided by 3
+        int modNum = len % 3;
+        int[] needNumArr;
         if (isJiang) {
             needNumArr = new int[]{2, 1, 0};
+        } else {
+            needNumArr = new int[]{0, 2, 1};
         }
         return needNumArr[modNum];
     }
 
-    // 递归函数计算子数组中需要的赖子数
-    private static void getNeedHunInSub(ArrayList<MahjongCard> subArr, int hNum) {
-        // 如果已确定不需要赖子，直接返回
+    // Recursive function to calculate the number of jokers needed in the subarray
+    private static void getNeedHunInSub(ArrayList<MahjongCard> subCards, int numOfLai) {
+        // If it is already determined that no jokers are needed, return directly
         if (g_NeedHunCount == 0) {
             return;
         }
-        // 获取子数组长度
-        int lArr = subArr.size();
-
-        // 如果当前赖子数加上按最小组合需要的赖子数已经超过了当前记录的最少赖子数，返回
-        if (hNum + getModNeedNum(lArr, false) >= g_NeedHunCount) {
+        // Get the length of the subarray
+        int len = subCards.size();
+        // If the current number of jokers plus the minimum number of jokers needed already exceeds the current record of the fewest jokers needed, return
+        if (numOfLai + getModNeedNum(len, false) >= g_NeedHunCount) {
             return;
         }
-        // 根据子数组的长度处理不同情况
-        if (lArr == 0) {
-            // 如果子数组为空，更新最少赖子数为当前计数和已有赖子数的较小值
-            g_NeedHunCount = Math.min(hNum, g_NeedHunCount);
-        } else if (lArr == 1) {
-            // 如果子数组长度为1，至少需要两个赖子，更新最少赖子数
-            g_NeedHunCount = Math.min(hNum + 2, g_NeedHunCount);
-        } else if (lArr == 2) {
-            // 如果子数组长度为2，分析两张牌的情况
-            int t = Integer.parseInt(subArr.get(0).getName().substring(0, 1)); // 获取第一张牌的类型
-            int v0 = Integer.parseInt(subArr.get(0).getName().substring(2)) ; // 获取第一张牌的数值
-            int v1 = Integer.parseInt(subArr.get(1).getName().substring(2)) ; // 获取第二张牌的数值
-            if (t >=3) {
-                // 如果是字牌
-                if (v0 == v1) {
-                    // 如果两张字牌相同，则需要一个赖子
-                    g_NeedHunCount = Math.min(hNum + 1, g_NeedHunCount);
+        // Handle different cases based on the length of the subarray
+        if (len == 0) {
+            // If the subarray is empty, update the fewest jokers needed to smaller of the current count and the existing number of jokers
+            g_NeedHunCount = Math.min(numOfLai, g_NeedHunCount);
+        } else if (len == 1) {
+            // If the subarray length is 1, at least two jokers are needed, update the fewest jokers needed
+            g_NeedHunCount = Math.min(numOfLai + 2, g_NeedHunCount);
+        } else if (len == 2) {
+            // If the subarray length is 2, analyze the situation of the two tiles
+            int t1 = subCards.get(0).getColor(); // Get the type of the first tile
+            int v1 = subCards.get(0).getValue(); // Get the value of the first tile
+            int t2 = subCards.get(1).getColor(); // Get the type of the second tile
+            int v2 = subCards.get(1).getValue(); // Get the value of the second tile
+            if (t1 >= 3) {
+                // If it is a wind tile
+                if (t1 == t2) {
+                    // If the two wind tiles are the same, one joker is needed
+                    g_NeedHunCount = Math.min(numOfLai + 1, g_NeedHunCount);
                 }
-            } else if ((v1 - v0) < 3) {
-                // 如果是数牌且两张牌的数值差小于3，也认为需要一个赖子
-                g_NeedHunCount = Math.min(hNum + 1, g_NeedHunCount);
+            } else if ((v2 - v1) < 3) {
+                // If it is a number tile and the difference in value between the two tiles is less than 3, also consider needing one joker
+                g_NeedHunCount = Math.min(numOfLai + 1, g_NeedHunCount);
             }
-        } else if(lArr>=3){
-            // 处理数组长度大于2的情况
-            int t = Integer.parseInt(subArr.get(0).getName().substring(0, 1)); // 牌的类型
-            int v0 = Integer.parseInt(subArr.get(0).getName().substring(2)); // 第一张牌的数值
-            int arrLen=subArr.size();
+        } else {
+            // Handle the case where the array length is greater than 2
+            int t = subCards.get(0).getColor(); // Type of the tile
+            int v0 = subCards.get(0).getValue(); // Value of the first tile
+            int arrLen = subCards.size();
             for (int i = 1; i < arrLen; i++) {
-                if (hNum + getModNeedNum(lArr - 3, false) >= g_NeedHunCount) {
+                // If the current number of jokers plus the minimum number of jokers needed already exceeds the current record of the fewest jokers needed, exit the loop
+                if (numOfLai + getModNeedNum(len - 3, false) >= g_NeedHunCount) {
                     break;
                 }
-                int v1 = Integer.parseInt(subArr.get(i).getName().substring(2));
+                // Get the value of the current tile
+                int v1 = subCards.get(i).getValue();
+                // If the difference in value between the current tile and the first tile is greater than 1, exit the loop
                 if (v1 - v0 > 1) {
                     break;
                 }
-                if (i + 2 < arrLen && Integer.parseInt(subArr.get(i + 2).getName().substring(2)) == v1) {
+                // If the next two tiles are the same, skip these tiles and continue the loop
+                if (i + 2 < arrLen && subCards.get(i + 2).getValue() == v1) {
                     continue;
                 }
+                // Check the next tile
                 if (i + 1 < arrLen) {
-                    MahjongCard tmp1 = subArr.get(0);
-                    MahjongCard tmp2 = subArr.get(i);
-                    MahjongCard tmp3 = subArr.get(i + 1);
-                    if (test3Combine(tmp1, tmp2, tmp3)) {
-                        // 尝试移除三张牌并递归检查
-                        subArr.remove(tmp1);
-                        subArr.remove(tmp2);
-                        subArr.remove(tmp3);
-                        getNeedHunInSub(subArr, hNum);
-                        subArr.add(tmp1);
-                        subArr.add(tmp2);
-                        subArr.add(tmp3);
-                        order(subArr);
+                    // Get the first, current, and next tile
+                    MahjongCard tmp1 = subCards.get(0);
+                    MahjongCard tmp2 = subCards.get(i);
+                    MahjongCard tmp3 = subCards.get(i + 1);
+                    // Check if the three tiles can form a valid combination
+                    if (test3Combine(tmp1, tmp2, tmp3)) { // If they can
+                        // Try removing the three tiles and recursively check
+                        subCards.remove(tmp1);
+                        subCards.remove(tmp2);
+                        subCards.remove(tmp3);
+                        // First remove these three tiles, then check the number of jokers needed for the remaining tiles
+                        getNeedHunInSub(subCards, numOfLai);
+                        // Then add the removed tiles back
+                        subCards.add(tmp1);
+                        subCards.add(tmp2);
+                        subCards.add(tmp3);
+                        // Reorder the subarray
+                        order(subCards);
                     }
                 }
             }
-            int v1 = Integer.parseInt(subArr.get(1).getName().substring(2));
-            // 进一步检查需要赖子的情况
-            if (hNum + getModNeedNum(lArr - 2, false) + 1 < g_NeedHunCount) {
-                if (t == 4 ) {
-                    if(v0 == v1) {
-                        MahjongCard tmp1 = subArr.get(0);
-                        MahjongCard tmp2 = subArr.get(1);
-                        subArr.remove(tmp1);
-                        subArr.remove(tmp2);
-                        getNeedHunInSub(subArr, hNum + 1);
-                        subArr.add(tmp1);
-                        subArr.add(tmp2);
-                        order(subArr);
+            // Get the value of the second tile
+            int t1 = subCards.get(1).getColor();
+            // Further check the number of jokers needed
+            if (numOfLai + getModNeedNum(len - 2, false) + 1 < g_NeedHunCount) {
+                if (t >= 3) { // If it is a wind tile
+                    if (t == t1) {
+                        MahjongCard tmp1 = subCards.get(0);
+                        MahjongCard tmp2 = subCards.get(1);
+                        subCards.remove(tmp1);
+                        subCards.remove(tmp2);
+                        getNeedHunInSub(subCards, numOfLai + 1);
+                        subCards.add(tmp1);
+                        subCards.add(tmp2);
+                        order(subCards);
                     }
-                }
-                else{
-                    arrLen=subArr.size();
-                    for(int i=0;i<arrLen;i++){
-                        if(hNum + getModNeedNum(lArr-2,false) +1  >= g_NeedHunCount){
+                } else { // If it is a number tile
+                    arrLen = subCards.size();
+                    for (int i = 0; i < arrLen; i++) {
+                        if (numOfLai + getModNeedNum(len - 2, false) + 1 >= g_NeedHunCount) {
                             break;
                         }
-                        int v4 = Integer.parseInt(subArr.get(i).getName().substring(2));
-                        if((i+1)!=arrLen){
-                            int v5 = Integer.parseInt(subArr.get(i+1).getName().substring(2));
-                            if(v4==v5){
+                        int v4 = subCards.get(i).getValue(); // Value of the current tile
+                        // If the current tile and the next tile are the same, skip the current tile and continue the loop
+                        if ((i + 1) != arrLen) {
+                            int v5 = subCards.get(i + 1).getValue();
+                            if (v4 == v5) {
                                 continue;
                             }
                         }
-                        int diff=v4-v0;
-                        if(diff<3){
-                            MahjongCard tmp1 = subArr.get(0);
-                            MahjongCard tmp2 = subArr.get(i);
-                            subArr.remove(tmp1);
-                            subArr.remove(tmp2);
-                            getNeedHunInSub(subArr, hNum + 1);
-                            subArr.add(tmp1);
-                            subArr.add(tmp2);
-                            order(subArr);
-                        }
-                        if(diff>=1){
+                        int diff = v4 - v0; // Difference in value between the current tile and the first tile
+                        // If the difference is less than 3, it means they can form a sequence or a triplet
+                        if (diff < 3) {
+                            MahjongCard tmp1 = subCards.get(0);
+                            MahjongCard tmp2 = subCards.get(i);
+                            subCards.remove(tmp1);
+                            subCards.remove(tmp2);
+                            getNeedHunInSub(subCards, numOfLai + 1);
+                            subCards.add(tmp1);
+                            subCards.add(tmp2);
+                            order(subCards);
+                            // If the difference is greater than 1, exit
+                            if (diff >= 1) {
+                                break;
+                            }
+                        } else {
                             break;
                         }
                     }
                 }
             }
-            if (hNum + getModNeedNum(lArr - 1, false) + 2 < g_NeedHunCount) {
-                MahjongCard tmp = subArr.get(0);
-                subArr.remove(tmp);
-                getNeedHunInSub(subArr, hNum + 2);
-                subArr.add(tmp);
-                order(subArr);
+            // Check if it is possible to form a valid combination by removing the first tile and adding two jokers
+            if (numOfLai + getModNeedNum(len - 1, false) + 2 < g_NeedHunCount) {
+                MahjongCard tmp = subCards.get(0);
+                subCards.remove(tmp);
+                getNeedHunInSub(subCards, numOfLai + 2);
+                subCards.add(tmp);
+                order(subCards);
             }
         }
     }
 
-    // 检查牌组是否能胡牌
-    private static boolean canHu(int hunNum, ArrayList<MahjongCard> arr) {
-        ArrayList<MahjongCard> tmpArr = new ArrayList<>(arr);
+    // Check if the hand can be a winning hand
+    private static boolean ifHu(int numOfLai, ArrayList<MahjongCard> cards) {
+        ArrayList<MahjongCard> tmpArr = new ArrayList<>();
+        for (MahjongCard card : cards) {
+            tmpArr.add(card);
+        }
         int arrLen = tmpArr.size();
         if (arrLen == 0) {
-            return hunNum >= 2;
+            return numOfLai >= 2;
         }
-        if (hunNum < getModNeedNum(arrLen, true)) {
+        if (numOfLai < getModNeedNum(arrLen, true)) {
             return false;
         }
         for (int i = 0; i < arrLen; i++) {
             if (i == arrLen - 1) {
-                if (hunNum > 0) {
+                if (numOfLai > 0) {
                     MahjongCard tmp = tmpArr.get(i);
-                    hunNum--;
+                    numOfLai--;
                     tmpArr.remove(tmpArr.get(i));
                     g_NeedHunCount = 4;
                     getNeedHunInSub(tmpArr, 0);
-                    if (g_NeedHunCount <= hunNum) {
+                    if (g_NeedHunCount <= numOfLai) {
                         return true;
                     }
-                    hunNum++;
+                    numOfLai++;
                     tmpArr.add(tmp);
                     Other_Algorithm.order(tmpArr);
                 }
             } else {
-                if (i + 2 == arrLen || Integer.parseInt(tmpArr.get(i).getName().substring(2)) != Integer.parseInt(tmpArr.get(i + 2) .getName().substring(2))) {
+                if (i + 2 == arrLen || tmpArr.get(i).getValue() != tmpArr.get(i + 2).getValue()) {
                     if (test2Combine(tmpArr.get(i), tmpArr.get(i + 1))) {
                         MahjongCard tmp1 = tmpArr.get(i);
                         MahjongCard tmp2 = tmpArr.get(i + 1);
@@ -263,25 +315,25 @@ public class Hu_Algorithm {
                         tmpArr.remove(tmp2);
                         g_NeedHunCount = 4;
                         getNeedHunInSub(tmpArr, 0);
-                        if (g_NeedHunCount<= hunNum) {
+                        if (g_NeedHunCount <= numOfLai) {
                             return true;
                         }
                         tmpArr.add(tmp1);
                         tmpArr.add(tmp2);
-                        Other_Algorithm.order(tmpArr);
+                        order(tmpArr);
                     }
-                    if (hunNum > 0 && Integer.parseInt(tmpArr.get(i).getName().substring(2)) != Integer.parseInt(tmpArr.get(i + 1)  .getName().substring(2))){
-                        hunNum--;
+                    if (numOfLai > 0 && tmpArr.get(i).getValue() != tmpArr.get(i + 1).getValue()) {
+                        numOfLai--;
                         MahjongCard tmp = tmpArr.get(i);
                         tmpArr.remove(tmp);
-                        g_NeedHunCount= 4;
+                        g_NeedHunCount = 4;
                         getNeedHunInSub(tmpArr, 0);
-                        if (g_NeedHunCount<= hunNum) {
+                        if (g_NeedHunCount <= numOfLai) {
                             return true;
                         }
-                        hunNum++;
+                        numOfLai++;
                         tmpArr.add(tmp);
-                        Other_Algorithm.order(tmpArr);
+                        order(tmpArr);
                     }
                 }
             }
@@ -289,111 +341,122 @@ public class Hu_Algorithm {
         return false;
     }
 
-    // 主函数：检查是否胡牌
-    // 测试是否胡牌
-    public static boolean CheckHu( ArrayList<MahjongCard> mjArr,MahjongCard mj, MahjongCard hunMj) {
-        ArrayList<MahjongCard> tmpArr = new ArrayList<>(mjArr);
-        //加入当前麻将
-        tmpArr.add(mj);
-        ArrayList<ArrayList<MahjongCard>> sptArr = separateArr(tmpArr, hunMj);
+    // Check if the player can win with the discarded tile
+    public static boolean checkHu(ArrayList<MahjongCard> cards, MahjongCard card, MahjongCard Lai) {
+        ArrayList<MahjongCard> tepArr = new ArrayList<>();
+        for (MahjongCard c : cards) {
+            tepArr.add(c);
+        }
+        // Add the current Mahjong tile
+        tepArr.add(card);
+        if (tepArr.size() < 14) {
+            return false;
+        }
+        ArrayList<ArrayList<MahjongCard>> sptArr = separateCards(tepArr, Lai);
         int curHunNum = sptArr.get(0).size();
         if (curHunNum > 3) {
             return true;
         }
         int[] ndHunArr = new int[4];
         for (int i = 1; i < 5; i++) {
-            g_NeedHunCount= 4;
+            g_NeedHunCount = 4;
             getNeedHunInSub(sptArr.get(i), 0);
             ndHunArr[i - 1] = g_NeedHunCount;
         }
         boolean isHu;
-        // 将在万中
+        // Winning with characters as the pair
         int ndHunAll = ndHunArr[1] + ndHunArr[2] + ndHunArr[3];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(1));
+            isHu = ifHu(hasNum, sptArr.get(1));
             if (isHu) {
                 return true;
             }
         }
-        // 将在饼中
-        ndHunAll = ndHunArr[0] + ndHunArr[2] + ndHunArr[3];
-        if (ndHunAll <= curHunNum) {
-            int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(2));
-            if (isHu) {
-                return true;
-            }
-        }
-        // 将在条中
+        // Winning with bamboos as the pair
         ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[3];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(3));
+            isHu = ifHu(hasNum, sptArr.get(2));
             if (isHu) {
                 return true;
             }
         }
-        // 将在风中
+        // Winning with dots as the pair
+        ndHunAll = ndHunArr[0] + ndHunArr[2] + ndHunArr[3];
+        if (ndHunAll <= curHunNum) {
+            int hasNum = curHunNum - ndHunAll;
+            isHu = ifHu(hasNum, sptArr.get(3));
+            if (isHu) {
+                return true;
+            }
+        }
+        // Winning with winds as the pair
         ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[2];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(4));
+            isHu = ifHu(hasNum, sptArr.get(4));
             return isHu;
         }
         return false;
     }
 
-    public static boolean CheckHu(ArrayList<MahjongCard> mjArr, MahjongCard hunMj) {
-        ArrayList<MahjongCard> tmpArr = new ArrayList<>(mjArr);
-        ArrayList<ArrayList<MahjongCard>> sptArr = separateArr(tmpArr, hunMj);
+    // Check if the player's hand can win
+    public static boolean checkHu(ArrayList<MahjongCard> cards, MahjongCard Lai) {
+        ArrayList<MahjongCard> tepArr = new ArrayList<>();
+        for (MahjongCard card : cards) {
+            tepArr.add(card);
+        }
+        if (tepArr.size() < 14) { // If the hand size is less than 14, it does not meet the winning conditions
+            return false;
+        }
+        ArrayList<ArrayList<MahjongCard>> sptArr = separateCards(tepArr, Lai);
+        ArrayList<ArrayList<MahjongCard>> temptArr = separateCards(tepArr, Lai);
         int curHunNum = sptArr.get(0).size();
         if (curHunNum > 3) {
             return true;
         }
         int[] ndHunArr = new int[4];
         for (int i = 1; i < 5; i++) {
-            g_NeedHunCount= 4;
-            getNeedHunInSub(sptArr.get(i), 0);
+            g_NeedHunCount = 4;
+            getNeedHunInSub(temptArr.get(i), 0);
             ndHunArr[i - 1] = g_NeedHunCount;
         }
         boolean isHu;
-        // 将在万中
+        // Winning with characters as the pair
         int ndHunAll = ndHunArr[1] + ndHunArr[2] + ndHunArr[3];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(1));
+            isHu = ifHu(hasNum, sptArr.get(1));
             if (isHu) {
                 return true;
             }
         }
-        // 将在饼中
+        // Winning with bamboos as the pair
         ndHunAll = ndHunArr[0] + ndHunArr[2] + ndHunArr[3];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(2));
+            isHu = ifHu(hasNum, sptArr.get(2));
             if (isHu) {
                 return true;
             }
         }
-        // 将在条中
+        // Winning with dots as the pair
         ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[3];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(3));
+            isHu = ifHu(hasNum, sptArr.get(3));
             if (isHu) {
                 return true;
             }
         }
-        // 将在风中
+        // Winning with winds as the pair
         ndHunAll = ndHunArr[0] + ndHunArr[1] + ndHunArr[2];
         if (ndHunAll <= curHunNum) {
             int hasNum = curHunNum - ndHunAll;
-            isHu = canHu(hasNum, sptArr.get(4));
+            isHu = ifHu(hasNum, sptArr.get(4));
             return isHu;
         }
         return false;
     }
-
-
 }

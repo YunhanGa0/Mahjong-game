@@ -7,120 +7,123 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-//麻将类的oop实现
-public class MahjongCard extends JLabel implements MouseListener {
+// OOP implementation of Mahjong cards
+public class MahjongCard extends JLabel implements MouseListener, Serializable {
 
-    GameJFrame gameJFrame;
-    //牌是啥
+    private static final int CARD_WIDTH = 35;
+    private static final int CARD_HEIGHT = 48;
+    private static final int CLICK_OFFSET = 15;
+    private static final String FRONT_IMAGE_PREFIX_CLASSIC = "/MahjongPic/tilee";
+    private static final String FRONT_IMAGE_PREFIX_MODERN = "/MahjongPic/tile";
+    private static final String REAR_IMAGE_CLASSIC = "/MahjongPic/back1.jpg";
+    private static final String REAR_IMAGE_MODERN = "/MahjongPic/back0.jpg";
+
+    private GameJFrame gameJFrame;
     private String name;
-    //正反
     private boolean up;
-    //能否被点击
-    private boolean Clickable = false;
-    //当前状态：是否被点击
+    private boolean clickable = false;
     private boolean clicked = false;
-
-    //当前是否被进行碰操作
     private boolean ifPeng = false;
+    private boolean ifGang = false;
+    private boolean ifEat = false;
 
-    private boolean ifGang= false;
+    // Constructor
+    public MahjongCard(GameJFrame gameJFrame, String name, boolean up) {
+        this.gameJFrame = gameJFrame;
+        this.name = name;
+        this.up = up;
 
-    private boolean ifEat= false;
-
-
-    public MahjongCard(GameJFrame m, String name, boolean up){
-        this.gameJFrame=m;
-        this.name=name;
-        this.up=up;
-        if (this.up){
-            //正面
-            this.turnFront();
-        }else {
-            //背面
-            this.turnRear();
-        }
-        //牌的大小
-        this.setSize(35,48);
-        //把牌显示出来
+        setCardFace();
+        this.setSize(CARD_WIDTH, CARD_HEIGHT);
         this.setVisible(false);
-        //给每一张牌添加鼠标监听
         this.addMouseListener(this);
-
     }
 
-    public MahjongCard(String name){
-        this.name=name;
+    // Constructor for testing
+    public MahjongCard(String name) {
+        this.name = name;
     }
 
-    //显示正面
+    // Show the front side of the card
     public void turnFront() {
-        if (!ShinJFrame.getIsClassic()) {
-            int i = Integer.parseInt(this.getName().substring(0, 1));
-            int j = Integer.parseInt(this.getName().substring(2));
-            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/tile"+i+j+".png"); // 创建一个图片图标
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/tile" + i + j + ".png")); // 创建一个图片图标
-            Image image = imageIcon.getImage(); // 获取图标的图片对象
-            Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-            this.up = true;
-        }else {
-            int i = Integer.parseInt(this.getName().substring(0, 1));
-            int j = Integer.parseInt(this.getName().substring(2));
-            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/MahjongPic/tile"+i+j+".png"); // 创建一个图片图标
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/tilee" + i + j + ".png")); // 创建一个图片图标
-            Image image = imageIcon.getImage(); // 获取图标的图片对象
-            Image scaledImage = image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-            this.up = true;
-        }
+        String prefix = ShinJFrame.getIsClassic() ? FRONT_IMAGE_PREFIX_CLASSIC : FRONT_IMAGE_PREFIX_MODERN;
+        setCardImage(prefix + getImageIndex() + ".png");
+        this.up = true;
     }
-    //显示背面
+
+    // Show the rear side of the card
     public void turnRear() {
-        if (!ShinJFrame.getIsClassic()) {
-            //ImageIcon imageIcon = new ImageIcon("/Volumes/中转/软工课设/Mahjong-game/Mahjong/MahjongPic/tile01.png"); // 创建一个背面图标
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/back0.jpg"));
-            Image image = imageIcon.getImage(); // 获取图标的图片对象
-            Image scaledImage = image.getScaledInstance(35, 48, Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-            this.up = false;
-        }else {
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/MahjongPic/back1.jpg"));
-            Image image = imageIcon.getImage(); // 获取图标的图片对象
-            Image scaledImage = image.getScaledInstance(35, 48, Image.SCALE_SMOOTH); // 缩放图片以适应牌的大小
-            this.setIcon(new ImageIcon(scaledImage)); // 设置牌的图标为缩放后的图片
-            this.up = false;
-        }
-
+        String rearImage = ShinJFrame.getIsClassic() ? REAR_IMAGE_CLASSIC : REAR_IMAGE_MODERN;
+        setCardImage(rearImage);
+        this.up = false;
     }
 
-    //能不能被点击,能就上升，再被点就下去
+    // Toggle card clicked state
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (Clickable && !ifPeng && !ifGang && !ifEat) {
+        if (clickable && !ifPeng && !ifGang && !ifEat) {
             toggleClicked();
-            handleAllCardsClickability();
+            updateCardClickability();
         }
     }
 
+    // Helper method to toggle the card click state
     private void toggleClicked() {
         this.clicked = !this.clicked;
         Point location = this.getLocation();
-        location.y += this.clicked ? -15 : 15;
+        location.y += this.clicked ? -CLICK_OFFSET : CLICK_OFFSET;
         this.setLocation(location);
     }
 
-    private void handleAllCardsClickability() {
+    // Restrict card clickability
+    private void updateCardClickability() {
         ArrayList<MahjongCard> cards = gameJFrame.getPlayerList().get(0);  // Assuming index 0 is the human player
         for (MahjongCard card : cards) {
             if (card != this) {
-                card.setCanClick(!this.clicked);
+                card.setClickable(!this.clicked);
             }
         }
     }
 
-    public boolean getIfPeng(){
+    // Set which side towards
+    private void setCardFace() {
+        if (this.up) {
+            turnFront();
+        } else {
+            turnRear();
+        }
+    }
+
+    //Get the index of card to set image
+    private String getImageIndex() {
+        int i = Integer.parseInt(this.name.substring(0, 1));
+        int j = Integer.parseInt(this.name.substring(2));
+        return i + "" + j;
+    }
+
+    //Set image for card
+    private void setCardImage(String imagePath) {
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource(imagePath));
+        Image image = imageIcon.getImage();
+        Image scaledImage = image.getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+        this.setIcon(new ImageIcon(scaledImage));
+    }
+
+    // Get the color of the card
+    public int getColor() {
+        return Integer.parseInt(this.getName().substring(0, 1));
+    }
+
+    // Get the size of the card
+    public int getValue() {
+        return Integer.parseInt(this.getName().substring(2));
+    }
+
+    // Getters and setters methods
+    public boolean getIfPeng() {
         return ifPeng;
     }
 
@@ -128,7 +131,7 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.ifPeng = ifPeng;
     }
 
-    public boolean getIfGang(){
+    public boolean getIfGang() {
         return ifGang;
     }
 
@@ -136,14 +139,15 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.ifGang = ifGang;
     }
 
-    public boolean getIfEat(){
-        return this.ifEat;
+    public boolean getIfEat() {
+        return ifEat;
     }
 
     public void setIfEat(boolean ifEat) {
         this.ifEat = ifEat;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -156,8 +160,8 @@ public class MahjongCard extends JLabel implements MouseListener {
         this.name = name;
     }
 
-    public void setCanClick(boolean canClick) {
-        this.Clickable = canClick;
+    public void setClickable(boolean clickable) {
+        this.clickable = clickable;
     }
 
     public boolean isClicked() {
@@ -176,7 +180,8 @@ public class MahjongCard extends JLabel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {}
 
+    @Override
     public String toString() {
-        return "Poker{gameJFrame = " + gameJFrame + ", name = " + name + ", up = " + up + ", Clickable = " + Clickable + ", clicked = " + clicked + "}";
+        return "Poker{gameJFrame = " + gameJFrame + ", name = " + name + ", up = " + up + ", clickable = " + clickable + ", clicked = " + clicked + "}";
     }
 }
