@@ -3,6 +3,7 @@ package Game;
 import javax.swing.*;
 
 public class DifficultyJFrame extends JFrame {
+    public static boolean isEasy, isMiddle, isHard;
 
     public DifficultyJFrame() {
         setTitle("Choose the difficulty");
@@ -10,39 +11,52 @@ public class DifficultyJFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Load the background image
         ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/MahjongPic/Difficulty.png"));
         JLabel backgroundLabel = new JLabel(backgroundImage);
-        backgroundLabel.setLayout(null); // 使用绝对布局
+        backgroundLabel.setLayout(null); // Use absolute layout
 
-        // 创建并设置按钮，设置为透明
-        JButton easyButton = new JButton();
-        easyButton.setBounds(200, 170, 120, 500);
-        easyButton.setOpaque(false); // 设置为透明
-        easyButton.setContentAreaFilled(false); // 内容区域填充为透明
-        easyButton.setBorderPainted(false); // 不绘制边框
-        easyButton.addActionListener(e -> new GameJFrame().setVisible(true));
+        // Create and configure the Easy button
+        JButton easyButton = createButton(200);
+        easyButton.addActionListener(e -> {
+            isEasy = true;
+            new GameJFrame().setVisible(true);
+            dispose(); // Close the difficulty selection window
+        });
 
-        JButton middleButton = new JButton();
-        middleButton.setBounds(355, 170, 120, 500);
-        middleButton.setOpaque(false);
-        middleButton.setContentAreaFilled(false);
-        middleButton.setBorderPainted(false);
-        middleButton.addActionListener(e -> new GameJFrame().setVisible(true));
+        // Create and configure the Middle button
+        JButton middleButton = createButton(355);
+        middleButton.addActionListener(e -> {
+            isMiddle = true;
+            new GameJFrame().setVisible(true);
+            dispose(); // Close the difficulty selection window
+        });
 
-        JButton hardButton = new JButton();
-        hardButton.setBounds(510, 170, 120, 500);
-        hardButton.setOpaque(false);
-        hardButton.setContentAreaFilled(false);
-        hardButton.setBorderPainted(false);
-        hardButton.addActionListener(e -> new GameJFrame().setVisible(true));
+        // Create and configure the Hard button
+        JButton hardButton = createButton(510);
+        hardButton.addActionListener(e -> {
+            isHard = true;
+            new GameJFrame().setVisible(true);
+            dispose(); // Close the difficulty selection window
+        });
 
-        // 将按钮添加到背景标签
+        // Add buttons to the background label
         backgroundLabel.add(easyButton);
         backgroundLabel.add(middleButton);
         backgroundLabel.add(hardButton);
 
-        // 设置背景标签为内容面板
+        // Set the background label as the content pane
         setContentPane(backgroundLabel);
         setVisible(true);
+    }
+
+    // Create a transparent button with specified bounds
+    private JButton createButton(int x) {
+        JButton button = new JButton();
+        button.setBounds(x, 170, 120, 500);
+        button.setOpaque(false); // Make button transparent
+        button.setContentAreaFilled(false); // Make content area transparent
+        button.setBorderPainted(false); // Do not paint the border
+        return button;
     }
 }

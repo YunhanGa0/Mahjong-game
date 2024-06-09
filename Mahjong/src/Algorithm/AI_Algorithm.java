@@ -1,318 +1,350 @@
 package Algorithm;
 
 import Game.GameJFrame;
+import Game.PlayerOperation;
 import Objects.MahjongCard;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AI_Algorithm {
-    public static int cpg1Count=0;
-    public static int cpg2Count=0;
-    public static  int cpg3Count=0;
-    public static boolean is1=false;
-    public static boolean is2=false;
-    public static boolean is3=false;
 
-    public static void EasyAI(GameJFrame gameJFrame,int playerIndex){
-        ArrayList<MahjongCard> player= gameJFrame.getPlayerList().get(playerIndex);
-        if(gameJFrame.getCurrentList().size()==0) {
-            ShowCard(gameJFrame,playerIndex);
-        }else {
-            MahjongCard current = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
-            if (Hu_Algorithm.CheckHu(player,gameJFrame.getLai())) {
-                HuCards(gameJFrame, playerIndex, current);
-            } else if (Other_Algorithm.CheckGang(player, current)) {
-                GangCards(gameJFrame, playerIndex, current);
-            } else if (Other_Algorithm.CheckPeng(player, current)) {
-                PengCards(gameJFrame, playerIndex);
-            } else if (Other_Algorithm.CheckChi(player, current)) {
-                EatCards(gameJFrame, playerIndex);
+    private static int cpg1Count = 0;
+    private static int cpg2Count = 0;
+    private static int cpg3Count = 0;
+    private static boolean is1 = false;
+    private static boolean is2 = false;
+    private static boolean is3 = false;
+
+    // Implementation of simple AI
+    public static void easyAI(GameJFrame gameJFrame, int playerIndex) {
+        ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
+
+        if (gameJFrame.getTurn() == playerIndex) {
+            if (Hu_Algorithm.checkHu(player, gameJFrame.getLai())) {
+                selfHu(gameJFrame, playerIndex);
+            } else if (Other_Algorithm.checkDarkGang(player, player.get(player.size() - 1))) {
+                darkGangCards(gameJFrame, playerIndex, player.get(player.size() - 1));
             } else {
-                ShowCard(gameJFrame, playerIndex);
+                showCard(gameJFrame, playerIndex, true);
+            }
+        } else {
+            MahjongCard current = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
+            if (Hu_Algorithm.checkHu(player, gameJFrame.getLai())) {
+                huCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.checkGang(player, current)) {
+                gangCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.checkPeng(player, current)) {
+                pengCards(gameJFrame, playerIndex);
+            } else if (Other_Algorithm.checkEat(player, current)) {
+                eatCards(gameJFrame, playerIndex);
             }
         }
     }
 
-    //机器人出牌
-    public static void ShowCard(GameJFrame gameJFrame, int playerIndex) {  //显示出去的牌的位置
-        // 获取当前玩家手中的麻将牌列表
+    public static void advancedAI(GameJFrame gameJFrame, int playerIndex) {
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
-        int i=player.size()-2;
-        while(i>=0){
-            MahjongCard card = player.get(i);
-            //如果没有碰，吃，杠，说明牌可以出
-            if (!card.getIfEat() && !card.getIfPeng() && !card.getIfGang()){
-                break;
-            }else {i--;}
+
+        if (gameJFrame.getTurn() == playerIndex) {
+            if (Hu_Algorithm.checkHu(player, gameJFrame.getLai())) {
+                selfHu(gameJFrame, playerIndex);
+            } else if (Other_Algorithm.checkDarkGang(player, player.get(player.size() - 1))) {
+                darkGangCards(gameJFrame, playerIndex, player.get(player.size() - 1));
+            } else {
+                showCard(gameJFrame, playerIndex, false);
+            }
+        } else {
+            MahjongCard current = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
+            if (Hu_Algorithm.checkHu(player, gameJFrame.getLai())) {
+                huCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.checkGang(player, current)) {
+                gangCards(gameJFrame, playerIndex, current);
+            } else if (Other_Algorithm.checkPeng(player, current)) {
+                pengCards(gameJFrame, playerIndex);
+            } else if (Other_Algorithm.checkEat(player, current)) {
+                eatCards(gameJFrame, playerIndex);
+            }
         }
-        MahjongCard c=player.get(i);
-        gameJFrame.getCurrentList().add(c);
-        //在手上的牌中，去掉已经出掉的牌
-        player.remove(c);
-        //计算坐标并移动牌
-        //移动的目的是要出的牌移动到上方
+    }
+
+
+
+    // AI card playing method
+    public static void showCard(GameJFrame gameJFrame, int playerIndex, boolean isEasy) {
+        ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
+        MahjongCard cardToPlay = null;
+
+        if (isEasy) {
+            int i = player.size() - 2;
+            while (i >= 0) {
+                MahjongCard card = player.get(i);
+                if (!card.getIfEat() && !card.getIfPeng() && !card.getIfGang() && !Objects.equals(card.getName(), gameJFrame.getLai().getName())) {
+                    cardToPlay = card;
+                    break;
+                }
+                i--;
+            }
+        } else {
+            for (MahjongCard card : player) {
+                if (!card.getIfEat() && !card.getIfPeng() && !card.getIfGang() && !Objects.equals(card.getName(), gameJFrame.getLai().getName())) {
+                    if (cardToPlay == null || !isUsefulCard(card, player)) {
+                        cardToPlay = card;
+                    }
+                }
+            }
+        }
+        if (cardToPlay == null) {
+            cardToPlay = player.get(player.size() - 1);
+        }
+
+        gameJFrame.getCurrentList().add(cardToPlay);
+        player.remove(cardToPlay);
+
+        Point point = calculateCardPosition(gameJFrame, playerIndex);
+        cardToPlay.setLocation(point.x, point.y);
+        Other_Algorithm.order(player);
+        Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
+        gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1).turnFront();
+    }
+
+    // Determine if a card is useful
+    private static boolean isUsefulCard(MahjongCard card, ArrayList<MahjongCard> player) {
+        int color = card.getColor();
+        int size = card.getValue();
+        for (MahjongCard c : player) {
+            if (c != card && c.getColor() == color && Math.abs(c.getValue() - size) <= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Calculate the position of a card
+    private static Point calculateCardPosition(GameJFrame gameJFrame, int playerIndex) {
         Point point = new Point();
-        if(playerIndex==1){
-            if (gameJFrame.num1/13==0) {
+        if (playerIndex == 1) {
+            if (gameJFrame.num1 / 13 == 0) {
                 point.x = 1040;
                 point.y = 290 + gameJFrame.num1 * 35;
-            }else {
+            } else {
                 point.x = 1000;
-                point.y = 290 + (gameJFrame.num1-13) * 35;
+                point.y = 290 + (gameJFrame.num1 - 13) * 35;
             }
             gameJFrame.num1++;
-        }
-        if(playerIndex==2){
-            if (gameJFrame.num2/13==0) {
-                point.x = 820-gameJFrame.num2*35;
+        } else if (playerIndex == 2) {
+            if (gameJFrame.num2 / 13 == 0) {
+                point.x = 820 - gameJFrame.num2 * 35;
                 point.y = 340;
-            }else {
-                point.x = 820-(gameJFrame.num2-13)*35;
+            } else {
+                point.x = 820 - (gameJFrame.num2 - 13) * 35;
                 point.y = 390;
             }
             gameJFrame.num2++;
-        }
-        if(playerIndex==3){
-            if (gameJFrame.num2/13==0) {
+        } else if (playerIndex == 3) {
+            if (gameJFrame.num3 / 13 == 0) {
                 point.x = 260;
-                point.y = 290+gameJFrame.num3*35;
-            }else {
+                point.y = 290 + gameJFrame.num3 * 35;
+            } else {
                 point.x = 300;
-                point.y = 290+(gameJFrame.num3-13)*35;
+                point.y = 290 + (gameJFrame.num3 - 13) * 35;
             }
             gameJFrame.num3++;
         }
-        c.setLocation(point.x,point.y);
-        //重新摆放剩余的牌
-        Other_Algorithm.order(player);
-        Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
-        // 展示出的麻将牌
-        gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1).turnFront();
+        return point;
     }
 
-    //机器人的碰牌方法
-    public static void PengCards(GameJFrame gameJFrame,int playerIndex){
-        //通过弃牌堆找到要碰的牌
-        MahjongCard pengCard = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1);
-        //获取中自己手上所有的牌
+    // AI Peng method
+    public static void pengCards(GameJFrame gameJFrame, int playerIndex) {
+        MahjongCard pengCard = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
-        if(Other_Algorithm.CheckPeng(player,pengCard)){
-            //先将牌加入到自己的牌中
+
+        if (Other_Algorithm.checkPeng(player, pengCard)) {
             player.add(pengCard);
-            int j=0;
-            //遍历玩家手牌找到此牌并放到指定位置
+            Other_Algorithm.order(player);
+            int j = 0;
             for (MahjongCard card : player) {
                 if (card.getName().equals(pengCard.getName())) {
-                    Point point = new Point();
-                    if(playerIndex==1){
-                        point.x = 1120-cpg1Count*40;      //850
-                        point.y = 610+j*35;  //370
-                        is1=true;
-                    }
-                    if(playerIndex==2){
-                        point.x = 850+j*35;   //720
-                        point.y = 200+cpg2Count*50;        //50
-                        is2=true;
-                    }
-                    if(playerIndex==3){
-                        point.x = 170+cpg3Count*40;        //80
-                        point.y = 120+j*35;   //70
-                        is3=true;
-                    }
+                    Point point = calculateOperationPoint(playerIndex, j);
                     j++;
                     card.turnFront();
-                    card.setCanClick(false);
-                    //碰过的牌不能动了
+                    card.setClickable(false);
                     card.setIfPeng(true);
                     Other_Algorithm.move(card, card.getLocation(), point);
                 }
             }
-            if (is1){
-                cpg1Count++;
-                is1=false;
-            }
-            if (is2){
-                cpg2Count++;
-                is2=false;
-            }
-            if (is3){
-                cpg3Count++;
-                is3=false;
-            }
-            //碰后出牌
-            ShowCard(gameJFrame,playerIndex);
+            incrementCpgCount();
+            showCard(gameJFrame, playerIndex, true);
         }
     }
 
-    //机器人开杠
-    public static void GangCards(GameJFrame gameJFrame,int playerIndex, MahjongCard GangCard){
-        //获取中自己手上所有的牌
+    // AI Gang method
+    public static void gangCards(GameJFrame gameJFrame, int playerIndex, MahjongCard gangCard) {
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
-        if(Other_Algorithm.CheckPeng(player,GangCard)){
-            //先将牌加入到自己的牌中
-            player.add(GangCard);
-            //计数
-            int j=0;
-            //遍历玩家手牌找到此牌并放到指定位置
+
+        if (Other_Algorithm.checkGang(player, gangCard)) {
+            player.add(gangCard);
+            PlayerOperation.addCards(playerIndex);
+            int j = 0;
             for (MahjongCard card : player) {
-                if (card.getName().equals(GangCard.getName())) {
-                    Point point = new Point();
-                    if(playerIndex==1){
-                        point.x = 1120-cpg1Count*40;      //850
-                        point.y = 610+j*35;  //370
-                        is1=true;
-                    }
-                    if(playerIndex==2){
-                        point.x = 850+j*35;   //720
-                        point.y = 200+cpg2Count*50;        //50
-                        is2=true;
-                    }
-                    if(playerIndex==3){
-                        point.x = 170+cpg3Count*40;        //80
-                        point.y = 120+j*35;   //70
-                        is3=true;
-                    }
+                if (card.getName().equals(gangCard.getName())) {
+                    Point point = calculateOperationPoint(playerIndex, j);
                     Other_Algorithm.move(card, card.getLocation(), point);
                     card.turnFront();
-                    //碰过的牌不能动了
-                    card.setCanClick(false);
+                    card.setClickable(false);
                     card.setIfGang(true);
                     j++;
                 }
             }
-            if (is1){
-                cpg1Count++;
-                is1=false;
-            }
-            if (is2){
-                cpg2Count++;
-                is2=false;
-            }
-            if (is3){
-                cpg3Count++;
-                is3=false;
-            }
-            //杠后出牌
-            ShowCard(gameJFrame,playerIndex);
+            incrementCpgCount();
+            showCard(gameJFrame, playerIndex, true);
         }
     }
 
-    //机器人开吃
-    public static void EatCards(GameJFrame gameJFrame,int playerIndex){
-        //通过弃牌堆找到要碰的牌
-        MahjongCard chiCard = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size()-1);
-        int color = getColor(chiCard);
-        int size = getSize(chiCard);
-        //获取中自己手上所有的牌
+    // AI Dark Gang method
+    public static void darkGangCards(GameJFrame gameJFrame, int playerIndex, MahjongCard gangCard) {
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
-        if(Other_Algorithm.CheckChi(player,chiCard)){
-            //先将牌加入到自己的牌中
+        if (Other_Algorithm.checkDarkGang(player, gangCard)) {
+            int j = 0;
+            for (MahjongCard card : player) {
+                if (card.getName().equals(gangCard.getName())) {
+                    Point point = calculateOperationPoint(playerIndex, j);
+                    Other_Algorithm.move(card, card.getLocation(), point);
+                    card.turnFront();
+                    card.setClickable(false);
+                    card.setIfGang(true);
+                    j++;
+                }
+            }
+            incrementCpgCount();
+            PlayerOperation.addCards(playerIndex);
+            showCard(gameJFrame, playerIndex, true);
+        }
+    }
+
+    // AI Eat method
+    public static void eatCards(GameJFrame gameJFrame, int playerIndex) {
+        MahjongCard chiCard = gameJFrame.getCurrentList().get(gameJFrame.getCurrentList().size() - 1);
+        int color = chiCard.getColor();
+        ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
+
+        if (Other_Algorithm.checkEat(player, chiCard)) {
             player.add(chiCard);
-            //计数
-            int j=0;
-            boolean smaller = false;
-            boolean bigger = false;
+            Other_Algorithm.order(player);
+            ArrayList<MahjongCard> sequence = new ArrayList<>();
+            sequence.add(chiCard);
             for (MahjongCard card : player) {
-                if (getColor(card) == color){
-                    if (getSize(card) == getSize(chiCard)-1){
-                        smaller = true;
-                    } else if (getSize(card) == getSize(chiCard)+1) {
-                        bigger = true;
+                boolean ifSame = false;
+                for (MahjongCard card1 : sequence) {
+                    if (card.getColor() == card1.getColor() && card.getValue() == card1.getValue()) {
+                        ifSame = true;
+                        break;
                     }
                 }
-            }
-            //遍历玩家手牌找到此牌并放到指定位置
-            for (MahjongCard card : player) {
-                if (getColor(card) == getColor(chiCard) && !smaller){ // 牌堆里没有比chiCard小一张的→找cc+1和cc+2移动
-                    if (getSize(card) == (getSize(chiCard)+1) ||  getSize(card) == (getSize(chiCard)+2)) {
-                        Point point = new Point();
-                        if(playerIndex==1){
-                            point.x = 1120-cpg1Count*40;      //850
-                            point.y = 610+j*35;  //370
-                            is1=true;
-                        }
-                        if(playerIndex==2){
-                            point.x = 850+j*35;   //720
-                            point.y = 200+cpg2Count*50;        //50
-                            is2=true;
-                        }
-                        if(playerIndex==3){
-                            point.x = 170+cpg3Count*40;        //80
-                            point.y = 120+j*35;   //70
-                            is3=true;
-                        }
-                        Other_Algorithm.move(card, card.getLocation(), point);
-                        card.turnFront();
-                        //碰过的牌不能动了
-                        card.setCanClick(false);
+                if (ifSame) {
+                    continue;
+                }
+                if (Objects.equals(Other_Algorithm.getChiSituation(), "XOO")) {
+                    if (card.getColor() == color && card.getValue() == chiCard.getValue() + 1) {
                         card.setIfEat(true);
-                        j++;
+                        sequence.add(card);
                     }
-                } else if (getColor(card) == getColor(chiCard) && !bigger) { // 牌堆里没有比chiCard大一张的→找cc-1和cc-2移动
-                    if (getSize(card) == (getSize(chiCard)-1) ||  getSize(card) == (getSize(chiCard)-2)) {
-                        Point point = new Point();
-                        if(playerIndex==1){
-                            point.x = 1120-cpg1Count*40;      //850
-                            point.y = 610+j*35;  //370
-                            is1=true;
-                        }
-                        if(playerIndex==2){
-                            point.x = 850+j*35;   //720
-                            point.y = 200+cpg2Count*50;        //50
-                            is2=true;
-                        }
-                        if(playerIndex==3){
-                            point.x = 170+cpg3Count*40;        //80
-                            point.y = 120+j*35;   //70
-                            is3=true;
-                        }
-                        Other_Algorithm.move(card, card.getLocation(), point);
-                        //碰过的牌不能动了
-                        card.setCanClick(false);
+                    else if (card.getColor() == color && card.getValue() == chiCard.getValue() + 2) {
                         card.setIfEat(true);
-                        j++;
+                        sequence.add(card);
+                    }
+                } else if (Objects.equals(Other_Algorithm.getChiSituation(), "OXO")) {
+                    if (card.getColor() == color && card.getValue() == chiCard.getValue() - 1) {
+                        card.setIfEat(true);
+                        sequence.add(card);
+                    }
+                    else if (card.getColor() == color && card.getValue() == chiCard.getValue() + 1) {
+                        card.setIfEat(true);
+                        sequence.add(card);
+                    }
+                } else if (Objects.equals(Other_Algorithm.getChiSituation(), "OOX")) {
+                    if (card.getColor() == color && card.getValue() == chiCard.getValue() - 1) {
+                        card.setIfEat(true);
+                        sequence.add(card);
+                    }
+                    else if (card.getColor() == color && card.getValue() == chiCard.getValue() - 2) {
+                        card.setIfEat(true);
+                        sequence.add(card);
                     }
                 }
+                if (sequence.size() == 3) {
+                    break;
+                }
             }
-            if (is1){
-                cpg1Count++;
-                is1=false;
+            Other_Algorithm.order(sequence);
+            int j = 0;
+            Other_Algorithm.order(sequence);
+            for (MahjongCard card : sequence) {
+                Other_Algorithm.move(card, card.getLocation(), calculateOperationPoint(playerIndex, j));
+                card.turnFront();
+                card.setClickable(false);
+                card.setIfEat(true);
+                j++;
             }
-            if (is2){
-                cpg2Count++;
-                is2=false;
-            }
-            if (is3){
-                cpg3Count++;
-                is3=false;
-            }
-            //碰后出牌
-            ShowCard(gameJFrame,playerIndex);
+            incrementCpgCount();
+            showCard(gameJFrame,playerIndex,true);
         }
     }
-
-    //机器人开胡
-    public static void HuCards(GameJFrame gameJFrame,int playerIndex, MahjongCard HuCard){
-        //获取中自己手上所有的牌
+    // AI Hu method
+    public static void huCards(GameJFrame gameJFrame, int playerIndex, MahjongCard huCard) {
         ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
-        //将牌添加进去
-        player.add(HuCard);
-        //重新摆放全部的牌
+        player.add(huCard);
         Other_Algorithm.order(player);
         Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
-        //展示胡的牌
-        for(MahjongCard card:player){
+
+        for (MahjongCard card : player) {
             card.turnFront();
         }
     }
 
-    public static int getColor(MahjongCard card) {
-        return Integer.parseInt(card.getName().substring(0, 1));
+    public static void selfHu(GameJFrame gameJFrame, int playerIndex) {
+        ArrayList<MahjongCard> player = gameJFrame.getPlayerList().get(playerIndex);
+        Other_Algorithm.order(player);
+        Other_Algorithm.rePosition(gameJFrame, player, playerIndex);
+
+        for (MahjongCard card : player) {
+            card.turnFront();
+        }
     }
 
-    public static int getSize(MahjongCard card) {
-        return Integer.parseInt(card.getName().substring(2));
+    // Calculate the position for Peng, Gang, and Chi
+    private static Point calculateOperationPoint(int playerIndex, int j) {
+        Point point = new Point();
+        if (playerIndex == 1) {
+            point.x = 1158 - cpg1Count * 40;
+            point.y = 630 + j * 35;
+            is1 = true;
+        } else if (playerIndex == 2) {
+            point.x = 850 + j * 35;
+            point.y = 152 + cpg2Count * 50;
+            is2 = true;
+        } else if (playerIndex == 3) {
+            point.x = 132 + cpg3Count * 40;
+            point.y = 120 + j * 35;
+            is3 = true;
+        }
+        return point;
+    }
+
+    // Increment the count for Peng, Gang, and Chi
+    private static void incrementCpgCount() {
+        if (is1) {
+            cpg1Count++;
+            is1 = false;
+        }
+        if (is2) {
+            cpg2Count++;
+            is2 = false;
+        }
+        if (is3) {
+            cpg3Count++;
+            is3 = false;
+        }
     }
 
 }
