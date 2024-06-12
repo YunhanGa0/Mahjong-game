@@ -104,10 +104,8 @@ public class Other_Algorithm {
     public static boolean helpCheckEat(ArrayList<MahjongCard> list, MahjongCard comingCard) {
         order(list);
         int comingValue = comingCard.getValue();
-        // 遍历当前牌组，查找可以与comingCard组成顺子的牌
         for (int i = 0; i < list.size(); i++) {
             int currentValue = list.get(i).getValue();
-            // 检查当前牌和前一张牌是否与comingCard组成顺子
             if (i > 0) {
                 int prevValue = list.get(i - 1).getValue();
                 if (prevValue == comingValue - 1 && currentValue == comingValue + 1) {
@@ -121,12 +119,11 @@ public class Other_Algorithm {
                     return true;
                 }
             }
-            // 检查当前牌和后一张牌是否与comingCard组成顺子
             if (i < list.size() - 1) {
-                int nextValue = list.get(i + 1).getValue(); // 获取下一张牌的值
+                int nextValue = list.get(i + 1).getValue();
                 if (currentValue == comingValue - 1 && nextValue == comingValue + 1) {
                     setChiSituation("OXO");
-                    return true; // (currentValue, comingValue, nextValue) 组成顺子
+                    return true; 
                 } else if (currentValue == comingValue + 1 && nextValue == comingValue + 2) {
                     setChiSituation("XOO");
                     return true;
@@ -143,17 +140,13 @@ public class Other_Algorithm {
     // Auxiliary method for checking Eat
     public static ArrayList<MahjongCard> insertIn(ArrayList<MahjongCard> list, int color){
         ArrayList<MahjongCard> filteredList = new ArrayList<>();
-        // 遍历数组中的每一个元素
         for (MahjongCard card : list) {
-            //如果没有吃碰杠过
-            if(!card.getIfEat()&&!card.getIfGang()&&!card.getIfPeng()) { //碰过吃过或杠过的牌不能再吃
-                // 如果元素等于指定值，则加入filteredList
+            if(!card.getIfEat()&&!card.getIfGang()&&!card.getIfPeng()) {
                 if (card.getColor() == color) {
                     filteredList.add(card);
                 }
             }
         }
-        // 返回新的ArrayList
         return filteredList;
     }
 
